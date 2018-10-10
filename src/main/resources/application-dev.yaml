@@ -8,11 +8,15 @@ spring:
      show-sql: true
      hibernate:
        ddl-auto: update
+#     properties:
+#       hibernate:
+#        enable_lazy_no_trans: true
   redis:
     database: 0
     host: 127.0.0.1
     password:
     port: 6379
+
 
 logging:
   level: info

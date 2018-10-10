@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails
 
 import javax.persistence.CascadeType
 import javax.persistence.Entity
+import javax.persistence.FetchType
 import javax.persistence.OneToMany
 
 @Entity
@@ -31,10 +32,11 @@ public class Administ extends BosEntity implements UserDetails{
 //    @SchemaDocumentation("权限")
 //    String functionAuthority;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", orphanRemoval = true)
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", orphanRemoval = true,fetch = FetchType.EAGER)
     Set<RoleItem> roleItems = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", orphanRemoval = true,fetch = FetchType.EAGER)
     Set<PrivilegeItem> privilegeItems = new HashSet<>();
 
     @Override
