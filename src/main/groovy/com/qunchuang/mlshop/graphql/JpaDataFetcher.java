@@ -1,10 +1,13 @@
 package com.qunchuang.mlshop.graphql;
 
 import com.bos.domain.BosEnum;
+import com.qunchuang.mlshop.model.Administ;
 import graphql.language.*;
 import graphql.schema.*;
 import org.springframework.beans.ConfigurablePropertyAccessor;
 import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
@@ -24,7 +27,6 @@ public class JpaDataFetcher implements DataFetcher {
     protected EntityManager entityManager;
     protected EntityType<?> entityType;
     protected IGraphQlTypeMapper graphQlTypeMapper;
-
 
     public JpaDataFetcher(EntityManager entityManager, EntityType<?> entityType, IGraphQlTypeMapper graphQlTypeMapper) {
         this.entityManager = entityManager;
@@ -47,7 +49,30 @@ public class JpaDataFetcher implements DataFetcher {
         Object result = this.getResult(environment, queryFilter);
         //throw new CustomRuntimeException();
         //TODO 检查权限
-        //checkPermission();
+//        checkPermission(result);
+
+        if (result == null) {
+            return result;
+        }
+
+        if (result.getClass().isAssignableFrom(LinkedHashMap.class)) {
+            if (((ArrayList) ((LinkedHashMap) result).get("content")).get(0).getClass().isAssignableFrom(Administ.class)) {
+//                Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//                if (principal.getClass().isAssignableFrom(Administ.class)){
+//                    throw new BadCredentialsException("权限不足");
+//                }
+                if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                    throw new AccessDeniedException("权限不足");
+                }
+            }
+        } else {
+            if (result.getClass().isAssignableFrom(Administ.class)) {
+                if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                    throw new AccessDeniedException("权限不足");
+                }
+            }
+        }
+
         return result;
     }
 
@@ -231,9 +256,9 @@ public class JpaDataFetcher implements DataFetcher {
                 result = cb.like(path, (String) value);
                 break;
             case IN:
-                List<Object> inList = Stream.of(v.split(",")).collect(Collectors.toList());
-                for (int i=0;i<inList.size();i++){
-                    inList.set(i,convertFilterValue(path.getJavaType(), (String) inList.get(i)));
+                List<Object> inList = Stream.of(v.split(",")).map(s -> (s.startsWith("'") && s.endsWith("'") ? s.substring(1, s.length() - 1) : s)).collect(Collectors.toList());
+                for (int i = 0; i < inList.size(); i++) {
+                    inList.set(i, convertFilterValue(path.getJavaType(), (String) inList.get(i)));
                 }
                 result = path.in(inList);
                 break;
@@ -486,5 +511,9 @@ public class JpaDataFetcher implements DataFetcher {
         JUSTFORCOUNTBYDISTINCTID,//仅仅是为了统计记录条数count(distinct(id))
         JUSTFORIDSINTHEPAGE,//仅仅是为了找出某一页中记录的ids
         NORMAL//常规
+    }
+
+    public void checkPermission(Object result) {
+
     }
 }

@@ -5,28 +5,24 @@ import com.qunchuang.mlshop.enums.RoleAuthorityFunctionEnum;
 import com.qunchuang.mlshop.model.Administ;
 import com.qunchuang.mlshop.utils.RoleUtil;
 import com.zzk.test.domain.User;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RestController;
 
 @Aspect
 @Component
-@RestController
 public class RoleAuthorityCheckAspect {
 
     @Pointcut("execution(public * com.qunchuang.mlshop.controller.*.*(..)) " +
             " && @annotation(roleAuthority)")
-
     public void init(RoleAuthority roleAuthority) {
     }
 
     @Before("init(roleAuthority)")
-    public void doBefore(JoinPoint joinPoint, RoleAuthority roleAuthority) {
+    public void doBefore(RoleAuthority roleAuthority) {
 
 
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

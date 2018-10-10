@@ -30,6 +30,7 @@ class GraphQlController {
     @CrossOrigin(origins = "*",methods = [RequestMethod.GET,RequestMethod.POST,RequestMethod.OPTIONS],maxAge=1800L,allowedHeaders ="*")
     @RequestMapping(path = "/graphql")
     ExecutionResult graphQl(@RequestBody GraphQLInputQuery graphQLInput) throws IOException {
+        //todo  在这里也可以依据  获取的实体内容 做判断 是否具有权限
         ExecutionResult result = graphQLExecutor.execute(graphQLInput.getQuery(),graphQLInput.getArguments());
         // if(result.getErrors()!=null && result.getErrors().size()==0){
         result=new ExecutionResultBos(result.getData(),result.getErrors(),result.getExtensions());
