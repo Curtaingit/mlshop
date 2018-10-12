@@ -42,9 +42,10 @@ public class Administ extends BosEntity implements UserDetails{
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> list=new ArrayList<>();
-//        for(String role : roleAuthority.split(",")){
+//        for(String role : .split(",")){
 //            list.add(new SimpleGrantedAuthority(role));
 //        }
+
         return list;
     }
 

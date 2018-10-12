@@ -1,13 +1,10 @@
 package com.qunchuang.mlshop.graphql;
 
 import com.bos.domain.BosEnum;
-import com.qunchuang.mlshop.model.Administ;
 import graphql.language.*;
 import graphql.schema.*;
 import org.springframework.beans.ConfigurablePropertyAccessor;
 import org.springframework.beans.PropertyAccessorFactory;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
@@ -36,43 +33,36 @@ public class JpaDataFetcher implements DataFetcher {
 
 
     public final Object get(DataFetchingEnvironment environment) {
-     /*  if(true){
-           Map<String,String[]> map=new HashMap();
-           map.put("名字要有",new String[]{"a,a.b"});
-           map.put("身份证和电话号码二者必须要有一个",new String[]{"b,a.b.c"});
-
-           throw new InputErrorException(map);
-       }
-*/
         QueryFilter queryFilter = extractQueryFilter(environment, environment.getFields().iterator().next());
 
+        //todo   在查询之前就坚持用户角色  和 本次请求想要获取的实体数据   如果是限制类型实体数据  那么就直接构造  queryFilter
+        //todo  比如  普通管理角色 获取订单  那么只能获取5000金额一下的   那么就 构造queryFilter  key amount value 5000 operator 小于
+        QueryFilter qf = new QueryFilter();
+        qf.setKey("order.amout");
+        qf.setValue("5000");
+        qf.setOperator(QueryFilterOperator.LESSTHAN);
+        qf.setCombinator(QueryFilterCombinator.AND);
+        qf.setNext(queryFilter);
+
+        //todo 不管是不是mutation  都会通过这里  并获取到queryFilter
         Object result = this.getResult(environment, queryFilter);
-        //throw new CustomRuntimeException();
-        //TODO 检查权限
-//        checkPermission(result);
-
-        if (result == null) {
-            return result;
-        }
-
-        if (result.getClass().isAssignableFrom(LinkedHashMap.class)) {
-            if (((ArrayList) ((LinkedHashMap) result).get("content")).get(0).getClass().isAssignableFrom(Administ.class)) {
-//                Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//                if (principal.getClass().isAssignableFrom(Administ.class)){
-//                    throw new BadCredentialsException("权限不足");
+//        if (result.getClass().isAssignableFrom(LinkedHashMap.class)) {
+//            if (((ArrayList) ((LinkedHashMap) result).get("content")).get(0).getClass().isAssignableFrom(Administ.class)) {
+////                Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+////                if (principal.getClass().isAssignableFrom(Administ.class)){
+////                    throw new BadCredentialsException("权限不足");
+////                }
+//                if (SecurityContextHolder.getContext().getAuthentication() == null) {
+//                    throw new AccessDeniedException("权限不足");
 //                }
-                if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                    throw new AccessDeniedException("权限不足");
-                }
-            }
-        } else {
-            if (result.getClass().isAssignableFrom(Administ.class)) {
-                if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                    throw new AccessDeniedException("权限不足");
-                }
-            }
-        }
-
+//            }
+//        } else {
+//            if (result.getClass().isAssignableFrom(Administ.class)) {
+//                if (SecurityContextHolder.getContext().getAuthentication() == null) {
+//                    throw new AccessDeniedException("权限不足");
+//                }
+//            }
+//        }
         return result;
     }
 
@@ -268,7 +258,6 @@ public class JpaDataFetcher implements DataFetcher {
             case EQUEAL:
                 value = convertFilterValue(path.getJavaType(), v);
                 result = cb.equal(path, value);
-                ;
                 break;
             case LESSTHAN:
                 value = convertFilterValue(path.getJavaType(), v);
@@ -511,9 +500,5 @@ public class JpaDataFetcher implements DataFetcher {
         JUSTFORCOUNTBYDISTINCTID,//仅仅是为了统计记录条数count(distinct(id))
         JUSTFORIDSINTHEPAGE,//仅仅是为了找出某一页中记录的ids
         NORMAL//常规
-    }
-
-    public void checkPermission(Object result) {
-
     }
 }

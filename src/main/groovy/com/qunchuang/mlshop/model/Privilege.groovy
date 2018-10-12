@@ -18,4 +18,6 @@ import javax.persistence.Entity;
 @Bostype("A07")
 public class Privilege extends BosEntity {
     String privilege;
+
+
 }
