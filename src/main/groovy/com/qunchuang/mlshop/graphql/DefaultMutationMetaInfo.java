@@ -6,7 +6,6 @@ import graphql.ErrorType;
 import graphql.GraphQLError;
 import graphql.language.SourceLocation;
 import graphql.schema.*;
-
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import javax.persistence.metamodel.EntityType;
+import javax.validation.ConstraintViolationException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -137,7 +137,14 @@ public class DefaultMutationMetaInfo implements MutationMetaInfo {
 //        if(nameArgMaps.containsKey("carbrandicon")){
 //            args[0] = new ArrayList((Collection) args[0]);
 //        }
-        return ReflectionUtils.invokeMethod(this.proxyMethod, this.target, args);
+        try {
+            //todo 因为这里会抛出异常ConstraintViolationException   所以先捕获
+            return ReflectionUtils.invokeMethod(this.proxyMethod, this.target, args);
+        }catch (ConstraintViolationException e){
+            //todo  具体信息提示 在做选择
+            throw new RuntimeException(e.getMessage());
+        }
+
 
     }
 

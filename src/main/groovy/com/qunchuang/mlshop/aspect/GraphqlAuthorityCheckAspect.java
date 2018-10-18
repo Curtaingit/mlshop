@@ -1,8 +1,6 @@
 package com.qunchuang.mlshop.aspect;
 
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,14 +21,4 @@ public class GraphqlAuthorityCheckAspect {
 //    }
 
 
-    @Pointcut("execution(public * com.qunchuang.mlshop.graphql.JpaDataFetcher.checkPermission(..))")
-    public void init() {
-    }
-
-    @Before("init()")
-    public void doBefore() {
-
-        System.out.println("xxx");
-
-    }
 }
