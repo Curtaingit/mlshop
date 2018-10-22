@@ -58,9 +58,10 @@ class TestController {
 
     //测试 graphql mutation 集合实体返回 + 权限
     @GRequestMapping("/administFindAll")
-//    @RoleAuthority(RoleAuthorityFunctionEnum.ORDER_LAUNDRY)
+    @RoleAuthority(RoleAuthorityFunctionEnum.ORDER_LAUNDRY)
     public List<Administ> findAll(@RequestParam(name = "id",required = false)String id){
         return administRepository.findAll();
+
     }
 
     @GRequestMapping("/addAdminist")

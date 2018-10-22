@@ -43,7 +43,7 @@ public class RoleUtil {
 
 
         //如果权限不符合 那么抛出AccessDeniedException  返回403
-        Set<PrivilegeItem> privilegeItems = administ.getPrivilegeItems();
+        Set<PrivilegeItem> privilegeItems = administ.getRole().getPrivilegeItems();
         final String[] privilege = new String[1];
         privilegeItems.stream().forEach(privilegeItem -> privilege[0] = privilegeItem.getPrivilege().getPrivilege());
         if (!authorityJudge(privilege[0], requisite)) {

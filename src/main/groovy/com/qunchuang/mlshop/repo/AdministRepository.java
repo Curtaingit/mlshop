@@ -9,5 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface AdministRepository extends JpaRepository<Administ,String> {
+
     Optional<Administ>  findByUsername(String username);
 }

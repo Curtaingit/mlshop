@@ -9,10 +9,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
@@ -24,9 +21,9 @@ import java.util.*;
 @Setter
 public class Administ extends BosEntity implements UserDetails{
     @SchemaDocumentation("姓名")
-    @NotNull
+    @NotNull(message = "xxxxxx")
     String name;
-    //todo  异常提示应该是获取 实体类中书写的message 作为反馈     @NotNull（姓名不能为空）
+    //todo  异常提示应该是获取 实体类中书写的message 作为反馈     @NotNull（message=xxx）
 
     @SchemaDocumentation("联系方式")
     String tel;
@@ -41,11 +38,8 @@ public class Administ extends BosEntity implements UserDetails{
 //    String functionAuthority;
 
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", orphanRemoval = true,fetch = FetchType.EAGER)
-    Set<RoleItem> roleItems = new HashSet<>();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", orphanRemoval = true,fetch = FetchType.EAGER)
-    Set<PrivilegeItem> privilegeItems = new HashSet<>();
+    @ManyToOne
+    Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

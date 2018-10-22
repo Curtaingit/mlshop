@@ -19,7 +19,15 @@ import javax.persistence.ManyToOne
 @Bostype("A08")
 
 class PrivilegeItem extends Entry {
+    /**
+     * 权限
+     */
     @ManyToOne(fetch = FetchType.EAGER)
     Privilege privilege;
+
+    /**
+     * 约束规则
+     */
+    String constraintRule;
 
 }

@@ -37,22 +37,26 @@ public class MlshopApplicationTests {
         administ.setPassword("1");
         administ.setTel("135****3423");
 
-        RoleItem roleItem = new RoleItem();
         PrivilegeItem privilegeItem = new PrivilegeItem();
+        PrivilegeItem privilegeItem2 = new PrivilegeItem();
 
         Privilege privilege = new Privilege();
-        privilege.setPrivilege("A1,A2");
+        privilege.setPrivilege("A1");
+        Privilege privilege2 = new Privilege();
+        privilege2.setPrivilege("A2");
+
         privilege = privilegeRepository.save(privilege);
+        privilege2 = privilegeRepository.save(privilege2);
 
         Role role = new Role();
         role.setRole("Role_Admin");
+        privilegeItem.setPrivilege(privilege);
+        role.getPrivilegeItems().add(privilegeItem);
+        role.getPrivilegeItems().add(privilegeItem2);
         role = roleRepository.save(role);
 
-        roleItem.setRole(role);
-        privilegeItem.setPrivilege(privilege);
 
-        administ.getPrivilegeItems().add(privilegeItem);
-        administ.getRoleItems().add(roleItem);
+        administ.setRole(role);
 
         //todo 这里如果不前保存 role 和 privilege 会出现以下错误   暂时未找到解决方案
         //todo object references an unsaved transient instance - save the transient instance before flushing

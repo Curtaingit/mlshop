@@ -3,9 +3,12 @@ package com.qunchuang.mlshop.model;
 import com.bos.domain.BosEntity
 import com.bos.domain.Bostype;
 import com.qunchuang.mlshop.graphql.annotation.SchemaDocumentation;
-import groovy.transform.CompileStatic;
+import groovy.transform.CompileStatic
 
-import javax.persistence.Entity;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity
+import javax.persistence.FetchType
+import javax.persistence.OneToMany;
 
 /**
  * @author Curtain
@@ -18,5 +21,15 @@ import javax.persistence.Entity;
 @Bostype("A09")
 public class Role extends BosEntity{
 
+    /**
+     * 角色
+     */
     String role;
+
+    /**
+     * 权限集合
+     */
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", orphanRemoval = true,fetch = FetchType.EAGER)
+    Set<PrivilegeItem> privilegeItems = new HashSet<>();
+
 }

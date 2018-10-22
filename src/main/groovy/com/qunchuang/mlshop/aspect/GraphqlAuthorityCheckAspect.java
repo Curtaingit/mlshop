@@ -1,8 +1,9 @@
 package com.qunchuang.mlshop.aspect;
 
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Curtain
@@ -11,14 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Aspect
 @Component
-@RestController
 public class GraphqlAuthorityCheckAspect {
 
-//    @AfterReturning(returning="result", pointcut="execution(public * com.qunchuang.mlshop.graphql.JpaDataFetcher.get(..))")
-//    public void after(JoinPoint joinPoint,Object result){
-//        System.out.println(result);
-//
-//    }
+    @After("execution(public * com.qunchuang.mlshop.controller.GraphQlController.graphQl(..))")
+    public void after(JoinPoint joinPoint){
+        System.out.println("aop");
+
+    }
 
 
 }

@@ -17,6 +17,9 @@ import javax.persistence.Entity;
 @CompileStatic
 @Bostype("A07")
 public class Privilege extends BosEntity {
+    /**
+     * 权限名
+     */
     String privilege;
 
 

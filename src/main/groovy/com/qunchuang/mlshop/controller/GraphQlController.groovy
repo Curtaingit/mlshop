@@ -29,13 +29,17 @@ class GraphQlController {
         result = new ExecutionResultBos(result.getData(), result.getErrors(), result.getExtensions());
 
         //增加response   判断异常中是否包含身份验证异常  返回401 403
-        if (result.getErrors() != null) {
-            if (result.getErrors().get(0).class.isAssignableFrom(ExceptionWhileDataFetching)) {
-                ExceptionWhileDataFetching exceptionWhileDataFetching = result.getErrors().get(0);
+
+        def errors = result.getErrors()
+        if (errors != null) {
+            ExceptionWhileDataFetching exceptionWhileDataFetching = errors.get(0);
+            if (exceptionWhileDataFetching.class.isAssignableFrom(ExceptionWhileDataFetching)) {
                 //401
                 if (exceptionWhileDataFetching.exception.class.isAssignableFrom(BadCredentialsException.class)) {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    throw new BadCredentialsException(exceptionWhileDataFetching.exception.message);
                 }
+
                 //403
                 if (exceptionWhileDataFetching.exception.class.isAssignableFrom(AccessDeniedException.class)) {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);

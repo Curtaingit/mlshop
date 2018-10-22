@@ -33,6 +33,7 @@ public class JpaDataFetcher implements DataFetcher {
 
 
     public final Object get(DataFetchingEnvironment environment) {
+
         QueryFilter queryFilter = extractQueryFilter(environment, environment.getFields().iterator().next());
 
         //todo   在查询之前就坚持用户角色  和 本次请求想要获取的实体数据   如果是限制类型实体数据  那么就直接构造  queryFilter
