@@ -42,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private MyAuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Autowired
-    private MyAuthenticationFailHandle myAuthenticationFailHandle;
+    private MyAuthenticationFailHandler myAuthenticationFailHandler;
 
     @Autowired
     private MyAccessDeniedHandler accessDeniedHandler;
@@ -72,7 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/login")
                 .successHandler(authenticationSuccessHandler)
-                .failureHandler(myAuthenticationFailHandle)
+                .failureHandler(myAuthenticationFailHandler)
                 .and()
                 .logout().logoutSuccessHandler(mySimpleLogoutHandler);
 

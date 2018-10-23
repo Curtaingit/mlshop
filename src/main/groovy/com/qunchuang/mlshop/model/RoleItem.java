@@ -1,17 +1,13 @@
 package com.qunchuang.mlshop.model;
 
-import com.bos.domain.BosEntity;
 import com.bos.domain.Bostype;
+import com.bos.domain.Entry;
 import com.qunchuang.mlshop.graphql.annotation.SchemaDocumentation;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.ManyToOne;
 
 /**
  * @author Curtain
@@ -19,14 +15,14 @@ import java.util.Set;
  */
 @Entity
 @SchemaDocumentation("角色集合")
-@Bostype("A010")
+@Bostype("A10")
 @Getter
 @Setter
-public class RoleItem extends BosEntity{
+public class RoleItem extends Entry{
     /**
      * 角色
      */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", orphanRemoval = true,fetch = FetchType.EAGER)
-    Set<Role> roleItems = new HashSet<>();
+    @ManyToOne
+    Role role;
 
 }

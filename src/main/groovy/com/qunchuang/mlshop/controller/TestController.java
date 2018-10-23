@@ -7,7 +7,6 @@ import com.qunchuang.mlshop.graphql.annotation.SchemaDocumentation;
 import com.qunchuang.mlshop.model.Administ;
 import com.qunchuang.mlshop.repo.AdministRepository;
 import com.validator.bos.anntations.DomainRule;
-import groovy.transform.CompileStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -28,7 +27,6 @@ import static com.qunchuang.mlshop.enums.RoleAuthorityFunctionConst.*;
 @SchemaDocumentation("用户信息")
 @GRestController("mlshop")
 @RestController
-@CompileStatic
 @Validated
 class TestController {
 

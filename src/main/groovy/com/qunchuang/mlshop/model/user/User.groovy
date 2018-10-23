@@ -37,6 +37,7 @@ class User extends BosEntity {
     String nickname;
 
 
+    //todo  绑定一个固定的角色    固定角色下固定的权限  来给到用户
 }
 
 

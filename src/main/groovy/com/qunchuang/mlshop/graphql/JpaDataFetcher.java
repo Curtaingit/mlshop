@@ -63,6 +63,24 @@ public class JpaDataFetcher implements DataFetcher {
 //                }
 //            }
 //        }
+
+/*        //查询过滤
+        if(this.getClass().isAssignableFrom(JpaDataFetcher.class)){
+            //获取实体类型
+            Class clazz = this.entityType.getJavaType();
+
+            //todo  这里是不是应该 先通过数据做一个过滤  只留下要需要权限校验、约束判断的
+
+            //遍历得到用户的约束条件
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication==null){
+                throw new AccessDeniedException("权限不足。。。。");
+            }
+
+            authentication.getPrincipal()
+
+        }*/
+
         return result;
     }
 
@@ -225,7 +243,7 @@ public class JpaDataFetcher implements DataFetcher {
         Path path = root;
         //TODO 这里要做报错处理，因为很可能数据导航写错了。
         for (String part : parts) {
-            //如果(From)path不能转换，则说明queryfilter的k写错了。因为如果含有.那必须是形如roleItems.role.id这样的除最后一段外均为关系(可以作为From)的path
+            //如果(From)path不能转换，则说明queryfilter的k写错了。因为如果含有.那必须是形如roleItems.name.id这样的除最后一段外均为关系(可以作为From)的path
             From temp = joinIfNecessary((From) path, part);
             if (temp == path) {//如果没变动，说明到顶了，该属性为简单类型，拿到路径。
                 path = temp.get(part);

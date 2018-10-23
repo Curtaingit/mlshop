@@ -3,7 +3,7 @@ package com.qunchuang.mlshop.handler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,11 +22,11 @@ import java.io.StringWriter;
 public class RwlMallExceptionHandler {
 
     @ResponseBody
-    @ExceptionHandler(BadCredentialsException.class)
+    @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public String handler(BadCredentialsException e) throws Exception {
+    public String handler(AuthenticationException e) throws Exception {
 
-        log.error("Controller : BadCredentialsException = " + e.getMessage());
+        log.error("Controller : AuthenticationException = " + e.getMessage());
         return e.getMessage();
     }
 
@@ -34,7 +34,7 @@ public class RwlMallExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handler(AccessDeniedException e) throws Exception {
-        log.error("Controller : BadCredentialsException = " + e.getMessage());
+        log.error("Controller : AccessDeniedException = " + e.getMessage());
         return e.getMessage();
     }
 

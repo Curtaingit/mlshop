@@ -6,7 +6,6 @@ import com.qunchuang.mlshop.model.Administ;
 import com.qunchuang.mlshop.repo.AdministRepository;
 import com.qunchuang.mlshop.service.AdministService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -35,17 +34,12 @@ public class AdministServiceImpl implements AdministService {
 
     @Override
     public Administ update(Administ administ) {
+        //todo  首先在方法上需要功能权限   其次在这里需要做判断  只能赋予 自己子集的权限（角色）    创建也是一样的
+        return administRepository.save(administ);
+    }
 
-        //只有总管理员才能修改普通管理员
-        Administ admin = (Administ) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        Administ result =  administRepository.findById(administ.getId()).get();
-
-        if (result.getPassword()==null){
-            administ.setPassword(null);
-        }else {
-            administ.setPassword(result.getPassword());
-        }
+    @Override
+    public Administ save(Administ administ) {
         return administRepository.save(administ);
     }
 

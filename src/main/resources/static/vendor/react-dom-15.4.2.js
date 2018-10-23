@@ -13277,7 +13277,7 @@ var ATTRS = {
   xlinkActuate: 'xlink:actuate',
   xlinkArcrole: 'xlink:arcrole',
   xlinkHref: 'xlink:href',
-  xlinkRole: 'xlink:role',
+  xlinkRole: 'xlink:name',
   xlinkShow: 'xlink:show',
   xlinkTitle: 'xlink:title',
   xlinkType: 'xlink:type',

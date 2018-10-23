@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse
  * @date 2018/5/23 14:08
  */
 
-@Component( "myAuthenticationFailHandle" )
-public class MyAuthenticationFailHandle extends SimpleUrlAuthenticationFailureHandler {
+@Component("myAuthenticationFailHandler")
+public class MyAuthenticationFailHandler extends SimpleUrlAuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request,

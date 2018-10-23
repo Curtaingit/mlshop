@@ -17,4 +17,11 @@ public interface AdministService extends UserDetailsService {
      */
     Administ update(Administ administ);
 
+    /**
+     * 创建
+     * @param administ
+     * @return
+     */
+    Administ save(Administ administ);
+
 }
