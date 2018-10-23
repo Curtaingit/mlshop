@@ -45,7 +45,6 @@ public class JpaDataFetcher implements DataFetcher {
         qf.setCombinator(QueryFilterCombinator.AND);
         qf.setNext(queryFilter);
 
-        //todo 不管是不是mutation  都会通过这里  并获取到queryFilter
         Object result = this.getResult(environment, queryFilter);
 //        if (result.getClass().isAssignableFrom(LinkedHashMap.class)) {
 //            if (((ArrayList) ((LinkedHashMap) result).get("content")).get(0).getClass().isAssignableFrom(Administ.class)) {

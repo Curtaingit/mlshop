@@ -1,9 +1,10 @@
 package com.qunchuang.mlshop;
 
+import com.qunchuang.mlshop.enums.RoleAuthorityFunctionConst;
 import com.qunchuang.mlshop.model.*;
 import com.qunchuang.mlshop.repo.AdministRepository;
-import com.qunchuang.mlshop.repo.PrivilegeRepository;
-import com.qunchuang.mlshop.repo.RoleRepository;
+import com.qunchuang.mlshop.repo.PrivilegeItemRepository;
+import com.qunchuang.mlshop.repo.RoleItemRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,10 @@ public class MlshopApplicationTests {
     private AdministRepository administRepository;
 
     @Autowired
-    RoleRepository roleRepository;
+    RoleItemRepository roleItemRepository;
 
     @Autowired
-    PrivilegeRepository privilegeRepository;
+    PrivilegeItemRepository privilegeItemRepository;
 
     @Test
     public void contextLoads() {
@@ -38,25 +39,27 @@ public class MlshopApplicationTests {
         administ.setTel("135****3423");
 
         PrivilegeItem privilegeItem = new PrivilegeItem();
-        PrivilegeItem privilegeItem2 = new PrivilegeItem();
 
         Privilege privilege = new Privilege();
-        privilege.setPrivilege("A1");
+        privilege.setPrivilege(RoleAuthorityFunctionConst.NO_ROLE);
         Privilege privilege2 = new Privilege();
-        privilege2.setPrivilege("A2");
+        privilege2.setPrivilege(RoleAuthorityFunctionConst.ORDER);
 
-        privilege = privilegeRepository.save(privilege);
-        privilege2 = privilegeRepository.save(privilege2);
+        privilegeItem.getPrivilegeItems().add(privilege);
+        privilegeItem.getPrivilegeItems().add(privilege2);
+
+        privilegeItem = privilegeItemRepository.save(privilegeItem);
 
         Role role = new Role();
         role.setRole("Role_Admin");
-        privilegeItem.setPrivilege(privilege);
-        role.getPrivilegeItems().add(privilegeItem);
-        role.getPrivilegeItems().add(privilegeItem2);
-        role = roleRepository.save(role);
+        role.setPrivilegeItem(privilegeItem);
+
+        RoleItem roleItem = new RoleItem();
+        roleItem.getRoleItems().add(role);
+        roleItem = roleItemRepository.save(roleItem);
 
 
-        administ.setRole(role);
+        administ.setRoleItem(roleItem);
 
         //todo 这里如果不前保存 role 和 privilege 会出现以下错误   暂时未找到解决方案
         //todo object references an unsaved transient instance - save the transient instance before flushing

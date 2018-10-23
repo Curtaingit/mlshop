@@ -7,8 +7,6 @@ import graphql.ExecutionResult
 import graphql.ExecutionResultImpl
 import graphql.GraphQLError
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.access.AccessDeniedException
-import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.web.bind.annotation.*
 
 import javax.servlet.http.HttpServletResponse
@@ -28,32 +26,15 @@ class GraphQlController {
 
         result = new ExecutionResultBos(result.getData(), result.getErrors(), result.getExtensions());
 
-        //增加response   判断异常中是否包含身份验证异常  返回401 403
-
         def errors = result.getErrors()
         if (errors != null) {
             ExceptionWhileDataFetching exceptionWhileDataFetching = errors.get(0);
             if (exceptionWhileDataFetching.class.isAssignableFrom(ExceptionWhileDataFetching)) {
-                //401
-                if (exceptionWhileDataFetching.exception.class.isAssignableFrom(BadCredentialsException.class)) {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    throw new BadCredentialsException(exceptionWhileDataFetching.exception.message);
-                }
-
-                //403
-                if (exceptionWhileDataFetching.exception.class.isAssignableFrom(AccessDeniedException.class)) {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                }
+                throw exceptionWhileDataFetching.exception;
             }
         }
 
         return result;
-    }
-
-    @RequestMapping("/graphql2")
-    String withoutAuthority(HttpServletResponse response) {
-        throw new BadCredentialsException("未登录");
-        return "without";
     }
 
     /**
