@@ -21,17 +21,26 @@
     </style>
 
     <!-- Included here to allow for testing offline -->
-    <script src="vendor/es6-promise.auto.js"></script>
-    <script src="vendor/fetch.min.js"></script>
-    <script src="vendor/react-15.4.2.js"></script>
-    <script src="vendor/react-dom-15.4.2.js"></script>
+    <script src="./vendor/es6-promise.auto.js"></script>
+    <script src="./vendor/fetch.min.js"></script>
+    <script src="./vendor/react-15.4.2.js"></script>
+    <script src="./vendor/react-dom-15.4.2.js"></script>
 
     <!-- Load each file individually for better debugging  -->
     <!-- Note that in practice, a compiled graphiql.css is included -->
-    <link href="graphiql.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/codemirror.css" />
+    <link rel="stylesheet" href="css/doc-explorer.css" />
+    <link rel="stylesheet" href="css/foldgutter.css" />
+    <link rel="stylesheet" href="css/info.css" />
+    <link rel="stylesheet" href="css/jump.css" />
+    <link rel="stylesheet" href="css/lint.css" />
+    <link rel="stylesheet" href="css/loading.css" />
+    <link rel="stylesheet" href="css/show-hint.css" />
+    <link rel="stylesheet" href="css/history.css" />
 
     <!-- Note: this resource is not a file, it is bundled live by the test server -->
-    <script src="graphiql.js"></script>
+    <script src="./graphiql.js"></script>
   </head>
   <body>
     <div id="graphiql">Loading...</div>
@@ -96,12 +105,13 @@
       }
 
       // Defines a GraphQL fetcher using the fetch API.
-      function graphQLFetcher(graphQLParams) {
+      function graphQLFetcher(graphQLParams,xtoken) {
         return fetch('/graphql', {
           method: 'post',
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
+            'x-auth-token':xtoken
           },
           body: JSON.stringify(graphQLParams),
           credentials: 'include',

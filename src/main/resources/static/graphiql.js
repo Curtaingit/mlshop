@@ -256,7 +256,7 @@ DocExplorer.propTypes = {
   schema: _propTypes2.default.instanceOf(_graphql.GraphQLSchema)
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./DocExplorer/FieldDoc":4,"./DocExplorer/SchemaDoc":6,"./DocExplorer/SearchBox":7,"./DocExplorer/SearchResults":8,"./DocExplorer/TypeDoc":9,"graphql":95,"prop-types":236}],2:[function(require,module,exports){
+},{"./DocExplorer/FieldDoc":4,"./DocExplorer/SchemaDoc":6,"./DocExplorer/SearchBox":7,"./DocExplorer/SearchResults":8,"./DocExplorer/TypeDoc":9,"graphql":96,"prop-types":237}],2:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -316,7 +316,7 @@ Argument.propTypes = {
   showDefaultValue: _propTypes2.default.bool
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./DefaultValue":3,"./TypeLink":10,"prop-types":236}],3:[function(require,module,exports){
+},{"./DefaultValue":3,"./TypeLink":10,"prop-types":237}],3:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -368,7 +368,7 @@ DefaultValue.propTypes = {
   field: _propTypes2.default.object.isRequired
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"graphql":95,"prop-types":236}],4:[function(require,module,exports){
+},{"graphql":96,"prop-types":237}],4:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -496,7 +496,7 @@ FieldDoc.propTypes = {
 };
 exports.default = FieldDoc;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./Argument":2,"./MarkdownContent":5,"./TypeLink":10,"prop-types":236}],5:[function(require,module,exports){
+},{"./Argument":2,"./MarkdownContent":5,"./TypeLink":10,"prop-types":237}],5:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -572,7 +572,7 @@ MarkdownContent.propTypes = {
 };
 exports.default = MarkdownContent;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"markdown-it":175,"prop-types":236}],6:[function(require,module,exports){
+},{"markdown-it":176,"prop-types":237}],6:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -700,7 +700,7 @@ SchemaDoc.propTypes = {
 };
 exports.default = SchemaDoc;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./MarkdownContent":5,"./TypeLink":10,"prop-types":236}],7:[function(require,module,exports){
+},{"./MarkdownContent":5,"./TypeLink":10,"prop-types":237}],7:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -791,12 +791,12 @@ SearchBox.propTypes = {
 };
 exports.default = SearchBox;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../utility/debounce":26,"prop-types":236}],8:[function(require,module,exports){
+},{"../../utility/debounce":27,"prop-types":237}],8:[function(require,module,exports){
 (function (global){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -836,205 +836,205 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 var SearchResults = function (_React$Component) {
-    _inherits(SearchResults, _React$Component);
+  _inherits(SearchResults, _React$Component);
 
-    function SearchResults() {
-        _classCallCheck(this, SearchResults);
+  function SearchResults() {
+    _classCallCheck(this, SearchResults);
 
-        return _possibleConstructorReturn(this, (SearchResults.__proto__ || Object.getPrototypeOf(SearchResults)).apply(this, arguments));
+    return _possibleConstructorReturn(this, (SearchResults.__proto__ || Object.getPrototypeOf(SearchResults)).apply(this, arguments));
+  }
+
+  _createClass(SearchResults, [{
+    key: 'shouldComponentUpdate',
+    value: function shouldComponentUpdate(nextProps) {
+      return this.props.schema !== nextProps.schema || this.props.searchValue !== nextProps.searchValue;
     }
+  }, {
+    key: 'render',
+    value: function render() {
+      var searchValue = this.props.searchValue;
+      var withinType = this.props.withinType;
+      var schema = this.props.schema;
+      var onClickType = this.props.onClickType;
+      var onClickField = this.props.onClickField;
 
-    _createClass(SearchResults, [{
-        key: 'shouldComponentUpdate',
-        value: function shouldComponentUpdate(nextProps) {
-            return this.props.schema !== nextProps.schema || this.props.searchValue !== nextProps.searchValue;
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var searchValue = this.props.searchValue;
-            var withinType = this.props.withinType;
-            var schema = this.props.schema;
-            var onClickType = this.props.onClickType;
-            var onClickField = this.props.onClickField;
+      var matchedWithin = [];
+      var matchedTypes = [];
+      var matchedFields = [];
 
-            var matchedWithin = [];
-            var matchedTypes = [];
-            var matchedFields = [];
+      var typeMap = schema.getTypeMap();
+      var typeNames = Object.keys(typeMap);
 
-            var typeMap = schema.getTypeMap();
-            var typeNames = Object.keys(typeMap);
+      // Move the within type name to be the first searched.
+      if (withinType) {
+        typeNames = typeNames.filter(function (n) {
+          return n !== withinType.name;
+        });
+        typeNames.unshift(withinType.name);
+      }
 
-            // Move the within type name to be the first searched.
-            if (withinType) {
-                typeNames = typeNames.filter(function (n) {
-                    return n !== withinType.name;
-                });
-                typeNames.unshift(withinType.name);
-            }
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
 
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
+      try {
+        var _loop = function _loop() {
+          var typeName = _step.value;
 
-            try {
-                var _loop = function _loop() {
-                    var typeName = _step.value;
+          if (matchedWithin.length + matchedTypes.length + matchedFields.length >= 100) {
+            return 'break';
+          }
 
-                    if (matchedWithin.length + matchedTypes.length + matchedFields.length >= 100) {
-                        return 'break';
-                    }
+          var type = typeMap[typeName];
+          if (withinType !== type && isMatch(typeName, searchValue)) {
+            matchedTypes.push(_react2.default.createElement(
+              'div',
+              { className: 'doc-category-item', key: typeName },
+              _react2.default.createElement(_TypeLink2.default, { type: type, onClick: onClickType })
+            ));
+          }
 
-                    var type = typeMap[typeName];
-                    if (withinType !== type && isMatch(typeName, searchValue)) {
-                        matchedTypes.push(_react2.default.createElement(
-                            'div',
-                            { className: 'doc-category-item', key: typeName },
-                            _react2.default.createElement(_TypeLink2.default, { type: type, onClick: onClickType })
-                        ));
-                    }
+          if (type.getFields) {
+            var fields = type.getFields();
+            Object.keys(fields).forEach(function (fieldName) {
+              var field = fields[fieldName];
+              var matchingArgs = void 0;
 
-                    if (type.getFields) {
-                        var fields = type.getFields();
-                        Object.keys(fields).forEach(function (fieldName) {
-                            var field = fields[fieldName];
-                            var matchingArgs = void 0;
-
-                            if (!isMatch(fieldName, searchValue) && !isMatch(field.description || '', searchValue)) {
-                                if (field.args && field.args.length) {
-                                    matchingArgs = field.args.filter(function (arg) {
-                                        return isMatch(arg.name, searchValue);
-                                    });
-                                    if (matchingArgs.length === 0) {
-                                        return;
-                                    }
-                                } else {
-                                    return;
-                                }
-                            }
-
-                            var match = _react2.default.createElement(
-                                'div',
-                                { className: 'doc-category-item', key: typeName + '.' + fieldName },
-                                withinType !== type && [_react2.default.createElement(_TypeLink2.default, { key: 'type', type: type, onClick: onClickType }), '.'],
-                                _react2.default.createElement(
-                                    'a',
-                                    {
-                                        className: 'field-name',
-                                        onClick: function onClick(event) {
-                                            return onClickField(field, type, event);
-                                        } },
-                                    field.name
-                                ),
-                                matchingArgs && ['(', _react2.default.createElement(
-                                    'span',
-                                    { key: 'args' },
-                                    matchingArgs.map(function (arg) {
-                                        return _react2.default.createElement(_Argument2.default, {
-                                            key: arg.name,
-                                            arg: arg,
-                                            onClickType: onClickType,
-                                            showDefaultValue: false
-                                        });
-                                    })
-                                ), ')'],
-                                _react2.default.createElement(_MarkdownContent2.default, {
-                                    className: 'doc-type-description',
-                                    markdown: field.description || 'No Description'
-                                })
-                            );
-
-                            if (withinType === type) {
-                                matchedWithin.push(match);
-                            } else {
-                                matchedFields.push(match);
-                            }
-                        });
-                    }
-                };
-
-                for (var _iterator = typeNames[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var _ret = _loop();
-
-                    if (_ret === 'break') break;
+              if (!isMatch(fieldName, searchValue) && !isMatch(field.description || '', searchValue)) {
+                if (field.args && field.args.length) {
+                  matchingArgs = field.args.filter(function (arg) {
+                    return isMatch(arg.name, searchValue);
+                  });
+                  if (matchingArgs.length === 0) {
+                    return;
+                  }
+                } else {
+                  return;
                 }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
+              }
 
-            if (matchedWithin.length + matchedTypes.length + matchedFields.length === 0) {
-                return _react2.default.createElement(
-                    'span',
-                    { className: 'doc-alert-text' },
-                    'No results found.'
-                );
-            }
-
-            if (withinType && matchedTypes.length + matchedFields.length > 0) {
-                return _react2.default.createElement(
-                    'div',
-                    null,
-                    matchedWithin,
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'doc-category' },
-                        _react2.default.createElement(
-                            'div',
-                            { className: 'doc-category-title' },
-                            'other results'
-                        ),
-                        matchedTypes,
-                        matchedFields
-                    )
-                );
-            }
-
-            return _react2.default.createElement(
+              var match = _react2.default.createElement(
                 'div',
-                null,
-                matchedWithin,
-                matchedTypes,
-                matchedFields
-            );
-        }
-    }]);
+                { className: 'doc-category-item', key: typeName + '.' + fieldName },
+                withinType !== type && [_react2.default.createElement(_TypeLink2.default, { key: 'type', type: type, onClick: onClickType }), '.'],
+                _react2.default.createElement(
+                  'a',
+                  {
+                    className: 'field-name',
+                    onClick: function onClick(event) {
+                      return onClickField(field, type, event);
+                    } },
+                  field.name
+                ),
+                matchingArgs && ['(', _react2.default.createElement(
+                  'span',
+                  { key: 'args' },
+                  matchingArgs.map(function (arg) {
+                    return _react2.default.createElement(_Argument2.default, {
+                      key: arg.name,
+                      arg: arg,
+                      onClickType: onClickType,
+                      showDefaultValue: false
+                    });
+                  })
+                ), ')'],
+                _react2.default.createElement(_MarkdownContent2.default, {
+                  className: 'doc-type-description',
+                  markdown: field.description || 'No Description'
+                })
+              );
 
-    return SearchResults;
+              if (withinType === type) {
+                matchedWithin.push(match);
+              } else {
+                matchedFields.push(match);
+              }
+            });
+          }
+        };
+
+        for (var _iterator = typeNames[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var _ret = _loop();
+
+          if (_ret === 'break') break;
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      if (matchedWithin.length + matchedTypes.length + matchedFields.length === 0) {
+        return _react2.default.createElement(
+          'span',
+          { className: 'doc-alert-text' },
+          'No results found.'
+        );
+      }
+
+      if (withinType && matchedTypes.length + matchedFields.length > 0) {
+        return _react2.default.createElement(
+          'div',
+          null,
+          matchedWithin,
+          _react2.default.createElement(
+            'div',
+            { className: 'doc-category' },
+            _react2.default.createElement(
+              'div',
+              { className: 'doc-category-title' },
+              'other results'
+            ),
+            matchedTypes,
+            matchedFields
+          )
+        );
+      }
+
+      return _react2.default.createElement(
+        'div',
+        null,
+        matchedWithin,
+        matchedTypes,
+        matchedFields
+      );
+    }
+  }]);
+
+  return SearchResults;
 }(_react2.default.Component);
 
 SearchResults.propTypes = {
-    schema: _propTypes2.default.object,
-    withinType: _propTypes2.default.object,
-    searchValue: _propTypes2.default.string,
-    onClickType: _propTypes2.default.func,
-    onClickField: _propTypes2.default.func
+  schema: _propTypes2.default.object,
+  withinType: _propTypes2.default.object,
+  searchValue: _propTypes2.default.string,
+  onClickType: _propTypes2.default.func,
+  onClickField: _propTypes2.default.func
 };
 exports.default = SearchResults;
 
 
 function isMatch(sourceText, searchValue) {
-    try {
-        var escaped = searchValue.replace(/[^_0-9A-Za-z]/g, function (ch) {
-            return '\\' + ch;
-        });
-        return sourceText.search(new RegExp(escaped, 'i')) !== -1;
-    } catch (e) {
-        return sourceText.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1;
-    }
+  try {
+    var escaped = searchValue.replace(/[^_0-9A-Za-z]/g, function (ch) {
+      return '\\' + ch;
+    });
+    return sourceText.search(new RegExp(escaped, 'i')) !== -1;
+  } catch (e) {
+    return sourceText.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1;
+  }
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./Argument":2,"./MarkdownContent":5,"./TypeLink":10,"prop-types":236}],9:[function(require,module,exports){
+},{"./Argument":2,"./MarkdownContent":5,"./TypeLink":10,"prop-types":237}],9:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -1258,7 +1258,6 @@ var TypeDoc = function (_React$Component) {
         deprecatedFieldsDef,
         valuesDef,
         deprecatedValuesDef,
-        'v',
         !(type instanceof _graphql.GraphQLObjectType) && typesDef
       );
     }
@@ -1348,7 +1347,7 @@ EnumValue.propTypes = {
   value: _propTypes2.default.object
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./Argument":2,"./DefaultValue":3,"./MarkdownContent":5,"./TypeLink":10,"graphql":95,"prop-types":236}],10:[function(require,module,exports){
+},{"./Argument":2,"./DefaultValue":3,"./MarkdownContent":5,"./TypeLink":10,"graphql":96,"prop-types":237}],10:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -1440,7 +1439,73 @@ function renderType(type, _onClick) {
   );
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"graphql":95,"prop-types":236}],11:[function(require,module,exports){
+},{"graphql":96,"prop-types":237}],11:[function(require,module,exports){
+(function (global){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.EditToken = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = (typeof window !== "undefined" ? window['React'] : typeof global !== "undefined" ? global['React'] : null);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = require("prop-types");
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var EditToken = exports.EditToken = function (_React$Component) {
+  _inherits(EditToken, _React$Component);
+
+  function EditToken(props) {
+    _classCallCheck(this, EditToken);
+
+    var _this = _possibleConstructorReturn(this, (EditToken.__proto__ || Object.getPrototypeOf(EditToken)).call(this, props));
+
+    _this.handleSetToken = _this.handleSetToken.bind(_this);
+    _this.state = {
+      inputValue: ''
+    };
+    return _this;
+  }
+
+  _createClass(EditToken, [{
+    key: "render",
+    value: function render() {
+      return _react2.default.createElement(
+        "div",
+        { className: "setToken" },
+        "设置Token:",
+        _react2.default.createElement("input", { type: "text", placeholder: "\u8BF7\u8F93\u5165token", onChange: this.handleSetToken })
+      );
+    }
+  }, {
+    key: "handleSetToken",
+    value: function handleSetToken(event) {
+      this.props.onTokenChange(event.target.value);
+    }
+  }]);
+
+  return EditToken;
+}(_react2.default.Component);
+
+EditToken.propTypes = {
+  onTokenChange: _propTypes2.default.func
+};
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"prop-types":237}],12:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -1613,12 +1678,12 @@ ExecuteButton.propTypes = {
   operations: _propTypes2.default.array
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"prop-types":236}],12:[function(require,module,exports){
+},{"prop-types":237}],13:[function(require,module,exports){
 (function (global){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 exports.GraphiQL = undefined;
 
@@ -1696,6 +1761,8 @@ var _elementPosition = require('../utility/elementPosition');
 
 var _introspectionQueries = require('../utility/introspectionQueries');
 
+var _EditToken = require('./EditToken');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1721,1025 +1788,1039 @@ var DEFAULT_VARIABLE_EXPLORER_HEIGHT = 200;
  */
 
 var GraphiQL = exports.GraphiQL = function (_React$Component) {
-    _inherits(GraphiQL, _React$Component);
+  _inherits(GraphiQL, _React$Component);
 
-    function GraphiQL(props) {
-        _classCallCheck(this, GraphiQL);
+  function GraphiQL(props) {
+    _classCallCheck(this, GraphiQL);
 
-        // Ensure props are correct
-        var _this = _possibleConstructorReturn(this, (GraphiQL.__proto__ || Object.getPrototypeOf(GraphiQL)).call(this, props));
+    // Ensure props are correct
+    var _this = _possibleConstructorReturn(this, (GraphiQL.__proto__ || Object.getPrototypeOf(GraphiQL)).call(this, props));
 
-        _initialiseProps.call(_this);
+    _initialiseProps.call(_this);
 
-        if (typeof props.fetcher !== 'function') {
-            throw new TypeError('GraphiQL requires a fetcher function.');
-        }
-
-        // Cache the storage instance
-        _this._storage = new _StorageAPI2.default(props.storage);
-
-        // Determine the initial query to display.
-        var query = props.query !== undefined ? props.query : _this._storage.get('query') !== null ? _this._storage.get('query') : props.defaultQuery !== undefined ? props.defaultQuery : defaultQuery;
-
-        // Get the initial query facts.
-        var queryFacts = (0, _getQueryFacts2.default)(props.schema, query);
-
-        // Determine the initial variables to display.
-        var variables = props.variables !== undefined ? props.variables : _this._storage.get('variables');
-
-        // Determine the initial operationName to use.
-        var operationName = props.operationName !== undefined ? props.operationName : (0, _getSelectedOperationName2.default)(null, _this._storage.get('operationName'), queryFacts && queryFacts.operations);
-
-        // Initialize state
-        _this.state = _extends({
-            schema: props.schema,
-            query: query,
-            variables: variables,
-            operationName: operationName,
-            response: props.response,
-            editorFlex: Number(_this._storage.get('editorFlex')) || 1,
-            variableEditorOpen: Boolean(variables),
-            variableEditorHeight: Number(_this._storage.get('variableEditorHeight')) || DEFAULT_VARIABLE_EXPLORER_HEIGHT,
-            docExplorerOpen: _this._storage.get('docExplorerOpen') === 'true' || false,
-            historyPaneOpen: _this._storage.get('historyPaneOpen') === 'true' || false,
-            docExplorerWidth: Number(_this._storage.get('docExplorerWidth')) || DEFAULT_DOC_EXPLORER_WIDTH,
-            isWaitingForResponse: false,
-            subscription: null
-        }, queryFacts);
-
-        // Ensure only the last executed editor query is rendered.
-        _this._editorQueryID = 0;
-
-        // Subscribe to the browser window closing, treating it as an unmount.
-        if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object') {
-            window.addEventListener('beforeunload', function () {
-                return _this.componentWillUnmount();
-            });
-        }
-        return _this;
+    if (typeof props.fetcher !== 'function') {
+      throw new TypeError('GraphiQL requires a fetcher function.');
     }
 
-    _createClass(GraphiQL, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            // Only fetch schema via introspection if a schema has not been
-            // provided, including if `null` was provided.
-            if (this.state.schema === undefined) {
-                this._fetchSchema();
-            }
+    // Cache the storage instance
+    _this._storage = new _StorageAPI2.default(props.storage);
 
-            // Utility for keeping CodeMirror correctly sized.
-            this.codeMirrorSizer = new _CodeMirrorSizer2.default();
+    // Determine the initial query to display.
+    var query = props.query !== undefined ? props.query : _this._storage.get('query') !== null ? _this._storage.get('query') : props.defaultQuery !== undefined ? props.defaultQuery : defaultQuery;
 
-            global.g = this;
+    // Get the initial query facts.
+    var queryFacts = (0, _getQueryFacts2.default)(props.schema, query);
+
+    // Determine the initial variables to display.
+    var variables = props.variables !== undefined ? props.variables : _this._storage.get('variables');
+
+    // Determine the initial operationName to use.
+    var operationName = props.operationName !== undefined ? props.operationName : (0, _getSelectedOperationName2.default)(null, _this._storage.get('operationName'), queryFacts && queryFacts.operations);
+
+    // 绑定this
+    _this.handleTokenChange = _this.handleTokenChange.bind(_this);
+
+    // Initialize state
+    _this.state = _extends({
+      xToken: null,
+      schema: props.schema,
+      query: query,
+      variables: variables,
+      operationName: operationName,
+      response: props.response,
+      editorFlex: Number(_this._storage.get('editorFlex')) || 1,
+      variableEditorOpen: Boolean(variables),
+      variableEditorHeight: Number(_this._storage.get('variableEditorHeight')) || DEFAULT_VARIABLE_EXPLORER_HEIGHT,
+      docExplorerOpen: _this._storage.get('docExplorerOpen') === 'true' || false,
+      historyPaneOpen: _this._storage.get('historyPaneOpen') === 'true' || false,
+      docExplorerWidth: Number(_this._storage.get('docExplorerWidth')) || DEFAULT_DOC_EXPLORER_WIDTH,
+      isWaitingForResponse: false,
+      subscription: null
+    }, queryFacts);
+
+    // Ensure only the last executed editor query is rendered.
+    _this._editorQueryID = 0;
+
+    // Subscribe to the browser window closing, treating it as an unmount.
+    if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object') {
+      window.addEventListener('beforeunload', function () {
+        return _this.componentWillUnmount();
+      });
+    }
+    return _this;
+  }
+
+  _createClass(GraphiQL, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      // Only fetch schema via introspection if a schema has not been
+      // provided, including if `null` was provided.
+      if (this.state.schema === undefined) {
+        this._fetchSchema();
+      }
+
+      // Utility for keeping CodeMirror correctly sized.
+      this.codeMirrorSizer = new _CodeMirrorSizer2.default();
+
+      global.g = this;
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      var _this2 = this;
+
+      var nextSchema = this.state.schema;
+      var nextQuery = this.state.query;
+      var nextVariables = this.state.variables;
+      var nextOperationName = this.state.operationName;
+      var nextResponse = this.state.response;
+
+      if (nextProps.schema !== undefined) {
+        nextSchema = nextProps.schema;
+      }
+      if (nextProps.query !== undefined) {
+        nextQuery = nextProps.query;
+      }
+      if (nextProps.variables !== undefined) {
+        nextVariables = nextProps.variables;
+      }
+      if (nextProps.operationName !== undefined) {
+        nextOperationName = nextProps.operationName;
+      }
+      if (nextProps.response !== undefined) {
+        nextResponse = nextProps.response;
+      }
+      if (nextSchema !== this.state.schema || nextQuery !== this.state.query || nextOperationName !== this.state.operationName) {
+        var updatedQueryAttributes = this._updateQueryFacts(nextQuery, nextOperationName, this.state.operations, nextSchema);
+
+        if (updatedQueryAttributes !== undefined) {
+          nextOperationName = updatedQueryAttributes.operationName;
+
+          this.setState(updatedQueryAttributes);
         }
-    }, {
-        key: 'componentWillReceiveProps',
-        value: function componentWillReceiveProps(nextProps) {
-            var _this2 = this;
+      }
 
-            var nextSchema = this.state.schema;
-            var nextQuery = this.state.query;
-            var nextVariables = this.state.variables;
-            var nextOperationName = this.state.operationName;
-            var nextResponse = this.state.response;
+      // If schema is not supplied via props and the fetcher changed, then
+      // remove the schema so fetchSchema() will be called with the new fetcher.
+      if (nextProps.schema === undefined && nextProps.fetcher !== this.props.fetcher) {
+        nextSchema = undefined;
+      }
 
-            if (nextProps.schema !== undefined) {
-                nextSchema = nextProps.schema;
-            }
-            if (nextProps.query !== undefined) {
-                nextQuery = nextProps.query;
-            }
-            if (nextProps.variables !== undefined) {
-                nextVariables = nextProps.variables;
-            }
-            if (nextProps.operationName !== undefined) {
-                nextOperationName = nextProps.operationName;
-            }
-            if (nextProps.response !== undefined) {
-                nextResponse = nextProps.response;
-            }
-            if (nextSchema !== this.state.schema || nextQuery !== this.state.query || nextOperationName !== this.state.operationName) {
-                var updatedQueryAttributes = this._updateQueryFacts(nextQuery, nextOperationName, this.state.operations, nextSchema);
-
-                if (updatedQueryAttributes !== undefined) {
-                    nextOperationName = updatedQueryAttributes.operationName;
-
-                    this.setState(updatedQueryAttributes);
-                }
-            }
-
-            // If schema is not supplied via props and the fetcher changed, then
-            // remove the schema so fetchSchema() will be called with the new fetcher.
-            if (nextProps.schema === undefined && nextProps.fetcher !== this.props.fetcher) {
-                nextSchema = undefined;
-            }
-
-            this.setState({
-                schema: nextSchema,
-                query: nextQuery,
-                variables: nextVariables,
-                operationName: nextOperationName,
-                response: nextResponse
-            }, function () {
-                if (_this2.state.schema === undefined) {
-                    _this2.docExplorerComponent.reset();
-                    _this2._fetchSchema();
-                }
-            });
+      this.setState({
+        schema: nextSchema,
+        query: nextQuery,
+        variables: nextVariables,
+        operationName: nextOperationName,
+        response: nextResponse
+      }, function () {
+        if (_this2.state.schema === undefined) {
+          _this2.docExplorerComponent.reset();
+          _this2._fetchSchema();
         }
-    }, {
-        key: 'componentDidUpdate',
-        value: function componentDidUpdate() {
-            // If this update caused DOM nodes to have changed sizes, update the
-            // corresponding CodeMirror instance sizes to match.
-            this.codeMirrorSizer.updateSizes([this.queryEditorComponent, this.variableEditorComponent, this.resultComponent]);
-        }
+      });
+    }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate() {
+      // If this update caused DOM nodes to have changed sizes, update the
+      // corresponding CodeMirror instance sizes to match.
+      this.codeMirrorSizer.updateSizes([this.queryEditorComponent, this.variableEditorComponent, this.resultComponent]);
+    }
 
-        // When the component is about to unmount, store any persistable state, such
-        // that when the component is remounted, it will use the last used values.
+    // When the component is about to unmount, store any persistable state, such
+    // that when the component is remounted, it will use the last used values.
 
-    }, {
-        key: 'componentWillUnmount',
-        value: function componentWillUnmount() {
-            this._storage.set('query', this.state.query);
-            this._storage.set('variables', this.state.variables);
-            this._storage.set('operationName', this.state.operationName);
-            this._storage.set('editorFlex', this.state.editorFlex);
-            this._storage.set('variableEditorHeight', this.state.variableEditorHeight);
-            this._storage.set('docExplorerWidth', this.state.docExplorerWidth);
-            this._storage.set('docExplorerOpen', this.state.docExplorerOpen);
-            this._storage.set('historyPaneOpen', this.state.historyPaneOpen);
-        }
-    }, {
-        key: 'onKeyUp',
-        value: function onKeyUp(keyName, e, handle) {
-            console.log("test:onKeyUp", e, handle);
-            this.setState({
-                output: 'onKeyUp ' + keyName
-            });
-        }
-    }, {
-        key: 'onKeyDown',
-        value: function onKeyDown(keyName, e, handle) {
-            console.log("test:onKeyDown", keyName, e, handle);
-            if ("ctrl+d" == keyName.toLowerCase()) {
-                if (!this.state.docExplorerOpen) {
-                    this.setState({ docExplorerOpen: true });
-                } else if (this.state.docExplorerWidth >= 3 * DEFAULT_DOC_EXPLORER_WIDTH) {
-                    this.setState({ docExplorerOpen: false, docExplorerWidth: DEFAULT_DOC_EXPLORER_WIDTH });
-                } else {
-                    this.setState({ docExplorerWidth: 3 * DEFAULT_DOC_EXPLORER_WIDTH });
-                }
-            } else if ("ctrl+h" == keyName.toLowerCase()) {
-                var doccfg = { historyPaneOpen: !this.state.historyPaneOpen };
-                this.setState(doccfg);
-            } else if ("ctrl+q" == keyName.toLowerCase()) {
-                if (!this.state.variableEditorOpen) {
-                    this.setState({ variableEditorOpen: true });
-                } else if (this.state.variableEditorHeight >= 3 * DEFAULT_VARIABLE_EXPLORER_HEIGHT) {
-                    this.setState({ variableEditorOpen: false, variableEditorHeight: DEFAULT_VARIABLE_EXPLORER_HEIGHT });
-                } else {
-                    this.setState({ variableEditorHeight: 3 * DEFAULT_VARIABLE_EXPLORER_HEIGHT });
-                }
-            }
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var _this3 = this;
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      this._storage.set('query', this.state.query);
+      this._storage.set('variables', this.state.variables);
+      this._storage.set('operationName', this.state.operationName);
+      this._storage.set('editorFlex', this.state.editorFlex);
+      this._storage.set('variableEditorHeight', this.state.variableEditorHeight);
+      this._storage.set('docExplorerWidth', this.state.docExplorerWidth);
+      this._storage.set('docExplorerOpen', this.state.docExplorerOpen);
+      this._storage.set('historyPaneOpen', this.state.historyPaneOpen);
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this3 = this;
 
-            var children = _react2.default.Children.toArray(this.props.children);
+      var children = _react2.default.Children.toArray(this.props.children);
 
-            var logo = (0, _find2.default)(children, function (child) {
-                return child.type === GraphiQL.Logo;
-            }) || _react2.default.createElement(GraphiQL.Logo, null);
+      var logo = (0, _find2.default)(children, function (child) {
+        return child.type === GraphiQL.Logo;
+      }) || _react2.default.createElement(GraphiQL.Logo, null);
+      /*
+          EditToken组件
+      */
 
-            var toolbar = (0, _find2.default)(children, function (child) {
-                return child.type === GraphiQL.Toolbar;
-            }) || _react2.default.createElement(
-                GraphiQL.Toolbar,
-                null,
-                _react2.default.createElement(_ToolbarButton.ToolbarButton, {
-                    onClick: this.handlePrettifyQuery,
-                    title: 'Prettify Query (Shift-Ctrl-P)',
-                    label: 'Prettify'
-                }),
-                _react2.default.createElement(_ToolbarButton.ToolbarButton, {
-                    onClick: this.handleToggleHistory,
-                    title: 'Show History',
-                    label: 'History'
-                })
-            );
+      var toolbar = (0, _find2.default)(children, function (child) {
+        return child.type === GraphiQL.Toolbar;
+      }) || _react2.default.createElement(
+        GraphiQL.Toolbar,
+        null,
+        _react2.default.createElement(_ToolbarButton.ToolbarButton, {
+          onClick: this.handlePrettifyQuery,
+          title: 'Prettify Query (Shift-Ctrl-P)',
+          label: 'Prettify'
+        }),
+        _react2.default.createElement(_ToolbarButton.ToolbarButton, {
+          onClick: this.handleToggleHistory,
+          title: 'Show History (Ctrl-H)',
+          label: 'History'
+        }),
+        _react2.default.createElement(_EditToken.EditToken, { onTokenChange: this.handleTokenChange })
+      );
 
-            var footer = (0, _find2.default)(children, function (child) {
-                return child.type === GraphiQL.Footer;
-            });
+      var footer = (0, _find2.default)(children, function (child) {
+        return child.type === GraphiQL.Footer;
+      });
 
-            var queryWrapStyle = {
-                WebkitFlex: this.state.editorFlex,
-                flex: this.state.editorFlex
-            };
+      var queryWrapStyle = {
+        WebkitFlex: this.state.editorFlex,
+        flex: this.state.editorFlex
+      };
 
-            var docWrapStyle = {
-                display: this.state.docExplorerOpen ? 'block' : 'none',
-                width: this.state.docExplorerWidth
-            };
-            var docExplorerWrapClasses = 'docExplorerWrap' + (this.state.docExplorerWidth < 200 ? ' doc-explorer-narrow' : '');
+      var docWrapStyle = {
+        display: this.state.docExplorerOpen ? 'block' : 'none',
+        width: this.state.docExplorerWidth
+      };
+      var docExplorerWrapClasses = 'docExplorerWrap' + (this.state.docExplorerWidth < 200 ? ' doc-explorer-narrow' : '');
 
-            var historyPaneStyle = {
-                display: this.state.historyPaneOpen ? 'block' : 'none',
-                width: '230px',
-                zIndex: '7'
-            };
+      var historyPaneStyle = {
+        display: this.state.historyPaneOpen ? 'block' : 'none',
+        width: '230px',
+        zIndex: '7'
+      };
 
-            var variableOpen = this.state.variableEditorOpen;
-            var variableStyle = {
-                height: variableOpen ? this.state.variableEditorHeight : null
-            };
+      var variableOpen = this.state.variableEditorOpen;
+      var variableStyle = {
+        height: variableOpen ? this.state.variableEditorHeight : null
+      };
 
-            return _react2.default.createElement(
-                _reactHotKeys2.default,
+      return _react2.default.createElement(
+        _reactHotKeys2.default,
+        {
+          keyName: 'ctrl+d,ctrl+h,ctrl+q',
+          onKeyDown: this.onKeyDown.bind(this) },
+        _react2.default.createElement(
+          'div',
+          { className: 'graphiql-container' },
+          _react2.default.createElement(
+            'div',
+            { className: 'historyPaneWrap', style: historyPaneStyle },
+            _react2.default.createElement(
+              _QueryHistory.QueryHistory,
+              {
+                operationName: this.state.operationName,
+                query: this.state.query,
+                variables: this.state.variables,
+                onSelectQuery: this.handleSelectHistoryQuery,
+                storage: this._storage,
+                queryID: this._editorQueryID },
+              _react2.default.createElement(
+                'div',
                 {
-                    keyName: 'ctrl+d,ctrl+h,ctrl+q',
-                    onKeyDown: this.onKeyDown.bind(this),
-                    onKeyUp: this.onKeyUp.bind(this)
+                  className: 'docExplorerHide',
+                  onClick: this.handleToggleHistory },
+                '\u2715'
+              )
+            )
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'editorWrap' },
+            _react2.default.createElement(
+              'div',
+              { className: 'topBarWrap' },
+              _react2.default.createElement(
+                'div',
+                { className: 'topBar' },
+                logo,
+                _react2.default.createElement(_ExecuteButton.ExecuteButton, {
+                  isRunning: Boolean(this.state.subscription),
+                  onRun: this.handleRunQuery,
+                  onStop: this.handleStopQuery,
+                  operations: this.state.operations
+                }),
+                toolbar
+              ),
+              !this.state.docExplorerOpen && _react2.default.createElement(
+                'button',
+                {
+                  className: 'docExplorerShow',
+                  onClick: this.handleToggleDocs },
+                'Docs'
+              )
+            ),
+            _react2.default.createElement(
+              'div',
+              {
+                ref: function ref(n) {
+                  _this3.editorBarComponent = n;
                 },
+                className: 'editorBar',
+                onDoubleClick: this.handleResetResize,
+                onMouseDown: this.handleResizeStart },
+              _react2.default.createElement(
+                'div',
+                { className: 'queryWrap', style: queryWrapStyle },
+                _react2.default.createElement(_QueryEditor.QueryEditor, {
+                  ref: function ref(n) {
+                    _this3.queryEditorComponent = n;
+                  },
+                  schema: this.state.schema,
+                  value: this.state.query,
+                  onEdit: this.handleEditQuery,
+                  onHintInformationRender: this.handleHintInformationRender,
+                  onClickReference: this.handleClickReference,
+                  onPrettifyQuery: this.handlePrettifyQuery,
+                  onRunQuery: this.handleEditorRunQuery,
+                  editorTheme: this.props.editorTheme
+                }),
                 _react2.default.createElement(
+                  'div',
+                  { className: 'variable-editor', style: variableStyle },
+                  _react2.default.createElement(
                     'div',
-                    { className: 'graphiql-container' },
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'historyPaneWrap', style: historyPaneStyle },
-                        _react2.default.createElement(
-                            _QueryHistory.QueryHistory,
-                            {
-                                operationName: this.state.operationName,
-                                query: this.state.query,
-                                variables: this.state.variables,
-                                onSelectQuery: this.handleSelectHistoryQuery,
-                                storage: this._storage,
-                                queryID: this._editorQueryID },
-                            _react2.default.createElement(
-                                'div',
-                                { className: 'docExplorerHide', onClick: this.handleToggleHistory },
-                                '\u2715'
-                            )
-                        )
-                    ),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'editorWrap' },
-                        _react2.default.createElement(
-                            'div',
-                            { className: 'topBarWrap' },
-                            _react2.default.createElement(
-                                'div',
-                                { className: 'topBar' },
-                                logo,
-                                _react2.default.createElement(_ExecuteButton.ExecuteButton, {
-                                    isRunning: Boolean(this.state.subscription),
-                                    onRun: this.handleRunQuery,
-                                    onStop: this.handleStopQuery,
-                                    operations: this.state.operations
-                                }),
-                                toolbar
-                            ),
-                            !this.state.docExplorerOpen && _react2.default.createElement(
-                                'button',
-                                {
-                                    className: 'docExplorerShow',
-                                    onClick: this.handleToggleDocs },
-                                'Docs'
-                            )
-                        ),
-                        _react2.default.createElement(
-                            'div',
-                            {
-                                ref: function ref(n) {
-                                    _this3.editorBarComponent = n;
-                                },
-                                className: 'editorBar',
-                                onDoubleClick: this.handleResetResize,
-                                onMouseDown: this.handleResizeStart },
-                            _react2.default.createElement(
-                                'div',
-                                { className: 'queryWrap', style: queryWrapStyle },
-                                _react2.default.createElement(_QueryEditor.QueryEditor, {
-                                    ref: function ref(n) {
-                                        _this3.queryEditorComponent = n;
-                                    },
-                                    schema: this.state.schema,
-                                    value: this.state.query,
-                                    onEdit: this.handleEditQuery,
-                                    onHintInformationRender: this.handleHintInformationRender,
-                                    onClickReference: this.handleClickReference,
-                                    onPrettifyQuery: this.handlePrettifyQuery,
-                                    onRunQuery: this.handleEditorRunQuery,
-                                    editorTheme: this.props.editorTheme
-                                }),
-                                _react2.default.createElement(
-                                    'div',
-                                    { className: 'variable-editor', style: variableStyle },
-                                    _react2.default.createElement(
-                                        'div',
-                                        {
-                                            className: 'variable-editor-title',
-                                            style: { cursor: variableOpen ? 'row-resize' : 'n-resize' },
-                                            onMouseDown: this.handleVariableResizeStart },
-                                        'Query Variables'
-                                    ),
-                                    _react2.default.createElement(_VariableEditor.VariableEditor, {
-                                        ref: function ref(n) {
-                                            _this3.variableEditorComponent = n;
-                                        },
-                                        value: this.state.variables,
-                                        variableToType: this.state.variableToType,
-                                        onEdit: this.handleEditVariables,
-                                        onHintInformationRender: this.handleHintInformationRender,
-                                        onPrettifyQuery: this.handlePrettifyQuery,
-                                        onRunQuery: this.handleEditorRunQuery,
-                                        editorTheme: this.props.editorTheme
-                                    })
-                                )
-                            ),
-                            _react2.default.createElement(
-                                'div',
-                                { className: 'resultWrap' },
-                                this.state.isWaitingForResponse && _react2.default.createElement(
-                                    'div',
-                                    { className: 'spinner-container' },
-                                    _react2.default.createElement('div', { className: 'spinner' })
-                                ),
-                                _react2.default.createElement(_ResultViewer.ResultViewer, {
-                                    ref: function ref(c) {
-                                        _this3.resultComponent = c;
-                                    },
-                                    value: this.state.response,
-                                    editorTheme: this.props.editorTheme,
-                                    ResultsTooltip: this.props.ResultsTooltip
-                                }),
-                                footer
-                            )
-                        )
-                    ),
-                    _react2.default.createElement(
-                        'div',
-                        { className: docExplorerWrapClasses, style: docWrapStyle },
-                        _react2.default.createElement('div', {
-                            className: 'docExplorerResizer',
-                            onDoubleClick: this.handleDocsResetResize,
-                            onMouseDown: this.handleDocsResizeStart
-                        }),
-                        _react2.default.createElement(
-                            _DocExplorer.DocExplorer,
-                            {
-                                ref: function ref(c) {
-                                    _this3.docExplorerComponent = c;
-                                },
-                                schema: this.state.schema },
-                            _react2.default.createElement(
-                                'div',
-                                { className: 'docExplorerHide', onClick: this.handleToggleDocs },
-                                '\u2715'
-                            )
-                        )
-                    )
-                )
-            );
-        }
-
-        /**
-         * Get the query editor CodeMirror instance.
-         *
-         * @public
-         */
-
-    }, {
-        key: 'getQueryEditor',
-        value: function getQueryEditor() {
-            return this.queryEditorComponent.getCodeMirror();
-        }
-
-        /**
-         * Get the variable editor CodeMirror instance.
-         *
-         * @public
-         */
-
-    }, {
-        key: 'getVariableEditor',
-        value: function getVariableEditor() {
-            return this.variableEditorComponent.getCodeMirror();
-        }
-
-        /**
-         * Refresh all CodeMirror instances.
-         *
-         * @public
-         */
-
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.queryEditorComponent.getCodeMirror().refresh();
-            this.variableEditorComponent.getCodeMirror().refresh();
-            this.resultComponent.getCodeMirror().refresh();
-        }
-
-        /**
-         * Inspect the query, automatically filling in selection sets for non-leaf
-         * fields which do not yet have them.
-         *
-         * @public
-         */
-
-    }, {
-        key: 'autoCompleteLeafs',
-        value: function autoCompleteLeafs() {
-            var _fillLeafs = (0, _fillLeafs2.fillLeafs)(this.state.schema, this.state.query, this.props.getDefaultFieldNames),
-                insertions = _fillLeafs.insertions,
-                result = _fillLeafs.result;
-
-            if (insertions && insertions.length > 0) {
-                var editor = this.getQueryEditor();
-                editor.operation(function () {
-                    var cursor = editor.getCursor();
-                    var cursorIndex = editor.indexFromPos(cursor);
-                    editor.setValue(result);
-                    var added = 0;
-                    var markers = insertions.map(function (_ref) {
-                        var index = _ref.index,
-                            string = _ref.string;
-                        return editor.markText(editor.posFromIndex(index + added), editor.posFromIndex(index + (added += string.length)), {
-                            className: 'autoInsertedLeaf',
-                            clearOnEnter: true,
-                            title: 'Automatically added leaf fields'
-                        });
-                    });
-                    setTimeout(function () {
-                        return markers.forEach(function (marker) {
-                            return marker.clear();
-                        });
-                    }, 7000);
-                    var newCursorIndex = cursorIndex;
-                    insertions.forEach(function (_ref2) {
-                        var index = _ref2.index,
-                            string = _ref2.string;
-
-                        if (index < cursorIndex) {
-                            newCursorIndex += string.length;
-                        }
-                    });
-                    editor.setCursor(editor.posFromIndex(newCursorIndex));
-                });
-            }
-
-            return result;
-        }
-
-        // Private methods
-
-    }, {
-        key: '_fetchSchema',
-        value: function _fetchSchema() {
-            var _this4 = this;
-
-            var fetcher = this.props.fetcher;
-
-            var fetch = observableToPromise(fetcher({ query: _introspectionQueries.introspectionQuery }));
-            if (!isPromise(fetch)) {
-                this.setState({
-                    response: 'Fetcher did not return a Promise for introspection.'
-                });
-                return;
-            }
-
-            fetch.then(function (result) {
-                if (result.data) {
-                    return result;
-                }
-
-                // Try the stock introspection query first, falling back on the
-                // sans-subscriptions query for services which do not yet support it.
-                var fetch2 = observableToPromise(fetcher({
-                    query: _introspectionQueries.introspectionQuerySansSubscriptions
-                }));
-                if (!isPromise(fetch)) {
-                    throw new Error('Fetcher did not return a Promise for introspection.');
-                }
-                return fetch2;
-            }).then(function (result) {
-                // If a schema was provided while this fetch was underway, then
-                // satisfy the race condition by respecting the already
-                // provided schema.
-                if (_this4.state.schema !== undefined) {
-                    return;
-                }
-
-                if (result && result.data) {
-                    var schema = (0, _graphql.buildClientSchema)(result.data);
-                    var queryFacts = (0, _getQueryFacts2.default)(schema, _this4.state.query);
-                    _this4.setState(_extends({ schema: schema }, queryFacts));
-                } else {
-                    var responseString = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
-                    _this4.setState({
-                        // Set schema to `null` to explicitly indicate that no schema exists.
-                        schema: null,
-                        response: responseString
-                    });
-                }
-            }).catch(function (error) {
-                _this4.setState({
-                    schema: null,
-                    response: error && String(error.stack || error)
-                });
-            });
-        }
-    }, {
-        key: '_fetchQuery',
-        value: function _fetchQuery(query, variables, operationName, cb) {
-            var _this5 = this;
-
-            var fetcher = this.props.fetcher;
-            var jsonVariables = null;
-
-            try {
-                jsonVariables = variables && variables.trim() !== '' ? JSON.parse(variables) : null;
-            } catch (error) {
-                throw new Error('Variables are invalid JSON: ' + error.message + '.');
-            }
-
-            if ((typeof jsonVariables === 'undefined' ? 'undefined' : _typeof(jsonVariables)) !== 'object') {
-                throw new Error('Variables are not a JSON object.');
-            }
-
-            var fetch = fetcher({
-                query: query,
-                variables: jsonVariables,
-                operationName: operationName
-            });
-
-            if (isPromise(fetch)) {
-                // If fetcher returned a Promise, then call the callback when the promise
-                // resolves, otherwise handle the error.
-                fetch.then(cb).catch(function (error) {
-                    _this5.setState({
-                        isWaitingForResponse: false,
-                        response: error && String(error.stack || error)
-                    });
-                });
-            } else if (isObservable(fetch)) {
-                // If the fetcher returned an Observable, then subscribe to it, calling
-                // the callback on each next value, and handling both errors and the
-                // completion of the Observable. Returns a Subscription object.
-                var subscription = fetch.subscribe({
-                    next: cb,
-                    error: function error(_error) {
-                        _this5.setState({
-                            isWaitingForResponse: false,
-                            response: _error && String(_error.stack || _error),
-                            subscription: null
-                        });
+                    {
+                      className: 'variable-editor-title',
+                      style: { cursor: variableOpen ? 'row-resize' : 'n-resize' },
+                      onMouseDown: this.handleVariableResizeStart },
+                    'Query Variables'
+                  ),
+                  _react2.default.createElement(_VariableEditor.VariableEditor, {
+                    ref: function ref(n) {
+                      _this3.variableEditorComponent = n;
                     },
-                    complete: function complete() {
-                        _this5.setState({
-                            isWaitingForResponse: false,
-                            subscription: null
-                        });
-                    }
-                });
-
-                return subscription;
-            } else {
-                throw new Error('Fetcher did not return Promise or Observable.');
-            }
+                    value: this.state.variables,
+                    variableToType: this.state.variableToType,
+                    onEdit: this.handleEditVariables,
+                    onHintInformationRender: this.handleHintInformationRender,
+                    onPrettifyQuery: this.handlePrettifyQuery,
+                    onRunQuery: this.handleEditorRunQuery,
+                    editorTheme: this.props.editorTheme
+                  })
+                )
+              ),
+              _react2.default.createElement(
+                'div',
+                { className: 'resultWrap' },
+                this.state.isWaitingForResponse && _react2.default.createElement(
+                  'div',
+                  { className: 'spinner-container' },
+                  _react2.default.createElement('div', { className: 'spinner' })
+                ),
+                _react2.default.createElement(_ResultViewer.ResultViewer, {
+                  ref: function ref(c) {
+                    _this3.resultComponent = c;
+                  },
+                  value: this.state.response,
+                  editorTheme: this.props.editorTheme,
+                  ResultsTooltip: this.props.ResultsTooltip
+                }),
+                footer
+              )
+            )
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: docExplorerWrapClasses, style: docWrapStyle },
+            _react2.default.createElement('div', {
+              className: 'docExplorerResizer',
+              onDoubleClick: this.handleDocsResetResize,
+              onMouseDown: this.handleDocsResizeStart
+            }),
+            _react2.default.createElement(
+              _DocExplorer.DocExplorer,
+              {
+                ref: function ref(c) {
+                  _this3.docExplorerComponent = c;
+                },
+                schema: this.state.schema },
+              _react2.default.createElement(
+                'div',
+                { className: 'docExplorerHide', onClick: this.handleToggleDocs },
+                '\u2715'
+              )
+            )
+          )
+        )
+      );
+    }
+  }, {
+    key: 'onKeyDown',
+    value: function onKeyDown(keyName) {
+      if (keyName.toLowerCase() === 'ctrl+d') {
+        if (!this.state.docExplorerOpen) {
+          this.setState({ docExplorerOpen: true });
+        } else if (this.state.docExplorerWidth >= 3 * DEFAULT_DOC_EXPLORER_WIDTH) {
+          this.setState({
+            docExplorerOpen: false,
+            docExplorerWidth: DEFAULT_DOC_EXPLORER_WIDTH
+          });
+        } else {
+          this.setState({ docExplorerWidth: 3 * DEFAULT_DOC_EXPLORER_WIDTH });
         }
-    }, {
-        key: '_runQueryAtCursor',
-        value: function _runQueryAtCursor() {
-            if (this.state.subscription) {
-                this.handleStopQuery();
-                return;
-            }
-
-            var operationName = void 0;
-            var operations = this.state.operations;
-            if (operations) {
-                var editor = this.getQueryEditor();
-                if (editor.hasFocus()) {
-                    var cursor = editor.getCursor();
-                    var cursorIndex = editor.indexFromPos(cursor);
-
-                    // Loop through all operations to see if one contains the cursor.
-                    for (var i = 0; i < operations.length; i++) {
-                        var operation = operations[i];
-                        if (operation.loc.start <= cursorIndex && operation.loc.end >= cursorIndex) {
-                            operationName = operation.name && operation.name.value;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            this.handleRunQuery(operationName);
+      } else if (keyName.toLowerCase() === 'ctrl+h') {
+        this.setState({ historyPaneOpen: !this.state.historyPaneOpen });
+      } else if (keyName.toLowerCase() === 'ctrl+q') {
+        if (!this.state.variableEditorOpen) {
+          this.setState({ variableEditorOpen: true });
+        } else if (this.state.variableEditorHeight >= 3 * DEFAULT_VARIABLE_EXPLORER_HEIGHT) {
+          this.setState({
+            variableEditorOpen: false,
+            variableEditorHeight: DEFAULT_VARIABLE_EXPLORER_HEIGHT
+          });
+        } else {
+          this.setState({
+            variableEditorHeight: 3 * DEFAULT_VARIABLE_EXPLORER_HEIGHT
+          });
         }
-    }, {
-        key: '_didClickDragBar',
-        value: function _didClickDragBar(event) {
-            // Only for primary unmodified clicks
-            if (event.button !== 0 || event.ctrlKey) {
-                return false;
-            }
-            var target = event.target;
-            // We use codemirror's gutter as the drag bar.
-            if (target.className.indexOf('CodeMirror-gutter') !== 0) {
-                return false;
-            }
-            // Specifically the result window's drag bar.
-            var resultWindow = _reactDom2.default.findDOMNode(this.resultComponent);
-            while (target) {
-                if (target === resultWindow) {
-                    return true;
-                }
-                target = target.parentNode;
-            }
-            return false;
-        }
-    }]);
+      }
+    }
 
-    return GraphiQL;
+    /**
+       * Get the query editor CodeMirror instance.
+       *
+       * @public
+       */
+
+  }, {
+    key: 'getQueryEditor',
+    value: function getQueryEditor() {
+      return this.queryEditorComponent.getCodeMirror();
+    }
+
+    /**
+       * Get the variable editor CodeMirror instance.
+       *
+       * @public
+       */
+
+  }, {
+    key: 'getVariableEditor',
+    value: function getVariableEditor() {
+      return this.variableEditorComponent.getCodeMirror();
+    }
+
+    /**
+       * Refresh all CodeMirror instances.
+       *
+       * @public
+       */
+
+  }, {
+    key: 'refresh',
+    value: function refresh() {
+      this.queryEditorComponent.getCodeMirror().refresh();
+      this.variableEditorComponent.getCodeMirror().refresh();
+      this.resultComponent.getCodeMirror().refresh();
+    }
+
+    /**
+       * Inspect the query, automatically filling in selection sets for non-leaf
+       * fields which do not yet have them.
+       *
+       * @public
+       */
+
+  }, {
+    key: 'autoCompleteLeafs',
+    value: function autoCompleteLeafs() {
+      var _fillLeafs = (0, _fillLeafs2.fillLeafs)(this.state.schema, this.state.query, this.props.getDefaultFieldNames),
+          insertions = _fillLeafs.insertions,
+          result = _fillLeafs.result;
+
+      if (insertions && insertions.length > 0) {
+        var editor = this.getQueryEditor();
+        editor.operation(function () {
+          var cursor = editor.getCursor();
+          var cursorIndex = editor.indexFromPos(cursor);
+          editor.setValue(result);
+          var added = 0;
+          var markers = insertions.map(function (_ref) {
+            var index = _ref.index,
+                string = _ref.string;
+            return editor.markText(editor.posFromIndex(index + added), editor.posFromIndex(index + (added += string.length)), {
+              className: 'autoInsertedLeaf',
+              clearOnEnter: true,
+              title: 'Automatically added leaf fields'
+            });
+          });
+          setTimeout(function () {
+            return markers.forEach(function (marker) {
+              return marker.clear();
+            });
+          }, 7000);
+          var newCursorIndex = cursorIndex;
+          insertions.forEach(function (_ref2) {
+            var index = _ref2.index,
+                string = _ref2.string;
+
+            if (index < cursorIndex) {
+              newCursorIndex += string.length;
+            }
+          });
+          editor.setCursor(editor.posFromIndex(newCursorIndex));
+        });
+      }
+
+      return result;
+    }
+
+    // Private methods
+
+  }, {
+    key: '_fetchSchema',
+    value: function _fetchSchema() {
+      var _this4 = this;
+
+      var fetcher = this.props.fetcher;
+
+      var fetch = observableToPromise(fetcher({ query: _introspectionQueries.introspectionQuery }));
+      if (!isPromise(fetch)) {
+        this.setState({
+          response: 'Fetcher did not return a Promise for introspection.'
+        });
+        return;
+      }
+
+      fetch.then(function (result) {
+        if (result.data) {
+          return result;
+        }
+
+        // Try the stock introspection query first, falling back on the
+        // sans-subscriptions query for services which do not yet support it.
+        var fetch2 = observableToPromise(fetcher({
+          query: _introspectionQueries.introspectionQuerySansSubscriptions
+        }));
+        if (!isPromise(fetch)) {
+          throw new Error('Fetcher did not return a Promise for introspection.');
+        }
+        return fetch2;
+      }).then(function (result) {
+        // If a schema was provided while this fetch was underway, then
+        // satisfy the race condition by respecting the already
+        // provided schema.
+        if (_this4.state.schema !== undefined) {
+          return;
+        }
+
+        if (result && result.data) {
+          var schema = (0, _graphql.buildClientSchema)(result.data);
+          var queryFacts = (0, _getQueryFacts2.default)(schema, _this4.state.query);
+          _this4.setState(_extends({ schema: schema }, queryFacts));
+        } else {
+          var responseString = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+          _this4.setState({
+            // Set schema to `null` to explicitly indicate that no schema exists.
+            schema: null,
+            response: responseString
+          });
+        }
+      }).catch(function (error) {
+        _this4.setState({
+          schema: null,
+          response: error && String(error.stack || error)
+        });
+      });
+    }
+  }, {
+    key: '_fetchQuery',
+    value: function _fetchQuery(query, variables, operationName, cb) {
+      var _this5 = this;
+
+      var fetcher = this.props.fetcher;
+      var jsonVariables = null;
+      try {
+        jsonVariables = variables && variables.trim() !== '' ? JSON.parse(variables) : null;
+      } catch (error) {
+        throw new Error('Variables are invalid JSON: ' + error.message + '.');
+      }
+
+      if ((typeof jsonVariables === 'undefined' ? 'undefined' : _typeof(jsonVariables)) !== 'object') {
+        throw new Error('Variables are not a JSON object.');
+      }
+
+      var fetch = fetcher({
+        query: query,
+        variables: jsonVariables,
+        operationName: operationName
+      }, this.state.xToken);
+
+      if (isPromise(fetch)) {
+        // If fetcher returned a Promise, then call the callback when the promise
+        // resolves, otherwise handle the error.
+        fetch.then(cb).catch(function (error) {
+          _this5.setState({
+            isWaitingForResponse: false,
+            response: error && String(error.stack || error)
+          });
+        });
+      } else if (isObservable(fetch)) {
+        // If the fetcher returned an Observable, then subscribe to it, calling
+        // the callback on each next value, and handling both errors and the
+        // completion of the Observable. Returns a Subscription object.
+        var subscription = fetch.subscribe({
+          next: cb,
+          error: function error(_error) {
+            _this5.setState({
+              isWaitingForResponse: false,
+              response: _error && String(_error.stack || _error),
+              subscription: null
+            });
+          },
+          complete: function complete() {
+            _this5.setState({
+              isWaitingForResponse: false,
+              subscription: null
+            });
+          }
+        });
+
+        return subscription;
+      } else {
+        throw new Error('Fetcher did not return Promise or Observable.');
+      }
+    }
+  }, {
+    key: '_runQueryAtCursor',
+    value: function _runQueryAtCursor() {
+      if (this.state.subscription) {
+        this.handleStopQuery();
+        return;
+      }
+
+      var operationName = void 0;
+      var operations = this.state.operations;
+      if (operations) {
+        var editor = this.getQueryEditor();
+        if (editor.hasFocus()) {
+          var cursor = editor.getCursor();
+          var cursorIndex = editor.indexFromPos(cursor);
+
+          // Loop through all operations to see if one contains the cursor.
+          for (var i = 0; i < operations.length; i++) {
+            var operation = operations[i];
+            if (operation.loc.start <= cursorIndex && operation.loc.end >= cursorIndex) {
+              operationName = operation.name && operation.name.value;
+              break;
+            }
+          }
+        }
+      }
+
+      this.handleRunQuery(operationName);
+    }
+  }, {
+    key: '_didClickDragBar',
+    value: function _didClickDragBar(event) {
+      // Only for primary unmodified clicks
+      if (event.button !== 0 || event.ctrlKey) {
+        return false;
+      }
+      var target = event.target;
+      // We use codemirror's gutter as the drag bar.
+      if (target.className.indexOf('CodeMirror-gutter') !== 0) {
+        return false;
+      }
+      // Specifically the result window's drag bar.
+      var resultWindow = _reactDom2.default.findDOMNode(this.resultComponent);
+      while (target) {
+        if (target === resultWindow) {
+          return true;
+        }
+        target = target.parentNode;
+      }
+      return false;
+    }
+  }, {
+    key: 'handleTokenChange',
+    value: function handleTokenChange(xToken) {
+      this.setState({
+        xToken: xToken
+      });
+    }
+  }]);
+
+  return GraphiQL;
 }(_react2.default.Component);
 
 // Configure the UI by providing this Component as a child of GraphiQL.
 
 
 GraphiQL.propTypes = {
-    fetcher: _propTypes2.default.func.isRequired,
-    schema: _propTypes2.default.instanceOf(_graphql.GraphQLSchema),
-    query: _propTypes2.default.string,
-    variables: _propTypes2.default.string,
-    operationName: _propTypes2.default.string,
-    response: _propTypes2.default.string,
-    storage: _propTypes2.default.shape({
-        getItem: _propTypes2.default.func,
-        setItem: _propTypes2.default.func,
-        removeItem: _propTypes2.default.func
-    }),
-    defaultQuery: _propTypes2.default.string,
-    onEditQuery: _propTypes2.default.func,
-    onEditVariables: _propTypes2.default.func,
-    onEditOperationName: _propTypes2.default.func,
-    onToggleDocs: _propTypes2.default.func,
-    getDefaultFieldNames: _propTypes2.default.func,
-    editorTheme: _propTypes2.default.string,
-    onToggleHistory: _propTypes2.default.func,
-    ResultsTooltip: _propTypes2.default.any
+  fetcher: _propTypes2.default.func.isRequired,
+  schema: _propTypes2.default.instanceOf(_graphql.GraphQLSchema),
+  query: _propTypes2.default.string,
+  variables: _propTypes2.default.string,
+  operationName: _propTypes2.default.string,
+  response: _propTypes2.default.string,
+  storage: _propTypes2.default.shape({
+    getItem: _propTypes2.default.func,
+    setItem: _propTypes2.default.func,
+    removeItem: _propTypes2.default.func
+  }),
+  defaultQuery: _propTypes2.default.string,
+  onEditQuery: _propTypes2.default.func,
+  onEditVariables: _propTypes2.default.func,
+  onEditOperationName: _propTypes2.default.func,
+  onToggleDocs: _propTypes2.default.func,
+  getDefaultFieldNames: _propTypes2.default.func,
+  editorTheme: _propTypes2.default.string,
+  onToggleHistory: _propTypes2.default.func,
+  ResultsTooltip: _propTypes2.default.any
 };
 
 var _initialiseProps = function _initialiseProps() {
-    var _this6 = this;
+  var _this6 = this;
 
-    this.handleClickReference = function (reference) {
-        _this6.setState({ docExplorerOpen: true }, function () {
-            _this6.docExplorerComponent.showDocForReference(reference);
-        });
-    };
+  this.handleClickReference = function (reference) {
+    _this6.setState({ docExplorerOpen: true }, function () {
+      _this6.docExplorerComponent.showDocForReference(reference);
+    });
+  };
 
-    this.handleRunQuery = function (selectedOperationName) {
-        _this6._editorQueryID++;
-        var queryID = _this6._editorQueryID;
+  this.handleRunQuery = function (selectedOperationName) {
+    _this6._editorQueryID++;
+    var queryID = _this6._editorQueryID;
 
-        // Use the edited query after autoCompleteLeafs() runs or,
-        // in case autoCompletion fails (the function returns undefined),
-        // the current query from the editor.
-        var editedQuery = _this6.autoCompleteLeafs() || _this6.state.query;
-        var variables = _this6.state.variables;
-        var operationName = _this6.state.operationName;
+    // Use the edited query after autoCompleteLeafs() runs or,
+    // in case autoCompletion fails (the function returns undefined),
+    // the current query from the editor.
+    var editedQuery = _this6.autoCompleteLeafs() || _this6.state.query;
+    var variables = _this6.state.variables;
+    var operationName = _this6.state.operationName;
 
-        // If an operation was explicitly provided, different from the current
-        // operation name, then report that it changed.
-        if (selectedOperationName && selectedOperationName !== operationName) {
-            operationName = selectedOperationName;
-            _this6.handleEditOperationName(operationName);
-        }
+    // If an operation was explicitly provided, different from the current
+    // operation name, then report that it changed.
+    if (selectedOperationName && selectedOperationName !== operationName) {
+      operationName = selectedOperationName;
+      _this6.handleEditOperationName(operationName);
+    }
 
-        try {
-            _this6.setState({
-                isWaitingForResponse: true,
-                response: null,
-                operationName: operationName
-            });
+    try {
+      _this6.setState({
+        isWaitingForResponse: true,
+        response: null,
+        operationName: operationName
+      });
 
-            // _fetchQuery may return a subscription.
-            var subscription = _this6._fetchQuery(editedQuery, variables, operationName, function (result) {
-                if (queryID === _this6._editorQueryID) {
-                    _this6.setState({
-                        isWaitingForResponse: false,
-                        response: JSON.stringify(result, null, 2)
-                    });
-                }
-            });
-
-            _this6.setState({ subscription: subscription });
-        } catch (error) {
-            _this6.setState({
-                isWaitingForResponse: false,
-                response: error.message
-            });
-        }
-    };
-
-    this.handleStopQuery = function () {
-        var subscription = _this6.state.subscription;
-        _this6.setState({
+      // _fetchQuery may return a subscription.
+      var subscription = _this6._fetchQuery(editedQuery, variables, operationName, function (result) {
+        if (queryID === _this6._editorQueryID) {
+          _this6.setState({
             isWaitingForResponse: false,
-            subscription: null
-        });
-        if (subscription) {
-            subscription.unsubscribe();
+            response: JSON.stringify(result, null, 2)
+          });
         }
+      });
+
+      _this6.setState({ subscription: subscription });
+    } catch (error) {
+      _this6.setState({
+        isWaitingForResponse: false,
+        response: error.message
+      });
+    }
+  };
+
+  this.handleStopQuery = function () {
+    var subscription = _this6.state.subscription;
+    _this6.setState({
+      isWaitingForResponse: false,
+      subscription: null
+    });
+    if (subscription) {
+      subscription.unsubscribe();
+    }
+  };
+
+  this.handlePrettifyQuery = function () {
+    var editor = _this6.getQueryEditor();
+    editor.setValue((0, _graphql.print)((0, _graphql.parse)(editor.getValue())));
+  };
+
+  this.handleSettings = function () {};
+
+  this.handleEditQuery = (0, _debounce2.default)(100, function (value) {
+    var queryFacts = _this6._updateQueryFacts(value, _this6.state.operationName, _this6.state.operations, _this6.state.schema);
+    _this6.setState(_extends({
+      query: value
+    }, queryFacts));
+    if (_this6.props.onEditQuery) {
+      return _this6.props.onEditQuery(value);
+    }
+  });
+
+  this._updateQueryFacts = function (query, operationName, prevOperations, schema) {
+    var queryFacts = (0, _getQueryFacts2.default)(schema, query);
+    if (queryFacts) {
+      // Update operation name should any query names change.
+      var updatedOperationName = (0, _getSelectedOperationName2.default)(prevOperations, operationName, queryFacts.operations);
+
+      // Report changing of operationName if it changed.
+      var onEditOperationName = _this6.props.onEditOperationName;
+      if (onEditOperationName && operationName !== updatedOperationName) {
+        onEditOperationName(updatedOperationName);
+      }
+
+      return _extends({
+        operationName: updatedOperationName
+      }, queryFacts);
+    }
+  };
+
+  this.handleEditVariables = function (value) {
+    _this6.setState({ variables: value });
+    if (_this6.props.onEditVariables) {
+      _this6.props.onEditVariables(value);
+    }
+  };
+
+  this.handleEditOperationName = function (operationName) {
+    var onEditOperationName = _this6.props.onEditOperationName;
+    if (onEditOperationName) {
+      onEditOperationName(operationName);
+    }
+  };
+
+  this.handleHintInformationRender = function (elem) {
+    elem.addEventListener('click', _this6._onClickHintInformation);
+
+    var _onRemoveFn = void 0;
+    elem.addEventListener('DOMNodeRemoved', _onRemoveFn = function onRemoveFn() {
+      elem.removeEventListener('DOMNodeRemoved', _onRemoveFn);
+      elem.removeEventListener('click', _this6._onClickHintInformation);
+    });
+  };
+
+  this.handleEditorRunQuery = function () {
+    _this6._runQueryAtCursor();
+  };
+
+  this._onClickHintInformation = function (event) {
+    if (event.target.className === 'typeName') {
+      var typeName = event.target.innerHTML;
+      var schema = _this6.state.schema;
+      if (schema) {
+        var type = schema.getType(typeName);
+        if (type) {
+          _this6.setState({ docExplorerOpen: true }, function () {
+            _this6.docExplorerComponent.showDoc(type);
+          });
+        }
+      }
+    }
+  };
+
+  this.handleToggleDocs = function () {
+    if (typeof _this6.props.onToggleDocs === 'function') {
+      _this6.props.onToggleDocs(!_this6.state.docExplorerOpen);
+    }
+    _this6.setState({ docExplorerOpen: !_this6.state.docExplorerOpen });
+  };
+
+  this.handleToggleHistory = function () {
+    if (typeof _this6.props.onToggleHistory === 'function') {
+      _this6.props.onToggleHistory(!_this6.state.historyPaneOpen);
+    }
+    _this6.setState({ historyPaneOpen: !_this6.state.historyPaneOpen });
+  };
+
+  this.handleSelectHistoryQuery = function (query, variables, operationName) {
+    _this6.handleEditQuery(query);
+    _this6.handleEditVariables(variables);
+    _this6.handleEditOperationName(operationName);
+  };
+
+  this.handleResizeStart = function (downEvent) {
+    if (!_this6._didClickDragBar(downEvent)) {
+      return;
+    }
+
+    downEvent.preventDefault();
+
+    var offset = downEvent.clientX - (0, _elementPosition.getLeft)(downEvent.target);
+
+    var onMouseMove = function onMouseMove(moveEvent) {
+      if (moveEvent.buttons === 0) {
+        return onMouseUp();
+      }
+
+      var editorBar = _reactDom2.default.findDOMNode(_this6.editorBarComponent);
+      var leftSize = moveEvent.clientX - (0, _elementPosition.getLeft)(editorBar) - offset;
+      var rightSize = editorBar.clientWidth - leftSize;
+      _this6.setState({ editorFlex: leftSize / rightSize });
     };
 
-    this.handlePrettifyQuery = function () {
-        var editor = _this6.getQueryEditor();
-        editor.setValue((0, _graphql.print)((0, _graphql.parse)(editor.getValue())));
-    };
+    var onMouseUp = function (_onMouseUp) {
+      function onMouseUp() {
+        return _onMouseUp.apply(this, arguments);
+      }
 
-    this.handleEditQuery = (0, _debounce2.default)(100, function (value) {
-        var queryFacts = _this6._updateQueryFacts(value, _this6.state.operationName, _this6.state.operations, _this6.state.schema);
-        _this6.setState(_extends({
-            query: value
-        }, queryFacts));
-        if (_this6.props.onEditQuery) {
-            return _this6.props.onEditQuery(value);
-        }
+      onMouseUp.toString = function () {
+        return _onMouseUp.toString();
+      };
+
+      return onMouseUp;
+    }(function () {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      onMouseMove = null;
+      onMouseUp = null;
     });
 
-    this._updateQueryFacts = function (query, operationName, prevOperations, schema) {
-        var queryFacts = (0, _getQueryFacts2.default)(schema, query);
-        if (queryFacts) {
-            // Update operation name should any query names change.
-            var updatedOperationName = (0, _getSelectedOperationName2.default)(prevOperations, operationName, queryFacts.operations);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
 
-            // Report changing of operationName if it changed.
-            var onEditOperationName = _this6.props.onEditOperationName;
-            if (onEditOperationName && operationName !== updatedOperationName) {
-                onEditOperationName(updatedOperationName);
-            }
+  this.handleResetResize = function () {
+    _this6.setState({ editorFlex: 1 });
+  };
 
-            return _extends({
-                operationName: updatedOperationName
-            }, queryFacts);
-        }
-    };
+  this.handleDocsResizeStart = function (downEvent) {
+    downEvent.preventDefault();
 
-    this.handleEditVariables = function (value) {
-        _this6.setState({ variables: value });
-        if (_this6.props.onEditVariables) {
-            _this6.props.onEditVariables(value);
-        }
-    };
+    var hadWidth = _this6.state.docExplorerWidth;
+    var offset = downEvent.clientX - (0, _elementPosition.getLeft)(downEvent.target);
 
-    this.handleEditOperationName = function (operationName) {
-        var onEditOperationName = _this6.props.onEditOperationName;
-        if (onEditOperationName) {
-            onEditOperationName(operationName);
-        }
-    };
+    var onMouseMove = function onMouseMove(moveEvent) {
+      if (moveEvent.buttons === 0) {
+        return onMouseUp();
+      }
 
-    this.handleHintInformationRender = function (elem) {
-        elem.addEventListener('click', _this6._onClickHintInformation);
+      var app = _reactDom2.default.findDOMNode(_this6);
+      var cursorPos = moveEvent.clientX - (0, _elementPosition.getLeft)(app) - offset;
+      var docsSize = app.clientWidth - cursorPos;
 
-        var _onRemoveFn = void 0;
-        elem.addEventListener('DOMNodeRemoved', _onRemoveFn = function onRemoveFn() {
-            elem.removeEventListener('DOMNodeRemoved', _onRemoveFn);
-            elem.removeEventListener('click', _this6._onClickHintInformation);
-        });
-    };
-
-    this.handleEditorRunQuery = function () {
-        _this6._runQueryAtCursor();
-    };
-
-    this._onClickHintInformation = function (event) {
-        if (event.target.className === 'typeName') {
-            var typeName = event.target.innerHTML;
-            var schema = _this6.state.schema;
-            if (schema) {
-                var type = schema.getType(typeName);
-                if (type) {
-                    _this6.setState({ docExplorerOpen: true }, function () {
-                        _this6.docExplorerComponent.showDoc(type);
-                    });
-                }
-            }
-        }
-    };
-
-    this.handleToggleDocs = function () {
-        if (typeof _this6.props.onToggleDocs === 'function') {
-            _this6.props.onToggleDocs(!_this6.state.docExplorerOpen);
-        }
-        _this6.setState({ docExplorerOpen: !_this6.state.docExplorerOpen });
-    };
-
-    this.handleToggleHistory = function () {
-        if (typeof _this6.props.onToggleHistory === 'function') {
-            _this6.props.onToggleHistory(!_this6.state.historyPaneOpen);
-        }
-        _this6.setState({ historyPaneOpen: !_this6.state.historyPaneOpen });
-    };
-
-    this.handleSelectHistoryQuery = function (query, variables, operationName) {
-        _this6.handleEditQuery(query);
-        _this6.handleEditVariables(variables);
-        _this6.handleEditOperationName(operationName);
-    };
-
-    this.handleResizeStart = function (downEvent) {
-        if (!_this6._didClickDragBar(downEvent)) {
-            return;
-        }
-
-        downEvent.preventDefault();
-
-        var offset = downEvent.clientX - (0, _elementPosition.getLeft)(downEvent.target);
-
-        var onMouseMove = function onMouseMove(moveEvent) {
-            if (moveEvent.buttons === 0) {
-                return onMouseUp();
-            }
-
-            var editorBar = _reactDom2.default.findDOMNode(_this6.editorBarComponent);
-            var leftSize = moveEvent.clientX - (0, _elementPosition.getLeft)(editorBar) - offset;
-            var rightSize = editorBar.clientWidth - leftSize;
-            _this6.setState({ editorFlex: leftSize / rightSize });
-        };
-
-        var onMouseUp = function (_onMouseUp) {
-            function onMouseUp() {
-                return _onMouseUp.apply(this, arguments);
-            }
-
-            onMouseUp.toString = function () {
-                return _onMouseUp.toString();
-            };
-
-            return onMouseUp;
-        }(function () {
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
-            onMouseMove = null;
-            onMouseUp = null;
-        });
-
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
-    };
-
-    this.handleResetResize = function () {
-        _this6.setState({ editorFlex: 1 });
-    };
-
-    this.handleDocsResizeStart = function (downEvent) {
-        downEvent.preventDefault();
-
-        var hadWidth = _this6.state.docExplorerWidth;
-        var offset = downEvent.clientX - (0, _elementPosition.getLeft)(downEvent.target);
-
-        var onMouseMove = function onMouseMove(moveEvent) {
-            if (moveEvent.buttons === 0) {
-                return onMouseUp();
-            }
-
-            var app = _reactDom2.default.findDOMNode(_this6);
-            var cursorPos = moveEvent.clientX - (0, _elementPosition.getLeft)(app) - offset;
-            var docsSize = app.clientWidth - cursorPos;
-
-            if (docsSize < 100) {
-                _this6.setState({ docExplorerOpen: false });
-            } else {
-                _this6.setState({
-                    docExplorerOpen: true,
-                    docExplorerWidth: Math.min(docsSize, 650)
-                });
-            }
-        };
-
-        var onMouseUp = function (_onMouseUp2) {
-            function onMouseUp() {
-                return _onMouseUp2.apply(this, arguments);
-            }
-
-            onMouseUp.toString = function () {
-                return _onMouseUp2.toString();
-            };
-
-            return onMouseUp;
-        }(function () {
-            if (!_this6.state.docExplorerOpen) {
-                _this6.setState({ docExplorerWidth: hadWidth });
-            }
-
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
-            onMouseMove = null;
-            onMouseUp = null;
-        });
-
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
-    };
-
-    this.handleDocsResetResize = function () {
+      if (docsSize < 100) {
+        _this6.setState({ docExplorerOpen: false });
+      } else {
         _this6.setState({
-            docExplorerWidth: DEFAULT_DOC_EXPLORER_WIDTH
+          docExplorerOpen: true,
+          docExplorerWidth: Math.min(docsSize, 650)
         });
+      }
     };
 
-    this.handleVariableResizeStart = function (downEvent) {
-        downEvent.preventDefault();
+    var onMouseUp = function (_onMouseUp2) {
+      function onMouseUp() {
+        return _onMouseUp2.apply(this, arguments);
+      }
 
-        var didMove = false;
-        var wasOpen = _this6.state.variableEditorOpen;
-        var hadHeight = _this6.state.variableEditorHeight;
-        var offset = downEvent.clientY - (0, _elementPosition.getTop)(downEvent.target);
+      onMouseUp.toString = function () {
+        return _onMouseUp2.toString();
+      };
 
-        var onMouseMove = function onMouseMove(moveEvent) {
-            if (moveEvent.buttons === 0) {
-                return onMouseUp();
-            }
+      return onMouseUp;
+    }(function () {
+      if (!_this6.state.docExplorerOpen) {
+        _this6.setState({ docExplorerWidth: hadWidth });
+      }
 
-            didMove = true;
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      onMouseMove = null;
+      onMouseUp = null;
+    });
 
-            var editorBar = _reactDom2.default.findDOMNode(_this6.editorBarComponent);
-            var topSize = moveEvent.clientY - (0, _elementPosition.getTop)(editorBar) - offset;
-            var bottomSize = editorBar.clientHeight - topSize;
-            if (bottomSize < 60) {
-                _this6.setState({
-                    variableEditorOpen: false,
-                    variableEditorHeight: hadHeight
-                });
-            } else {
-                _this6.setState({
-                    variableEditorOpen: true,
-                    variableEditorHeight: bottomSize
-                });
-            }
-        };
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
 
-        var onMouseUp = function (_onMouseUp3) {
-            function onMouseUp() {
-                return _onMouseUp3.apply(this, arguments);
-            }
+  this.handleDocsResetResize = function () {
+    _this6.setState({
+      docExplorerWidth: DEFAULT_DOC_EXPLORER_WIDTH
+    });
+  };
 
-            onMouseUp.toString = function () {
-                return _onMouseUp3.toString();
-            };
+  this.handleVariableResizeStart = function (downEvent) {
+    downEvent.preventDefault();
 
-            return onMouseUp;
-        }(function () {
-            if (!didMove) {
-                _this6.setState({ variableEditorOpen: !wasOpen });
-            }
+    var didMove = false;
+    var wasOpen = _this6.state.variableEditorOpen;
+    var hadHeight = _this6.state.variableEditorHeight;
+    var offset = downEvent.clientY - (0, _elementPosition.getTop)(downEvent.target);
 
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
-            onMouseMove = null;
-            onMouseUp = null;
+    var onMouseMove = function onMouseMove(moveEvent) {
+      if (moveEvent.buttons === 0) {
+        return onMouseUp();
+      }
+
+      didMove = true;
+
+      var editorBar = _reactDom2.default.findDOMNode(_this6.editorBarComponent);
+      var topSize = moveEvent.clientY - (0, _elementPosition.getTop)(editorBar) - offset;
+      var bottomSize = editorBar.clientHeight - topSize;
+      if (bottomSize < 60) {
+        _this6.setState({
+          variableEditorOpen: false,
+          variableEditorHeight: hadHeight
         });
-
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
+      } else {
+        _this6.setState({
+          variableEditorOpen: true,
+          variableEditorHeight: bottomSize
+        });
+      }
     };
+
+    var onMouseUp = function (_onMouseUp3) {
+      function onMouseUp() {
+        return _onMouseUp3.apply(this, arguments);
+      }
+
+      onMouseUp.toString = function () {
+        return _onMouseUp3.toString();
+      };
+
+      return onMouseUp;
+    }(function () {
+      if (!didMove) {
+        _this6.setState({ variableEditorOpen: !wasOpen });
+      }
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      onMouseMove = null;
+      onMouseUp = null;
+    });
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
 };
 
 GraphiQL.Logo = function GraphiQLLogo(props) {
-    return _react2.default.createElement(
-        'div',
-        { className: 'title' },
-        props.children || _react2.default.createElement(
-            'span',
-            null,
-            'Graph',
-            _react2.default.createElement(
-                'em',
-                null,
-                'i'
-            ),
-            'QL'
-        )
-    );
+  return _react2.default.createElement(
+    'div',
+    { className: 'title' },
+    props.children || _react2.default.createElement(
+      'span',
+      null,
+      'Graph',
+      _react2.default.createElement(
+        'em',
+        null,
+        'i'
+      ),
+      'QL'
+    )
+  );
 };
 
 // Configure the UI by providing this Component as a child of GraphiQL.
 GraphiQL.Toolbar = function GraphiQLToolbar(props) {
-    return _react2.default.createElement(
-        'div',
-        { className: 'toolbar' },
-        props.children
-    );
+  return _react2.default.createElement(
+    'div',
+    { className: 'toolbar' },
+    props.children
+  );
 };
 
 // Export main windows/panes to be used separately if desired.
@@ -2764,41 +2845,41 @@ GraphiQL.SelectOption = _ToolbarSelect.ToolbarSelectOption;
 
 // Configure the UI by providing this Component as a child of GraphiQL.
 GraphiQL.Footer = function GraphiQLFooter(props) {
-    return _react2.default.createElement(
-        'div',
-        { className: 'footer' },
-        props.children
-    );
+  return _react2.default.createElement(
+    'div',
+    { className: 'footer' },
+    props.children
+  );
 };
 
-var defaultQuery = '# Welcome to GraphiQL\n#\n# GraphiQL is an in-browser tool for writing, validating, and\n# testing GraphQL queries.\n#\n# Type queries into this side of the screen, and you will see intelligent\n# typeaheads aware of the current GraphQL type schema and live syntax and\n# validation errors highlighted within the text.\n#\n# GraphQL queries typically start with a "{" character. Lines that starts\n# with a # are ignored.\n#\n# An example GraphQL query might look like:\n#\n#     {\n#       field(arg: "value") {\n#         subField\n#       }\n#     }\n#\n# Keyboard shortcuts:\n#\n#  Prettify Query:  Shift-Ctrl-P (or press the prettify button above)\n#\n#       Run Query:  Ctrl-Enter (or press the play button above)\n#\n#   Auto Complete:  Ctrl-Space (or just start typing)\n#\n\n';
+var defaultQuery = '# Welcome to GraphiQL\n#\n# GraphiQL is an in-browser tool for writing, validating, and\n# testing GraphQL queries.\n#\n# Type queries into this side of the screen, and you will see intelligent\n# typeaheads aware of the current GraphQL type schema and live syntax and\n# validation errors highlighted within the text.\n#\n# GraphQL queries typically start with a "{" character. Lines that starts\n# with a # are ignored.\n#\n# An example GraphQL query might look like:\n#\n#     {\n#       field(arg: "value") {\n#         subField\n#       }\n#     }\n#\n# Keyboard shortcuts:\n#\n#  Prettify Query:  Shift-Ctrl-P (or press the prettify button above)\n#       Run Query:  Ctrl-Enter (or press the play button above)\n#   Auto Complete:  Ctrl-Space (or just start typing)\n\n#  switch History Panel\uFF1ACtrl+H\n#  switch Docs Panel\uFF1ACtrl+D\n#  switch Query Variable panel\uFF1ACtrl+Q\n\n\n';
 
 // Duck-type promise detection.
 function isPromise(value) {
-    return (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && typeof value.then === 'function';
+  return (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && typeof value.then === 'function';
 }
 
 // Duck-type Observable.take(1).toPromise()
 function observableToPromise(observable) {
-    if (!isObservable(observable)) {
-        return observable;
-    }
-    return new Promise(function (resolve, reject) {
-        var subscription = observable.subscribe(function (v) {
-            resolve(v);
-            subscription.unsubscribe();
-        }, reject, function () {
-            reject(new Error('no value resolved'));
-        });
+  if (!isObservable(observable)) {
+    return observable;
+  }
+  return new Promise(function (resolve, reject) {
+    var subscription = observable.subscribe(function (v) {
+      resolve(v);
+      subscription.unsubscribe();
+    }, reject, function () {
+      reject(new Error('no value resolved'));
     });
+  });
 }
 
 // Duck-type observable detection.
 function isObservable(value) {
-    return (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && typeof value.subscribe === 'function';
+  return (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && typeof value.subscribe === 'function';
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../utility/CodeMirrorSizer":23,"../utility/StorageAPI":25,"../utility/debounce":26,"../utility/elementPosition":27,"../utility/fillLeafs":28,"../utility/find":29,"../utility/getQueryFacts":30,"../utility/getSelectedOperationName":31,"../utility/introspectionQueries":32,"./DocExplorer":1,"./ExecuteButton":11,"./QueryEditor":14,"./QueryHistory":15,"./ResultViewer":16,"./ToolbarButton":17,"./ToolbarGroup":18,"./ToolbarMenu":19,"./ToolbarSelect":20,"./VariableEditor":21,"graphql":95,"prop-types":236,"react-hot-keys":239}],13:[function(require,module,exports){
+},{"../utility/CodeMirrorSizer":24,"../utility/StorageAPI":26,"../utility/debounce":27,"../utility/elementPosition":28,"../utility/fillLeafs":29,"../utility/find":30,"../utility/getQueryFacts":31,"../utility/getSelectedOperationName":32,"../utility/introspectionQueries":33,"./DocExplorer":1,"./EditToken":11,"./ExecuteButton":12,"./QueryEditor":15,"./QueryHistory":16,"./ResultViewer":17,"./ToolbarButton":18,"./ToolbarGroup":19,"./ToolbarMenu":20,"./ToolbarSelect":21,"./VariableEditor":22,"graphql":96,"prop-types":237,"react-hot-keys":240}],14:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -2964,7 +3045,7 @@ HistoryQuery.propTypes = {
 };
 exports.default = HistoryQuery;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"prop-types":236}],14:[function(require,module,exports){
+},{"prop-types":237}],15:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -3267,7 +3348,7 @@ QueryEditor.propTypes = {
   editorTheme: _propTypes2.default.string
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../utility/normalizeWhitespace":33,"../utility/onHasCompletion":34,"codemirror":65,"codemirror-graphql/hint":36,"codemirror-graphql/info":37,"codemirror-graphql/jump":38,"codemirror-graphql/lint":39,"codemirror-graphql/mode":40,"codemirror/addon/comment/comment":52,"codemirror/addon/dialog/dialog":53,"codemirror/addon/edit/closebrackets":54,"codemirror/addon/edit/matchbrackets":55,"codemirror/addon/fold/brace-fold":56,"codemirror/addon/fold/foldgutter":58,"codemirror/addon/hint/show-hint":59,"codemirror/addon/lint/lint":60,"codemirror/addon/search/jump-to-line":61,"codemirror/addon/search/search":62,"codemirror/addon/search/searchcursor":63,"codemirror/keymap/sublime":64,"graphql":95,"markdown-it":175,"prop-types":236}],15:[function(require,module,exports){
+},{"../utility/normalizeWhitespace":34,"../utility/onHasCompletion":35,"codemirror":66,"codemirror-graphql/hint":37,"codemirror-graphql/info":38,"codemirror-graphql/jump":39,"codemirror-graphql/lint":40,"codemirror-graphql/mode":41,"codemirror/addon/comment/comment":53,"codemirror/addon/dialog/dialog":54,"codemirror/addon/edit/closebrackets":55,"codemirror/addon/edit/matchbrackets":56,"codemirror/addon/fold/brace-fold":57,"codemirror/addon/fold/foldgutter":59,"codemirror/addon/hint/show-hint":60,"codemirror/addon/lint/lint":61,"codemirror/addon/search/jump-to-line":62,"codemirror/addon/search/search":63,"codemirror/addon/search/searchcursor":64,"codemirror/keymap/sublime":65,"graphql":96,"markdown-it":176,"prop-types":237}],16:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -3453,7 +3534,7 @@ QueryHistory.propTypes = {
   storage: _propTypes2.default.object
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../utility/QueryStore":24,"./HistoryQuery":13,"graphql":95,"prop-types":236}],16:[function(require,module,exports){
+},{"../utility/QueryStore":25,"./HistoryQuery":14,"graphql":96,"prop-types":237}],17:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -3620,7 +3701,7 @@ ResultViewer.propTypes = {
   ResultsTooltip: _propTypes2.default.any
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"codemirror":65,"codemirror-graphql/results/mode":41,"codemirror-graphql/utils/info-addon":46,"codemirror/addon/dialog/dialog":53,"codemirror/addon/fold/brace-fold":56,"codemirror/addon/fold/foldgutter":58,"codemirror/addon/search/jump-to-line":61,"codemirror/addon/search/search":62,"codemirror/addon/search/searchcursor":63,"codemirror/keymap/sublime":64,"prop-types":236}],17:[function(require,module,exports){
+},{"codemirror":66,"codemirror-graphql/results/mode":42,"codemirror-graphql/utils/info-addon":47,"codemirror/addon/dialog/dialog":54,"codemirror/addon/fold/brace-fold":57,"codemirror/addon/fold/foldgutter":59,"codemirror/addon/search/jump-to-line":62,"codemirror/addon/search/search":63,"codemirror/addon/search/searchcursor":64,"codemirror/keymap/sublime":65,"prop-types":237}],18:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -3711,7 +3792,7 @@ function preventDefault(e) {
   e.preventDefault();
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"prop-types":236}],18:[function(require,module,exports){
+},{"prop-types":237}],19:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -3747,7 +3828,7 @@ function ToolbarGroup(_ref) {
    *  LICENSE file in the root directory of this source tree.
    */
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -3904,7 +3985,7 @@ function preventDefault(e) {
   e.preventDefault();
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"prop-types":236}],20:[function(require,module,exports){
+},{"prop-types":237}],21:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4080,7 +4161,7 @@ function preventDefault(e) {
   e.preventDefault();
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"prop-types":236}],21:[function(require,module,exports){
+},{"prop-types":237}],22:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4339,7 +4420,7 @@ VariableEditor.propTypes = {
   editorTheme: _propTypes2.default.string
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../utility/onHasCompletion":34,"codemirror":65,"codemirror-graphql/variables/hint":49,"codemirror-graphql/variables/lint":50,"codemirror-graphql/variables/mode":51,"codemirror/addon/dialog/dialog":53,"codemirror/addon/edit/closebrackets":54,"codemirror/addon/edit/matchbrackets":55,"codemirror/addon/fold/brace-fold":56,"codemirror/addon/fold/foldgutter":58,"codemirror/addon/hint/show-hint":59,"codemirror/addon/lint/lint":60,"codemirror/addon/search/jump-to-line":61,"codemirror/addon/search/searchcursor":63,"codemirror/keymap/sublime":64,"prop-types":236}],22:[function(require,module,exports){
+},{"../utility/onHasCompletion":35,"codemirror":66,"codemirror-graphql/variables/hint":50,"codemirror-graphql/variables/lint":51,"codemirror-graphql/variables/mode":52,"codemirror/addon/dialog/dialog":54,"codemirror/addon/edit/closebrackets":55,"codemirror/addon/edit/matchbrackets":56,"codemirror/addon/fold/brace-fold":57,"codemirror/addon/fold/foldgutter":59,"codemirror/addon/hint/show-hint":60,"codemirror/addon/lint/lint":61,"codemirror/addon/search/jump-to-line":62,"codemirror/addon/search/searchcursor":64,"codemirror/keymap/sublime":65,"prop-types":237}],23:[function(require,module,exports){
 'use strict';
 
 /**
@@ -4352,7 +4433,7 @@ VariableEditor.propTypes = {
 
 // The primary React component to use.
 module.exports = require('./components/GraphiQL').GraphiQL;
-},{"./components/GraphiQL":12}],23:[function(require,module,exports){
+},{"./components/GraphiQL":13}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4401,7 +4482,7 @@ var CodeMirrorSizer = function () {
 }();
 
 exports.default = CodeMirrorSizer;
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4494,7 +4575,7 @@ var QueryStore = function () {
 }();
 
 exports.default = QueryStore;
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4575,7 +4656,7 @@ function isStorageAvailable(storage, key, value) {
     storage.length !== 0;
   }
 }
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4607,7 +4688,7 @@ function debounce(duration, fn) {
     }, duration);
   };
 }
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4646,7 +4727,7 @@ function getTop(initialElem) {
   }
   return pt;
 }
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4828,7 +4909,7 @@ function getIndentation(str, index) {
   }
   return str.substring(indentStart, indentEnd);
 }
-},{"graphql":95}],29:[function(require,module,exports){
+},{"graphql":96}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4852,7 +4933,7 @@ function find(list, predicate) {
     }
   }
 }
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4925,7 +5006,7 @@ function collectVariables(schema, documentAST) {
   });
   return variableToType;
 }
-},{"graphql":95}],31:[function(require,module,exports){
+},{"graphql":96}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4972,7 +5053,7 @@ function getSelectedOperationName(prevOperations, prevSelectedOperationName, ope
   // Use the first operation.
   return names[0];
 }
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4993,7 +5074,7 @@ Object.defineProperty(exports, 'introspectionQuery', {
 // query which includes the `subscriptionType` field as the stock introspection
 // query does. This backup query removes that field.
 var introspectionQuerySansSubscriptions = exports.introspectionQuerySansSubscriptions = '\n  query IntrospectionQuery {\n    __schema {\n      queryType { name }\n      mutationType { name }\n      types {\n        ...FullType\n      }\n      directives {\n        name\n        description\n        locations\n        args {\n          ...InputValue\n        }\n      }\n    }\n  }\n\n  fragment FullType on __Type {\n    kind\n    name\n    description\n    fields(includeDeprecated: true) {\n      name\n      description\n      args {\n        ...InputValue\n      }\n      type {\n        ...TypeRef\n      }\n      isDeprecated\n      deprecationReason\n    }\n    inputFields {\n      ...InputValue\n    }\n    interfaces {\n      ...TypeRef\n    }\n    enumValues(includeDeprecated: true) {\n      name\n      description\n      isDeprecated\n      deprecationReason\n    }\n    possibleTypes {\n      ...TypeRef\n    }\n  }\n\n  fragment InputValue on __InputValue {\n    name\n    description\n    type { ...TypeRef }\n    defaultValue\n  }\n\n  fragment TypeRef on __Type {\n    kind\n    name\n    ofType {\n      kind\n      name\n      ofType {\n        kind\n        name\n        ofType {\n          kind\n          name\n          ofType {\n            kind\n            name\n            ofType {\n              kind\n              name\n              ofType {\n                kind\n                name\n                ofType {\n                  kind\n                  name\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n';
-},{"graphql":95}],33:[function(require,module,exports){
+},{"graphql":96}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5019,7 +5100,7 @@ var sanitizeRegex = new RegExp('[' + invalidCharacters.join('') + ']', 'g');
 function normalizeWhitespace(line) {
   return line.replace(sanitizeRegex, ' ');
 }
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5116,7 +5197,7 @@ function renderType(type) {
   }
   return '<a class="typeName">' + type.name + '</a>';
 }
-},{"codemirror":65,"graphql":95,"markdown-it":175}],35:[function(require,module,exports){
+},{"codemirror":66,"graphql":96,"markdown-it":176}],36:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -5610,7 +5691,7 @@ var objectKeys = Object.keys || function (obj) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"util/":248}],36:[function(require,module,exports){
+},{"util/":249}],37:[function(require,module,exports){
 'use strict';
 
 var _codemirror = require('codemirror');
@@ -5694,7 +5775,7 @@ _codemirror2.default.registerHelper('hint', 'graphql', function (editor, options
 
   return results;
 });
-},{"codemirror":65,"graphql-language-service-interface":76}],37:[function(require,module,exports){
+},{"codemirror":66,"graphql-language-service-interface":77}],38:[function(require,module,exports){
 'use strict';
 
 var _graphql = require('graphql');
@@ -5887,7 +5968,7 @@ function text(into, content, className, options, ref) {
     into.appendChild(document.createTextNode(content));
   }
 }
-},{"./utils/SchemaReference":42,"./utils/getTypeInfo":44,"./utils/info-addon":46,"codemirror":65,"graphql":95}],38:[function(require,module,exports){
+},{"./utils/SchemaReference":43,"./utils/getTypeInfo":45,"./utils/info-addon":47,"codemirror":66,"graphql":96}],39:[function(require,module,exports){
 'use strict';
 
 var _codemirror = require('codemirror');
@@ -5951,7 +6032,7 @@ _codemirror2.default.registerHelper('jump', 'graphql', function (token, options)
     return (0, _SchemaReference.getTypeReference)(typeInfo);
   }
 });
-},{"./utils/SchemaReference":42,"./utils/getTypeInfo":44,"./utils/jump-addon":48,"codemirror":65}],39:[function(require,module,exports){
+},{"./utils/SchemaReference":43,"./utils/getTypeInfo":45,"./utils/jump-addon":49,"codemirror":66}],40:[function(require,module,exports){
 'use strict';
 
 var _codemirror = require('codemirror');
@@ -6008,7 +6089,7 @@ _codemirror2.default.registerHelper('lint', 'graphql', function (text, options) 
 
   return results;
 });
-},{"codemirror":65,"graphql-language-service-interface":76}],40:[function(require,module,exports){
+},{"codemirror":66,"graphql-language-service-interface":77}],41:[function(require,module,exports){
 'use strict';
 
 var _codemirror = require('codemirror');
@@ -6080,7 +6161,7 @@ function indent(state, textAfter) {
   var level = !levels || levels.length === 0 ? state.indentLevel : levels[levels.length - 1] - (this.electricInput.test(textAfter) ? 1 : 0);
   return level * this.config.indentUnit;
 }
-},{"codemirror":65,"graphql-language-service-parser":80}],41:[function(require,module,exports){
+},{"codemirror":66,"graphql-language-service-parser":81}],42:[function(require,module,exports){
 'use strict';
 
 var _codemirror = require('codemirror');
@@ -6193,7 +6274,7 @@ var ParseRules = {
   ObjectValue: [(0, _graphqlLanguageServiceParser.p)('{'), (0, _graphqlLanguageServiceParser.list)('ObjectField', (0, _graphqlLanguageServiceParser.p)(',')), (0, _graphqlLanguageServiceParser.p)('}')],
   ObjectField: [(0, _graphqlLanguageServiceParser.t)('String', 'property'), (0, _graphqlLanguageServiceParser.p)(':'), 'Value']
 };
-},{"codemirror":65,"graphql-language-service-parser":80}],42:[function(require,module,exports){
+},{"codemirror":66,"graphql-language-service-parser":81}],43:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6268,7 +6349,7 @@ function getTypeReference(typeInfo, type) {
 function isMetaField(fieldDef) {
   return fieldDef.name.slice(0, 2) === '__';
 }
-},{"graphql":95}],43:[function(require,module,exports){
+},{"graphql":96}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6296,7 +6377,7 @@ function forEachState(stack, fn) {
     fn(reverseStateStack[i]);
   }
 }
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6436,7 +6517,7 @@ function find(array, predicate) {
     }
   }
 }
-},{"./forEachState":43,"graphql":95,"graphql/type/introspection":118}],45:[function(require,module,exports){
+},{"./forEachState":44,"graphql":96,"graphql/type/introspection":119}],46:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6566,7 +6647,7 @@ function lexicalDistance(a, b) {
 
   return d[aLength][bLength];
 }
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 'use strict';
 
 var _codemirror = require('codemirror');
@@ -6725,7 +6806,7 @@ function showPopup(cm, box, info) {
   _codemirror2.default.on(popup, 'mouseout', onMouseOut);
   _codemirror2.default.on(cm.getWrapperElement(), 'mouseout', onMouseOut);
 }
-},{"codemirror":65}],47:[function(require,module,exports){
+},{"codemirror":66}],48:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7043,7 +7124,7 @@ function readDigits() {
     ch();
   } while (code >= 48 && code <= 57); // 0 - 9
 }
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 'use strict';
 
 var _codemirror = require('codemirror');
@@ -7193,7 +7274,7 @@ function disableJumpMode(cm) {
 
   marker.clear();
 }
-},{"codemirror":65}],49:[function(require,module,exports){
+},{"codemirror":66}],50:[function(require,module,exports){
 'use strict';
 
 var _codemirror = require('codemirror');
@@ -7346,7 +7427,7 @@ function getTypeInfo(variableToType, tokenState) {
 
   return info;
 }
-},{"../utils/forEachState":43,"../utils/hintList":45,"codemirror":65,"graphql":95}],50:[function(require,module,exports){
+},{"../utils/forEachState":44,"../utils/hintList":46,"codemirror":66,"graphql":96}],51:[function(require,module,exports){
 'use strict';
 
 var _codemirror = require('codemirror');
@@ -7524,7 +7605,7 @@ function isNullish(value) {
 function mapCat(array, mapper) {
   return Array.prototype.concat.apply([], array.map(mapper));
 }
-},{"../utils/jsonParse":47,"codemirror":65,"graphql":95}],51:[function(require,module,exports){
+},{"../utils/jsonParse":48,"codemirror":66,"graphql":96}],52:[function(require,module,exports){
 'use strict';
 
 var _codemirror = require('codemirror');
@@ -7650,7 +7731,7 @@ function namedKey(style) {
     }
   };
 }
-},{"codemirror":65,"graphql-language-service-parser":80}],52:[function(require,module,exports){
+},{"codemirror":66,"graphql-language-service-parser":81}],53:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -7865,7 +7946,7 @@ function namedKey(style) {
   });
 });
 
-},{"../../lib/codemirror":65}],53:[function(require,module,exports){
+},{"../../lib/codemirror":66}],54:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -8024,7 +8105,7 @@ function namedKey(style) {
   });
 });
 
-},{"../../lib/codemirror":65}],54:[function(require,module,exports){
+},{"../../lib/codemirror":66}],55:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -8228,7 +8309,7 @@ function namedKey(style) {
   }
 });
 
-},{"../../lib/codemirror":65}],55:[function(require,module,exports){
+},{"../../lib/codemirror":66}],56:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -8370,7 +8451,7 @@ function namedKey(style) {
   });
 });
 
-},{"../../lib/codemirror":65}],56:[function(require,module,exports){
+},{"../../lib/codemirror":66}],57:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -8477,7 +8558,7 @@ CodeMirror.registerHelper("fold", "include", function(cm, start) {
 
 });
 
-},{"../../lib/codemirror":65}],57:[function(require,module,exports){
+},{"../../lib/codemirror":66}],58:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -8629,7 +8710,7 @@ CodeMirror.registerHelper("fold", "include", function(cm, start) {
   });
 });
 
-},{"../../lib/codemirror":65}],58:[function(require,module,exports){
+},{"../../lib/codemirror":66}],59:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -8777,7 +8858,7 @@ CodeMirror.registerHelper("fold", "include", function(cm, start) {
   }
 });
 
-},{"../../lib/codemirror":65,"./foldcode":57}],59:[function(require,module,exports){
+},{"../../lib/codemirror":66,"./foldcode":58}],60:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -9217,7 +9298,7 @@ CodeMirror.registerHelper("fold", "include", function(cm, start) {
   CodeMirror.defineOption("hintOptions", null);
 });
 
-},{"../../lib/codemirror":65}],60:[function(require,module,exports){
+},{"../../lib/codemirror":66}],61:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -9463,7 +9544,7 @@ CodeMirror.registerHelper("fold", "include", function(cm, start) {
   });
 });
 
-},{"../../lib/codemirror":65}],61:[function(require,module,exports){
+},{"../../lib/codemirror":66}],62:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -9514,7 +9595,7 @@ CodeMirror.registerHelper("fold", "include", function(cm, start) {
   CodeMirror.keyMap["default"]["Alt-G"] = "jumpToLine";
 });
 
-},{"../../lib/codemirror":65,"../dialog/dialog":53}],62:[function(require,module,exports){
+},{"../../lib/codemirror":66,"../dialog/dialog":54}],63:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -9768,7 +9849,7 @@ CodeMirror.registerHelper("fold", "include", function(cm, start) {
   CodeMirror.commands.replaceAll = function(cm) {replace(cm, true);};
 });
 
-},{"../../lib/codemirror":65,"../dialog/dialog":53,"./searchcursor":63}],63:[function(require,module,exports){
+},{"../../lib/codemirror":66,"../dialog/dialog":54,"./searchcursor":64}],64:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -10057,7 +10138,7 @@ CodeMirror.registerHelper("fold", "include", function(cm, start) {
   })
 });
 
-},{"../../lib/codemirror":65}],64:[function(require,module,exports){
+},{"../../lib/codemirror":66}],65:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -10655,7 +10736,7 @@ CodeMirror.registerHelper("fold", "include", function(cm, start) {
   CodeMirror.normalizeKeyMap(map);
 });
 
-},{"../addon/edit/matchbrackets":55,"../addon/search/searchcursor":63,"../lib/codemirror":65}],65:[function(require,module,exports){
+},{"../addon/edit/matchbrackets":56,"../addon/search/searchcursor":64,"../lib/codemirror":66}],66:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -20156,9 +20237,9 @@ return CodeMirror$1;
 
 })));
 
-},{}],66:[function(require,module,exports){
-module.exports={"Aacute":"\u00C1","aacute":"\u00E1","Abreve":"\u0102","abreve":"\u0103","ac":"\u223E","acd":"\u223F","acE":"\u223E\u0333","Acirc":"\u00C2","acirc":"\u00E2","acute":"\u00B4","Acy":"\u0410","acy":"\u0430","AElig":"\u00C6","aelig":"\u00E6","af":"\u2061","Afr":"\uD835\uDD04","afr":"\uD835\uDD1E","Agrave":"\u00C0","agrave":"\u00E0","alefsym":"\u2135","aleph":"\u2135","Alpha":"\u0391","alpha":"\u03B1","Amacr":"\u0100","amacr":"\u0101","amalg":"\u2A3F","amp":"&","AMP":"&","andand":"\u2A55","And":"\u2A53","and":"\u2227","andd":"\u2A5C","andslope":"\u2A58","andv":"\u2A5A","ang":"\u2220","ange":"\u29A4","angle":"\u2220","angmsdaa":"\u29A8","angmsdab":"\u29A9","angmsdac":"\u29AA","angmsdad":"\u29AB","angmsdae":"\u29AC","angmsdaf":"\u29AD","angmsdag":"\u29AE","angmsdah":"\u29AF","angmsd":"\u2221","angrt":"\u221F","angrtvb":"\u22BE","angrtvbd":"\u299D","angsph":"\u2222","angst":"\u00C5","angzarr":"\u237C","Aogon":"\u0104","aogon":"\u0105","Aopf":"\uD835\uDD38","aopf":"\uD835\uDD52","apacir":"\u2A6F","ap":"\u2248","apE":"\u2A70","ape":"\u224A","apid":"\u224B","apos":"'","ApplyFunction":"\u2061","approx":"\u2248","approxeq":"\u224A","Aring":"\u00C5","aring":"\u00E5","Ascr":"\uD835\uDC9C","ascr":"\uD835\uDCB6","Assign":"\u2254","ast":"*","asymp":"\u2248","asympeq":"\u224D","Atilde":"\u00C3","atilde":"\u00E3","Auml":"\u00C4","auml":"\u00E4","awconint":"\u2233","awint":"\u2A11","backcong":"\u224C","backepsilon":"\u03F6","backprime":"\u2035","backsim":"\u223D","backsimeq":"\u22CD","Backslash":"\u2216","Barv":"\u2AE7","barvee":"\u22BD","barwed":"\u2305","Barwed":"\u2306","barwedge":"\u2305","bbrk":"\u23B5","bbrktbrk":"\u23B6","bcong":"\u224C","Bcy":"\u0411","bcy":"\u0431","bdquo":"\u201E","becaus":"\u2235","because":"\u2235","Because":"\u2235","bemptyv":"\u29B0","bepsi":"\u03F6","bernou":"\u212C","Bernoullis":"\u212C","Beta":"\u0392","beta":"\u03B2","beth":"\u2136","between":"\u226C","Bfr":"\uD835\uDD05","bfr":"\uD835\uDD1F","bigcap":"\u22C2","bigcirc":"\u25EF","bigcup":"\u22C3","bigodot":"\u2A00","bigoplus":"\u2A01","bigotimes":"\u2A02","bigsqcup":"\u2A06","bigstar":"\u2605","bigtriangledown":"\u25BD","bigtriangleup":"\u25B3","biguplus":"\u2A04","bigvee":"\u22C1","bigwedge":"\u22C0","bkarow":"\u290D","blacklozenge":"\u29EB","blacksquare":"\u25AA","blacktriangle":"\u25B4","blacktriangledown":"\u25BE","blacktriangleleft":"\u25C2","blacktriangleright":"\u25B8","blank":"\u2423","blk12":"\u2592","blk14":"\u2591","blk34":"\u2593","block":"\u2588","bne":"=\u20E5","bnequiv":"\u2261\u20E5","bNot":"\u2AED","bnot":"\u2310","Bopf":"\uD835\uDD39","bopf":"\uD835\uDD53","bot":"\u22A5","bottom":"\u22A5","bowtie":"\u22C8","boxbox":"\u29C9","boxdl":"\u2510","boxdL":"\u2555","boxDl":"\u2556","boxDL":"\u2557","boxdr":"\u250C","boxdR":"\u2552","boxDr":"\u2553","boxDR":"\u2554","boxh":"\u2500","boxH":"\u2550","boxhd":"\u252C","boxHd":"\u2564","boxhD":"\u2565","boxHD":"\u2566","boxhu":"\u2534","boxHu":"\u2567","boxhU":"\u2568","boxHU":"\u2569","boxminus":"\u229F","boxplus":"\u229E","boxtimes":"\u22A0","boxul":"\u2518","boxuL":"\u255B","boxUl":"\u255C","boxUL":"\u255D","boxur":"\u2514","boxuR":"\u2558","boxUr":"\u2559","boxUR":"\u255A","boxv":"\u2502","boxV":"\u2551","boxvh":"\u253C","boxvH":"\u256A","boxVh":"\u256B","boxVH":"\u256C","boxvl":"\u2524","boxvL":"\u2561","boxVl":"\u2562","boxVL":"\u2563","boxvr":"\u251C","boxvR":"\u255E","boxVr":"\u255F","boxVR":"\u2560","bprime":"\u2035","breve":"\u02D8","Breve":"\u02D8","brvbar":"\u00A6","bscr":"\uD835\uDCB7","Bscr":"\u212C","bsemi":"\u204F","bsim":"\u223D","bsime":"\u22CD","bsolb":"\u29C5","bsol":"\\","bsolhsub":"\u27C8","bull":"\u2022","bullet":"\u2022","bump":"\u224E","bumpE":"\u2AAE","bumpe":"\u224F","Bumpeq":"\u224E","bumpeq":"\u224F","Cacute":"\u0106","cacute":"\u0107","capand":"\u2A44","capbrcup":"\u2A49","capcap":"\u2A4B","cap":"\u2229","Cap":"\u22D2","capcup":"\u2A47","capdot":"\u2A40","CapitalDifferentialD":"\u2145","caps":"\u2229\uFE00","caret":"\u2041","caron":"\u02C7","Cayleys":"\u212D","ccaps":"\u2A4D","Ccaron":"\u010C","ccaron":"\u010D","Ccedil":"\u00C7","ccedil":"\u00E7","Ccirc":"\u0108","ccirc":"\u0109","Cconint":"\u2230","ccups":"\u2A4C","ccupssm":"\u2A50","Cdot":"\u010A","cdot":"\u010B","cedil":"\u00B8","Cedilla":"\u00B8","cemptyv":"\u29B2","cent":"\u00A2","centerdot":"\u00B7","CenterDot":"\u00B7","cfr":"\uD835\uDD20","Cfr":"\u212D","CHcy":"\u0427","chcy":"\u0447","check":"\u2713","checkmark":"\u2713","Chi":"\u03A7","chi":"\u03C7","circ":"\u02C6","circeq":"\u2257","circlearrowleft":"\u21BA","circlearrowright":"\u21BB","circledast":"\u229B","circledcirc":"\u229A","circleddash":"\u229D","CircleDot":"\u2299","circledR":"\u00AE","circledS":"\u24C8","CircleMinus":"\u2296","CirclePlus":"\u2295","CircleTimes":"\u2297","cir":"\u25CB","cirE":"\u29C3","cire":"\u2257","cirfnint":"\u2A10","cirmid":"\u2AEF","cirscir":"\u29C2","ClockwiseContourIntegral":"\u2232","CloseCurlyDoubleQuote":"\u201D","CloseCurlyQuote":"\u2019","clubs":"\u2663","clubsuit":"\u2663","colon":":","Colon":"\u2237","Colone":"\u2A74","colone":"\u2254","coloneq":"\u2254","comma":",","commat":"@","comp":"\u2201","compfn":"\u2218","complement":"\u2201","complexes":"\u2102","cong":"\u2245","congdot":"\u2A6D","Congruent":"\u2261","conint":"\u222E","Conint":"\u222F","ContourIntegral":"\u222E","copf":"\uD835\uDD54","Copf":"\u2102","coprod":"\u2210","Coproduct":"\u2210","copy":"\u00A9","COPY":"\u00A9","copysr":"\u2117","CounterClockwiseContourIntegral":"\u2233","crarr":"\u21B5","cross":"\u2717","Cross":"\u2A2F","Cscr":"\uD835\uDC9E","cscr":"\uD835\uDCB8","csub":"\u2ACF","csube":"\u2AD1","csup":"\u2AD0","csupe":"\u2AD2","ctdot":"\u22EF","cudarrl":"\u2938","cudarrr":"\u2935","cuepr":"\u22DE","cuesc":"\u22DF","cularr":"\u21B6","cularrp":"\u293D","cupbrcap":"\u2A48","cupcap":"\u2A46","CupCap":"\u224D","cup":"\u222A","Cup":"\u22D3","cupcup":"\u2A4A","cupdot":"\u228D","cupor":"\u2A45","cups":"\u222A\uFE00","curarr":"\u21B7","curarrm":"\u293C","curlyeqprec":"\u22DE","curlyeqsucc":"\u22DF","curlyvee":"\u22CE","curlywedge":"\u22CF","curren":"\u00A4","curvearrowleft":"\u21B6","curvearrowright":"\u21B7","cuvee":"\u22CE","cuwed":"\u22CF","cwconint":"\u2232","cwint":"\u2231","cylcty":"\u232D","dagger":"\u2020","Dagger":"\u2021","daleth":"\u2138","darr":"\u2193","Darr":"\u21A1","dArr":"\u21D3","dash":"\u2010","Dashv":"\u2AE4","dashv":"\u22A3","dbkarow":"\u290F","dblac":"\u02DD","Dcaron":"\u010E","dcaron":"\u010F","Dcy":"\u0414","dcy":"\u0434","ddagger":"\u2021","ddarr":"\u21CA","DD":"\u2145","dd":"\u2146","DDotrahd":"\u2911","ddotseq":"\u2A77","deg":"\u00B0","Del":"\u2207","Delta":"\u0394","delta":"\u03B4","demptyv":"\u29B1","dfisht":"\u297F","Dfr":"\uD835\uDD07","dfr":"\uD835\uDD21","dHar":"\u2965","dharl":"\u21C3","dharr":"\u21C2","DiacriticalAcute":"\u00B4","DiacriticalDot":"\u02D9","DiacriticalDoubleAcute":"\u02DD","DiacriticalGrave":"`","DiacriticalTilde":"\u02DC","diam":"\u22C4","diamond":"\u22C4","Diamond":"\u22C4","diamondsuit":"\u2666","diams":"\u2666","die":"\u00A8","DifferentialD":"\u2146","digamma":"\u03DD","disin":"\u22F2","div":"\u00F7","divide":"\u00F7","divideontimes":"\u22C7","divonx":"\u22C7","DJcy":"\u0402","djcy":"\u0452","dlcorn":"\u231E","dlcrop":"\u230D","dollar":"$","Dopf":"\uD835\uDD3B","dopf":"\uD835\uDD55","Dot":"\u00A8","dot":"\u02D9","DotDot":"\u20DC","doteq":"\u2250","doteqdot":"\u2251","DotEqual":"\u2250","dotminus":"\u2238","dotplus":"\u2214","dotsquare":"\u22A1","doublebarwedge":"\u2306","DoubleContourIntegral":"\u222F","DoubleDot":"\u00A8","DoubleDownArrow":"\u21D3","DoubleLeftArrow":"\u21D0","DoubleLeftRightArrow":"\u21D4","DoubleLeftTee":"\u2AE4","DoubleLongLeftArrow":"\u27F8","DoubleLongLeftRightArrow":"\u27FA","DoubleLongRightArrow":"\u27F9","DoubleRightArrow":"\u21D2","DoubleRightTee":"\u22A8","DoubleUpArrow":"\u21D1","DoubleUpDownArrow":"\u21D5","DoubleVerticalBar":"\u2225","DownArrowBar":"\u2913","downarrow":"\u2193","DownArrow":"\u2193","Downarrow":"\u21D3","DownArrowUpArrow":"\u21F5","DownBreve":"\u0311","downdownarrows":"\u21CA","downharpoonleft":"\u21C3","downharpoonright":"\u21C2","DownLeftRightVector":"\u2950","DownLeftTeeVector":"\u295E","DownLeftVectorBar":"\u2956","DownLeftVector":"\u21BD","DownRightTeeVector":"\u295F","DownRightVectorBar":"\u2957","DownRightVector":"\u21C1","DownTeeArrow":"\u21A7","DownTee":"\u22A4","drbkarow":"\u2910","drcorn":"\u231F","drcrop":"\u230C","Dscr":"\uD835\uDC9F","dscr":"\uD835\uDCB9","DScy":"\u0405","dscy":"\u0455","dsol":"\u29F6","Dstrok":"\u0110","dstrok":"\u0111","dtdot":"\u22F1","dtri":"\u25BF","dtrif":"\u25BE","duarr":"\u21F5","duhar":"\u296F","dwangle":"\u29A6","DZcy":"\u040F","dzcy":"\u045F","dzigrarr":"\u27FF","Eacute":"\u00C9","eacute":"\u00E9","easter":"\u2A6E","Ecaron":"\u011A","ecaron":"\u011B","Ecirc":"\u00CA","ecirc":"\u00EA","ecir":"\u2256","ecolon":"\u2255","Ecy":"\u042D","ecy":"\u044D","eDDot":"\u2A77","Edot":"\u0116","edot":"\u0117","eDot":"\u2251","ee":"\u2147","efDot":"\u2252","Efr":"\uD835\uDD08","efr":"\uD835\uDD22","eg":"\u2A9A","Egrave":"\u00C8","egrave":"\u00E8","egs":"\u2A96","egsdot":"\u2A98","el":"\u2A99","Element":"\u2208","elinters":"\u23E7","ell":"\u2113","els":"\u2A95","elsdot":"\u2A97","Emacr":"\u0112","emacr":"\u0113","empty":"\u2205","emptyset":"\u2205","EmptySmallSquare":"\u25FB","emptyv":"\u2205","EmptyVerySmallSquare":"\u25AB","emsp13":"\u2004","emsp14":"\u2005","emsp":"\u2003","ENG":"\u014A","eng":"\u014B","ensp":"\u2002","Eogon":"\u0118","eogon":"\u0119","Eopf":"\uD835\uDD3C","eopf":"\uD835\uDD56","epar":"\u22D5","eparsl":"\u29E3","eplus":"\u2A71","epsi":"\u03B5","Epsilon":"\u0395","epsilon":"\u03B5","epsiv":"\u03F5","eqcirc":"\u2256","eqcolon":"\u2255","eqsim":"\u2242","eqslantgtr":"\u2A96","eqslantless":"\u2A95","Equal":"\u2A75","equals":"=","EqualTilde":"\u2242","equest":"\u225F","Equilibrium":"\u21CC","equiv":"\u2261","equivDD":"\u2A78","eqvparsl":"\u29E5","erarr":"\u2971","erDot":"\u2253","escr":"\u212F","Escr":"\u2130","esdot":"\u2250","Esim":"\u2A73","esim":"\u2242","Eta":"\u0397","eta":"\u03B7","ETH":"\u00D0","eth":"\u00F0","Euml":"\u00CB","euml":"\u00EB","euro":"\u20AC","excl":"!","exist":"\u2203","Exists":"\u2203","expectation":"\u2130","exponentiale":"\u2147","ExponentialE":"\u2147","fallingdotseq":"\u2252","Fcy":"\u0424","fcy":"\u0444","female":"\u2640","ffilig":"\uFB03","fflig":"\uFB00","ffllig":"\uFB04","Ffr":"\uD835\uDD09","ffr":"\uD835\uDD23","filig":"\uFB01","FilledSmallSquare":"\u25FC","FilledVerySmallSquare":"\u25AA","fjlig":"fj","flat":"\u266D","fllig":"\uFB02","fltns":"\u25B1","fnof":"\u0192","Fopf":"\uD835\uDD3D","fopf":"\uD835\uDD57","forall":"\u2200","ForAll":"\u2200","fork":"\u22D4","forkv":"\u2AD9","Fouriertrf":"\u2131","fpartint":"\u2A0D","frac12":"\u00BD","frac13":"\u2153","frac14":"\u00BC","frac15":"\u2155","frac16":"\u2159","frac18":"\u215B","frac23":"\u2154","frac25":"\u2156","frac34":"\u00BE","frac35":"\u2157","frac38":"\u215C","frac45":"\u2158","frac56":"\u215A","frac58":"\u215D","frac78":"\u215E","frasl":"\u2044","frown":"\u2322","fscr":"\uD835\uDCBB","Fscr":"\u2131","gacute":"\u01F5","Gamma":"\u0393","gamma":"\u03B3","Gammad":"\u03DC","gammad":"\u03DD","gap":"\u2A86","Gbreve":"\u011E","gbreve":"\u011F","Gcedil":"\u0122","Gcirc":"\u011C","gcirc":"\u011D","Gcy":"\u0413","gcy":"\u0433","Gdot":"\u0120","gdot":"\u0121","ge":"\u2265","gE":"\u2267","gEl":"\u2A8C","gel":"\u22DB","geq":"\u2265","geqq":"\u2267","geqslant":"\u2A7E","gescc":"\u2AA9","ges":"\u2A7E","gesdot":"\u2A80","gesdoto":"\u2A82","gesdotol":"\u2A84","gesl":"\u22DB\uFE00","gesles":"\u2A94","Gfr":"\uD835\uDD0A","gfr":"\uD835\uDD24","gg":"\u226B","Gg":"\u22D9","ggg":"\u22D9","gimel":"\u2137","GJcy":"\u0403","gjcy":"\u0453","gla":"\u2AA5","gl":"\u2277","glE":"\u2A92","glj":"\u2AA4","gnap":"\u2A8A","gnapprox":"\u2A8A","gne":"\u2A88","gnE":"\u2269","gneq":"\u2A88","gneqq":"\u2269","gnsim":"\u22E7","Gopf":"\uD835\uDD3E","gopf":"\uD835\uDD58","grave":"`","GreaterEqual":"\u2265","GreaterEqualLess":"\u22DB","GreaterFullEqual":"\u2267","GreaterGreater":"\u2AA2","GreaterLess":"\u2277","GreaterSlantEqual":"\u2A7E","GreaterTilde":"\u2273","Gscr":"\uD835\uDCA2","gscr":"\u210A","gsim":"\u2273","gsime":"\u2A8E","gsiml":"\u2A90","gtcc":"\u2AA7","gtcir":"\u2A7A","gt":">","GT":">","Gt":"\u226B","gtdot":"\u22D7","gtlPar":"\u2995","gtquest":"\u2A7C","gtrapprox":"\u2A86","gtrarr":"\u2978","gtrdot":"\u22D7","gtreqless":"\u22DB","gtreqqless":"\u2A8C","gtrless":"\u2277","gtrsim":"\u2273","gvertneqq":"\u2269\uFE00","gvnE":"\u2269\uFE00","Hacek":"\u02C7","hairsp":"\u200A","half":"\u00BD","hamilt":"\u210B","HARDcy":"\u042A","hardcy":"\u044A","harrcir":"\u2948","harr":"\u2194","hArr":"\u21D4","harrw":"\u21AD","Hat":"^","hbar":"\u210F","Hcirc":"\u0124","hcirc":"\u0125","hearts":"\u2665","heartsuit":"\u2665","hellip":"\u2026","hercon":"\u22B9","hfr":"\uD835\uDD25","Hfr":"\u210C","HilbertSpace":"\u210B","hksearow":"\u2925","hkswarow":"\u2926","hoarr":"\u21FF","homtht":"\u223B","hookleftarrow":"\u21A9","hookrightarrow":"\u21AA","hopf":"\uD835\uDD59","Hopf":"\u210D","horbar":"\u2015","HorizontalLine":"\u2500","hscr":"\uD835\uDCBD","Hscr":"\u210B","hslash":"\u210F","Hstrok":"\u0126","hstrok":"\u0127","HumpDownHump":"\u224E","HumpEqual":"\u224F","hybull":"\u2043","hyphen":"\u2010","Iacute":"\u00CD","iacute":"\u00ED","ic":"\u2063","Icirc":"\u00CE","icirc":"\u00EE","Icy":"\u0418","icy":"\u0438","Idot":"\u0130","IEcy":"\u0415","iecy":"\u0435","iexcl":"\u00A1","iff":"\u21D4","ifr":"\uD835\uDD26","Ifr":"\u2111","Igrave":"\u00CC","igrave":"\u00EC","ii":"\u2148","iiiint":"\u2A0C","iiint":"\u222D","iinfin":"\u29DC","iiota":"\u2129","IJlig":"\u0132","ijlig":"\u0133","Imacr":"\u012A","imacr":"\u012B","image":"\u2111","ImaginaryI":"\u2148","imagline":"\u2110","imagpart":"\u2111","imath":"\u0131","Im":"\u2111","imof":"\u22B7","imped":"\u01B5","Implies":"\u21D2","incare":"\u2105","in":"\u2208","infin":"\u221E","infintie":"\u29DD","inodot":"\u0131","intcal":"\u22BA","int":"\u222B","Int":"\u222C","integers":"\u2124","Integral":"\u222B","intercal":"\u22BA","Intersection":"\u22C2","intlarhk":"\u2A17","intprod":"\u2A3C","InvisibleComma":"\u2063","InvisibleTimes":"\u2062","IOcy":"\u0401","iocy":"\u0451","Iogon":"\u012E","iogon":"\u012F","Iopf":"\uD835\uDD40","iopf":"\uD835\uDD5A","Iota":"\u0399","iota":"\u03B9","iprod":"\u2A3C","iquest":"\u00BF","iscr":"\uD835\uDCBE","Iscr":"\u2110","isin":"\u2208","isindot":"\u22F5","isinE":"\u22F9","isins":"\u22F4","isinsv":"\u22F3","isinv":"\u2208","it":"\u2062","Itilde":"\u0128","itilde":"\u0129","Iukcy":"\u0406","iukcy":"\u0456","Iuml":"\u00CF","iuml":"\u00EF","Jcirc":"\u0134","jcirc":"\u0135","Jcy":"\u0419","jcy":"\u0439","Jfr":"\uD835\uDD0D","jfr":"\uD835\uDD27","jmath":"\u0237","Jopf":"\uD835\uDD41","jopf":"\uD835\uDD5B","Jscr":"\uD835\uDCA5","jscr":"\uD835\uDCBF","Jsercy":"\u0408","jsercy":"\u0458","Jukcy":"\u0404","jukcy":"\u0454","Kappa":"\u039A","kappa":"\u03BA","kappav":"\u03F0","Kcedil":"\u0136","kcedil":"\u0137","Kcy":"\u041A","kcy":"\u043A","Kfr":"\uD835\uDD0E","kfr":"\uD835\uDD28","kgreen":"\u0138","KHcy":"\u0425","khcy":"\u0445","KJcy":"\u040C","kjcy":"\u045C","Kopf":"\uD835\uDD42","kopf":"\uD835\uDD5C","Kscr":"\uD835\uDCA6","kscr":"\uD835\uDCC0","lAarr":"\u21DA","Lacute":"\u0139","lacute":"\u013A","laemptyv":"\u29B4","lagran":"\u2112","Lambda":"\u039B","lambda":"\u03BB","lang":"\u27E8","Lang":"\u27EA","langd":"\u2991","langle":"\u27E8","lap":"\u2A85","Laplacetrf":"\u2112","laquo":"\u00AB","larrb":"\u21E4","larrbfs":"\u291F","larr":"\u2190","Larr":"\u219E","lArr":"\u21D0","larrfs":"\u291D","larrhk":"\u21A9","larrlp":"\u21AB","larrpl":"\u2939","larrsim":"\u2973","larrtl":"\u21A2","latail":"\u2919","lAtail":"\u291B","lat":"\u2AAB","late":"\u2AAD","lates":"\u2AAD\uFE00","lbarr":"\u290C","lBarr":"\u290E","lbbrk":"\u2772","lbrace":"{","lbrack":"[","lbrke":"\u298B","lbrksld":"\u298F","lbrkslu":"\u298D","Lcaron":"\u013D","lcaron":"\u013E","Lcedil":"\u013B","lcedil":"\u013C","lceil":"\u2308","lcub":"{","Lcy":"\u041B","lcy":"\u043B","ldca":"\u2936","ldquo":"\u201C","ldquor":"\u201E","ldrdhar":"\u2967","ldrushar":"\u294B","ldsh":"\u21B2","le":"\u2264","lE":"\u2266","LeftAngleBracket":"\u27E8","LeftArrowBar":"\u21E4","leftarrow":"\u2190","LeftArrow":"\u2190","Leftarrow":"\u21D0","LeftArrowRightArrow":"\u21C6","leftarrowtail":"\u21A2","LeftCeiling":"\u2308","LeftDoubleBracket":"\u27E6","LeftDownTeeVector":"\u2961","LeftDownVectorBar":"\u2959","LeftDownVector":"\u21C3","LeftFloor":"\u230A","leftharpoondown":"\u21BD","leftharpoonup":"\u21BC","leftleftarrows":"\u21C7","leftrightarrow":"\u2194","LeftRightArrow":"\u2194","Leftrightarrow":"\u21D4","leftrightarrows":"\u21C6","leftrightharpoons":"\u21CB","leftrightsquigarrow":"\u21AD","LeftRightVector":"\u294E","LeftTeeArrow":"\u21A4","LeftTee":"\u22A3","LeftTeeVector":"\u295A","leftthreetimes":"\u22CB","LeftTriangleBar":"\u29CF","LeftTriangle":"\u22B2","LeftTriangleEqual":"\u22B4","LeftUpDownVector":"\u2951","LeftUpTeeVector":"\u2960","LeftUpVectorBar":"\u2958","LeftUpVector":"\u21BF","LeftVectorBar":"\u2952","LeftVector":"\u21BC","lEg":"\u2A8B","leg":"\u22DA","leq":"\u2264","leqq":"\u2266","leqslant":"\u2A7D","lescc":"\u2AA8","les":"\u2A7D","lesdot":"\u2A7F","lesdoto":"\u2A81","lesdotor":"\u2A83","lesg":"\u22DA\uFE00","lesges":"\u2A93","lessapprox":"\u2A85","lessdot":"\u22D6","lesseqgtr":"\u22DA","lesseqqgtr":"\u2A8B","LessEqualGreater":"\u22DA","LessFullEqual":"\u2266","LessGreater":"\u2276","lessgtr":"\u2276","LessLess":"\u2AA1","lesssim":"\u2272","LessSlantEqual":"\u2A7D","LessTilde":"\u2272","lfisht":"\u297C","lfloor":"\u230A","Lfr":"\uD835\uDD0F","lfr":"\uD835\uDD29","lg":"\u2276","lgE":"\u2A91","lHar":"\u2962","lhard":"\u21BD","lharu":"\u21BC","lharul":"\u296A","lhblk":"\u2584","LJcy":"\u0409","ljcy":"\u0459","llarr":"\u21C7","ll":"\u226A","Ll":"\u22D8","llcorner":"\u231E","Lleftarrow":"\u21DA","llhard":"\u296B","lltri":"\u25FA","Lmidot":"\u013F","lmidot":"\u0140","lmoustache":"\u23B0","lmoust":"\u23B0","lnap":"\u2A89","lnapprox":"\u2A89","lne":"\u2A87","lnE":"\u2268","lneq":"\u2A87","lneqq":"\u2268","lnsim":"\u22E6","loang":"\u27EC","loarr":"\u21FD","lobrk":"\u27E6","longleftarrow":"\u27F5","LongLeftArrow":"\u27F5","Longleftarrow":"\u27F8","longleftrightarrow":"\u27F7","LongLeftRightArrow":"\u27F7","Longleftrightarrow":"\u27FA","longmapsto":"\u27FC","longrightarrow":"\u27F6","LongRightArrow":"\u27F6","Longrightarrow":"\u27F9","looparrowleft":"\u21AB","looparrowright":"\u21AC","lopar":"\u2985","Lopf":"\uD835\uDD43","lopf":"\uD835\uDD5D","loplus":"\u2A2D","lotimes":"\u2A34","lowast":"\u2217","lowbar":"_","LowerLeftArrow":"\u2199","LowerRightArrow":"\u2198","loz":"\u25CA","lozenge":"\u25CA","lozf":"\u29EB","lpar":"(","lparlt":"\u2993","lrarr":"\u21C6","lrcorner":"\u231F","lrhar":"\u21CB","lrhard":"\u296D","lrm":"\u200E","lrtri":"\u22BF","lsaquo":"\u2039","lscr":"\uD835\uDCC1","Lscr":"\u2112","lsh":"\u21B0","Lsh":"\u21B0","lsim":"\u2272","lsime":"\u2A8D","lsimg":"\u2A8F","lsqb":"[","lsquo":"\u2018","lsquor":"\u201A","Lstrok":"\u0141","lstrok":"\u0142","ltcc":"\u2AA6","ltcir":"\u2A79","lt":"<","LT":"<","Lt":"\u226A","ltdot":"\u22D6","lthree":"\u22CB","ltimes":"\u22C9","ltlarr":"\u2976","ltquest":"\u2A7B","ltri":"\u25C3","ltrie":"\u22B4","ltrif":"\u25C2","ltrPar":"\u2996","lurdshar":"\u294A","luruhar":"\u2966","lvertneqq":"\u2268\uFE00","lvnE":"\u2268\uFE00","macr":"\u00AF","male":"\u2642","malt":"\u2720","maltese":"\u2720","Map":"\u2905","map":"\u21A6","mapsto":"\u21A6","mapstodown":"\u21A7","mapstoleft":"\u21A4","mapstoup":"\u21A5","marker":"\u25AE","mcomma":"\u2A29","Mcy":"\u041C","mcy":"\u043C","mdash":"\u2014","mDDot":"\u223A","measuredangle":"\u2221","MediumSpace":"\u205F","Mellintrf":"\u2133","Mfr":"\uD835\uDD10","mfr":"\uD835\uDD2A","mho":"\u2127","micro":"\u00B5","midast":"*","midcir":"\u2AF0","mid":"\u2223","middot":"\u00B7","minusb":"\u229F","minus":"\u2212","minusd":"\u2238","minusdu":"\u2A2A","MinusPlus":"\u2213","mlcp":"\u2ADB","mldr":"\u2026","mnplus":"\u2213","models":"\u22A7","Mopf":"\uD835\uDD44","mopf":"\uD835\uDD5E","mp":"\u2213","mscr":"\uD835\uDCC2","Mscr":"\u2133","mstpos":"\u223E","Mu":"\u039C","mu":"\u03BC","multimap":"\u22B8","mumap":"\u22B8","nabla":"\u2207","Nacute":"\u0143","nacute":"\u0144","nang":"\u2220\u20D2","nap":"\u2249","napE":"\u2A70\u0338","napid":"\u224B\u0338","napos":"\u0149","napprox":"\u2249","natural":"\u266E","naturals":"\u2115","natur":"\u266E","nbsp":"\u00A0","nbump":"\u224E\u0338","nbumpe":"\u224F\u0338","ncap":"\u2A43","Ncaron":"\u0147","ncaron":"\u0148","Ncedil":"\u0145","ncedil":"\u0146","ncong":"\u2247","ncongdot":"\u2A6D\u0338","ncup":"\u2A42","Ncy":"\u041D","ncy":"\u043D","ndash":"\u2013","nearhk":"\u2924","nearr":"\u2197","neArr":"\u21D7","nearrow":"\u2197","ne":"\u2260","nedot":"\u2250\u0338","NegativeMediumSpace":"\u200B","NegativeThickSpace":"\u200B","NegativeThinSpace":"\u200B","NegativeVeryThinSpace":"\u200B","nequiv":"\u2262","nesear":"\u2928","nesim":"\u2242\u0338","NestedGreaterGreater":"\u226B","NestedLessLess":"\u226A","NewLine":"\n","nexist":"\u2204","nexists":"\u2204","Nfr":"\uD835\uDD11","nfr":"\uD835\uDD2B","ngE":"\u2267\u0338","nge":"\u2271","ngeq":"\u2271","ngeqq":"\u2267\u0338","ngeqslant":"\u2A7E\u0338","nges":"\u2A7E\u0338","nGg":"\u22D9\u0338","ngsim":"\u2275","nGt":"\u226B\u20D2","ngt":"\u226F","ngtr":"\u226F","nGtv":"\u226B\u0338","nharr":"\u21AE","nhArr":"\u21CE","nhpar":"\u2AF2","ni":"\u220B","nis":"\u22FC","nisd":"\u22FA","niv":"\u220B","NJcy":"\u040A","njcy":"\u045A","nlarr":"\u219A","nlArr":"\u21CD","nldr":"\u2025","nlE":"\u2266\u0338","nle":"\u2270","nleftarrow":"\u219A","nLeftarrow":"\u21CD","nleftrightarrow":"\u21AE","nLeftrightarrow":"\u21CE","nleq":"\u2270","nleqq":"\u2266\u0338","nleqslant":"\u2A7D\u0338","nles":"\u2A7D\u0338","nless":"\u226E","nLl":"\u22D8\u0338","nlsim":"\u2274","nLt":"\u226A\u20D2","nlt":"\u226E","nltri":"\u22EA","nltrie":"\u22EC","nLtv":"\u226A\u0338","nmid":"\u2224","NoBreak":"\u2060","NonBreakingSpace":"\u00A0","nopf":"\uD835\uDD5F","Nopf":"\u2115","Not":"\u2AEC","not":"\u00AC","NotCongruent":"\u2262","NotCupCap":"\u226D","NotDoubleVerticalBar":"\u2226","NotElement":"\u2209","NotEqual":"\u2260","NotEqualTilde":"\u2242\u0338","NotExists":"\u2204","NotGreater":"\u226F","NotGreaterEqual":"\u2271","NotGreaterFullEqual":"\u2267\u0338","NotGreaterGreater":"\u226B\u0338","NotGreaterLess":"\u2279","NotGreaterSlantEqual":"\u2A7E\u0338","NotGreaterTilde":"\u2275","NotHumpDownHump":"\u224E\u0338","NotHumpEqual":"\u224F\u0338","notin":"\u2209","notindot":"\u22F5\u0338","notinE":"\u22F9\u0338","notinva":"\u2209","notinvb":"\u22F7","notinvc":"\u22F6","NotLeftTriangleBar":"\u29CF\u0338","NotLeftTriangle":"\u22EA","NotLeftTriangleEqual":"\u22EC","NotLess":"\u226E","NotLessEqual":"\u2270","NotLessGreater":"\u2278","NotLessLess":"\u226A\u0338","NotLessSlantEqual":"\u2A7D\u0338","NotLessTilde":"\u2274","NotNestedGreaterGreater":"\u2AA2\u0338","NotNestedLessLess":"\u2AA1\u0338","notni":"\u220C","notniva":"\u220C","notnivb":"\u22FE","notnivc":"\u22FD","NotPrecedes":"\u2280","NotPrecedesEqual":"\u2AAF\u0338","NotPrecedesSlantEqual":"\u22E0","NotReverseElement":"\u220C","NotRightTriangleBar":"\u29D0\u0338","NotRightTriangle":"\u22EB","NotRightTriangleEqual":"\u22ED","NotSquareSubset":"\u228F\u0338","NotSquareSubsetEqual":"\u22E2","NotSquareSuperset":"\u2290\u0338","NotSquareSupersetEqual":"\u22E3","NotSubset":"\u2282\u20D2","NotSubsetEqual":"\u2288","NotSucceeds":"\u2281","NotSucceedsEqual":"\u2AB0\u0338","NotSucceedsSlantEqual":"\u22E1","NotSucceedsTilde":"\u227F\u0338","NotSuperset":"\u2283\u20D2","NotSupersetEqual":"\u2289","NotTilde":"\u2241","NotTildeEqual":"\u2244","NotTildeFullEqual":"\u2247","NotTildeTilde":"\u2249","NotVerticalBar":"\u2224","nparallel":"\u2226","npar":"\u2226","nparsl":"\u2AFD\u20E5","npart":"\u2202\u0338","npolint":"\u2A14","npr":"\u2280","nprcue":"\u22E0","nprec":"\u2280","npreceq":"\u2AAF\u0338","npre":"\u2AAF\u0338","nrarrc":"\u2933\u0338","nrarr":"\u219B","nrArr":"\u21CF","nrarrw":"\u219D\u0338","nrightarrow":"\u219B","nRightarrow":"\u21CF","nrtri":"\u22EB","nrtrie":"\u22ED","nsc":"\u2281","nsccue":"\u22E1","nsce":"\u2AB0\u0338","Nscr":"\uD835\uDCA9","nscr":"\uD835\uDCC3","nshortmid":"\u2224","nshortparallel":"\u2226","nsim":"\u2241","nsime":"\u2244","nsimeq":"\u2244","nsmid":"\u2224","nspar":"\u2226","nsqsube":"\u22E2","nsqsupe":"\u22E3","nsub":"\u2284","nsubE":"\u2AC5\u0338","nsube":"\u2288","nsubset":"\u2282\u20D2","nsubseteq":"\u2288","nsubseteqq":"\u2AC5\u0338","nsucc":"\u2281","nsucceq":"\u2AB0\u0338","nsup":"\u2285","nsupE":"\u2AC6\u0338","nsupe":"\u2289","nsupset":"\u2283\u20D2","nsupseteq":"\u2289","nsupseteqq":"\u2AC6\u0338","ntgl":"\u2279","Ntilde":"\u00D1","ntilde":"\u00F1","ntlg":"\u2278","ntriangleleft":"\u22EA","ntrianglelefteq":"\u22EC","ntriangleright":"\u22EB","ntrianglerighteq":"\u22ED","Nu":"\u039D","nu":"\u03BD","num":"#","numero":"\u2116","numsp":"\u2007","nvap":"\u224D\u20D2","nvdash":"\u22AC","nvDash":"\u22AD","nVdash":"\u22AE","nVDash":"\u22AF","nvge":"\u2265\u20D2","nvgt":">\u20D2","nvHarr":"\u2904","nvinfin":"\u29DE","nvlArr":"\u2902","nvle":"\u2264\u20D2","nvlt":"<\u20D2","nvltrie":"\u22B4\u20D2","nvrArr":"\u2903","nvrtrie":"\u22B5\u20D2","nvsim":"\u223C\u20D2","nwarhk":"\u2923","nwarr":"\u2196","nwArr":"\u21D6","nwarrow":"\u2196","nwnear":"\u2927","Oacute":"\u00D3","oacute":"\u00F3","oast":"\u229B","Ocirc":"\u00D4","ocirc":"\u00F4","ocir":"\u229A","Ocy":"\u041E","ocy":"\u043E","odash":"\u229D","Odblac":"\u0150","odblac":"\u0151","odiv":"\u2A38","odot":"\u2299","odsold":"\u29BC","OElig":"\u0152","oelig":"\u0153","ofcir":"\u29BF","Ofr":"\uD835\uDD12","ofr":"\uD835\uDD2C","ogon":"\u02DB","Ograve":"\u00D2","ograve":"\u00F2","ogt":"\u29C1","ohbar":"\u29B5","ohm":"\u03A9","oint":"\u222E","olarr":"\u21BA","olcir":"\u29BE","olcross":"\u29BB","oline":"\u203E","olt":"\u29C0","Omacr":"\u014C","omacr":"\u014D","Omega":"\u03A9","omega":"\u03C9","Omicron":"\u039F","omicron":"\u03BF","omid":"\u29B6","ominus":"\u2296","Oopf":"\uD835\uDD46","oopf":"\uD835\uDD60","opar":"\u29B7","OpenCurlyDoubleQuote":"\u201C","OpenCurlyQuote":"\u2018","operp":"\u29B9","oplus":"\u2295","orarr":"\u21BB","Or":"\u2A54","or":"\u2228","ord":"\u2A5D","order":"\u2134","orderof":"\u2134","ordf":"\u00AA","ordm":"\u00BA","origof":"\u22B6","oror":"\u2A56","orslope":"\u2A57","orv":"\u2A5B","oS":"\u24C8","Oscr":"\uD835\uDCAA","oscr":"\u2134","Oslash":"\u00D8","oslash":"\u00F8","osol":"\u2298","Otilde":"\u00D5","otilde":"\u00F5","otimesas":"\u2A36","Otimes":"\u2A37","otimes":"\u2297","Ouml":"\u00D6","ouml":"\u00F6","ovbar":"\u233D","OverBar":"\u203E","OverBrace":"\u23DE","OverBracket":"\u23B4","OverParenthesis":"\u23DC","para":"\u00B6","parallel":"\u2225","par":"\u2225","parsim":"\u2AF3","parsl":"\u2AFD","part":"\u2202","PartialD":"\u2202","Pcy":"\u041F","pcy":"\u043F","percnt":"%","period":".","permil":"\u2030","perp":"\u22A5","pertenk":"\u2031","Pfr":"\uD835\uDD13","pfr":"\uD835\uDD2D","Phi":"\u03A6","phi":"\u03C6","phiv":"\u03D5","phmmat":"\u2133","phone":"\u260E","Pi":"\u03A0","pi":"\u03C0","pitchfork":"\u22D4","piv":"\u03D6","planck":"\u210F","planckh":"\u210E","plankv":"\u210F","plusacir":"\u2A23","plusb":"\u229E","pluscir":"\u2A22","plus":"+","plusdo":"\u2214","plusdu":"\u2A25","pluse":"\u2A72","PlusMinus":"\u00B1","plusmn":"\u00B1","plussim":"\u2A26","plustwo":"\u2A27","pm":"\u00B1","Poincareplane":"\u210C","pointint":"\u2A15","popf":"\uD835\uDD61","Popf":"\u2119","pound":"\u00A3","prap":"\u2AB7","Pr":"\u2ABB","pr":"\u227A","prcue":"\u227C","precapprox":"\u2AB7","prec":"\u227A","preccurlyeq":"\u227C","Precedes":"\u227A","PrecedesEqual":"\u2AAF","PrecedesSlantEqual":"\u227C","PrecedesTilde":"\u227E","preceq":"\u2AAF","precnapprox":"\u2AB9","precneqq":"\u2AB5","precnsim":"\u22E8","pre":"\u2AAF","prE":"\u2AB3","precsim":"\u227E","prime":"\u2032","Prime":"\u2033","primes":"\u2119","prnap":"\u2AB9","prnE":"\u2AB5","prnsim":"\u22E8","prod":"\u220F","Product":"\u220F","profalar":"\u232E","profline":"\u2312","profsurf":"\u2313","prop":"\u221D","Proportional":"\u221D","Proportion":"\u2237","propto":"\u221D","prsim":"\u227E","prurel":"\u22B0","Pscr":"\uD835\uDCAB","pscr":"\uD835\uDCC5","Psi":"\u03A8","psi":"\u03C8","puncsp":"\u2008","Qfr":"\uD835\uDD14","qfr":"\uD835\uDD2E","qint":"\u2A0C","qopf":"\uD835\uDD62","Qopf":"\u211A","qprime":"\u2057","Qscr":"\uD835\uDCAC","qscr":"\uD835\uDCC6","quaternions":"\u210D","quatint":"\u2A16","quest":"?","questeq":"\u225F","quot":"\"","QUOT":"\"","rAarr":"\u21DB","race":"\u223D\u0331","Racute":"\u0154","racute":"\u0155","radic":"\u221A","raemptyv":"\u29B3","rang":"\u27E9","Rang":"\u27EB","rangd":"\u2992","range":"\u29A5","rangle":"\u27E9","raquo":"\u00BB","rarrap":"\u2975","rarrb":"\u21E5","rarrbfs":"\u2920","rarrc":"\u2933","rarr":"\u2192","Rarr":"\u21A0","rArr":"\u21D2","rarrfs":"\u291E","rarrhk":"\u21AA","rarrlp":"\u21AC","rarrpl":"\u2945","rarrsim":"\u2974","Rarrtl":"\u2916","rarrtl":"\u21A3","rarrw":"\u219D","ratail":"\u291A","rAtail":"\u291C","ratio":"\u2236","rationals":"\u211A","rbarr":"\u290D","rBarr":"\u290F","RBarr":"\u2910","rbbrk":"\u2773","rbrace":"}","rbrack":"]","rbrke":"\u298C","rbrksld":"\u298E","rbrkslu":"\u2990","Rcaron":"\u0158","rcaron":"\u0159","Rcedil":"\u0156","rcedil":"\u0157","rceil":"\u2309","rcub":"}","Rcy":"\u0420","rcy":"\u0440","rdca":"\u2937","rdldhar":"\u2969","rdquo":"\u201D","rdquor":"\u201D","rdsh":"\u21B3","real":"\u211C","realine":"\u211B","realpart":"\u211C","reals":"\u211D","Re":"\u211C","rect":"\u25AD","reg":"\u00AE","REG":"\u00AE","ReverseElement":"\u220B","ReverseEquilibrium":"\u21CB","ReverseUpEquilibrium":"\u296F","rfisht":"\u297D","rfloor":"\u230B","rfr":"\uD835\uDD2F","Rfr":"\u211C","rHar":"\u2964","rhard":"\u21C1","rharu":"\u21C0","rharul":"\u296C","Rho":"\u03A1","rho":"\u03C1","rhov":"\u03F1","RightAngleBracket":"\u27E9","RightArrowBar":"\u21E5","rightarrow":"\u2192","RightArrow":"\u2192","Rightarrow":"\u21D2","RightArrowLeftArrow":"\u21C4","rightarrowtail":"\u21A3","RightCeiling":"\u2309","RightDoubleBracket":"\u27E7","RightDownTeeVector":"\u295D","RightDownVectorBar":"\u2955","RightDownVector":"\u21C2","RightFloor":"\u230B","rightharpoondown":"\u21C1","rightharpoonup":"\u21C0","rightleftarrows":"\u21C4","rightleftharpoons":"\u21CC","rightrightarrows":"\u21C9","rightsquigarrow":"\u219D","RightTeeArrow":"\u21A6","RightTee":"\u22A2","RightTeeVector":"\u295B","rightthreetimes":"\u22CC","RightTriangleBar":"\u29D0","RightTriangle":"\u22B3","RightTriangleEqual":"\u22B5","RightUpDownVector":"\u294F","RightUpTeeVector":"\u295C","RightUpVectorBar":"\u2954","RightUpVector":"\u21BE","RightVectorBar":"\u2953","RightVector":"\u21C0","ring":"\u02DA","risingdotseq":"\u2253","rlarr":"\u21C4","rlhar":"\u21CC","rlm":"\u200F","rmoustache":"\u23B1","rmoust":"\u23B1","rnmid":"\u2AEE","roang":"\u27ED","roarr":"\u21FE","robrk":"\u27E7","ropar":"\u2986","ropf":"\uD835\uDD63","Ropf":"\u211D","roplus":"\u2A2E","rotimes":"\u2A35","RoundImplies":"\u2970","rpar":")","rpargt":"\u2994","rppolint":"\u2A12","rrarr":"\u21C9","Rrightarrow":"\u21DB","rsaquo":"\u203A","rscr":"\uD835\uDCC7","Rscr":"\u211B","rsh":"\u21B1","Rsh":"\u21B1","rsqb":"]","rsquo":"\u2019","rsquor":"\u2019","rthree":"\u22CC","rtimes":"\u22CA","rtri":"\u25B9","rtrie":"\u22B5","rtrif":"\u25B8","rtriltri":"\u29CE","RuleDelayed":"\u29F4","ruluhar":"\u2968","rx":"\u211E","Sacute":"\u015A","sacute":"\u015B","sbquo":"\u201A","scap":"\u2AB8","Scaron":"\u0160","scaron":"\u0161","Sc":"\u2ABC","sc":"\u227B","sccue":"\u227D","sce":"\u2AB0","scE":"\u2AB4","Scedil":"\u015E","scedil":"\u015F","Scirc":"\u015C","scirc":"\u015D","scnap":"\u2ABA","scnE":"\u2AB6","scnsim":"\u22E9","scpolint":"\u2A13","scsim":"\u227F","Scy":"\u0421","scy":"\u0441","sdotb":"\u22A1","sdot":"\u22C5","sdote":"\u2A66","searhk":"\u2925","searr":"\u2198","seArr":"\u21D8","searrow":"\u2198","sect":"\u00A7","semi":";","seswar":"\u2929","setminus":"\u2216","setmn":"\u2216","sext":"\u2736","Sfr":"\uD835\uDD16","sfr":"\uD835\uDD30","sfrown":"\u2322","sharp":"\u266F","SHCHcy":"\u0429","shchcy":"\u0449","SHcy":"\u0428","shcy":"\u0448","ShortDownArrow":"\u2193","ShortLeftArrow":"\u2190","shortmid":"\u2223","shortparallel":"\u2225","ShortRightArrow":"\u2192","ShortUpArrow":"\u2191","shy":"\u00AD","Sigma":"\u03A3","sigma":"\u03C3","sigmaf":"\u03C2","sigmav":"\u03C2","sim":"\u223C","simdot":"\u2A6A","sime":"\u2243","simeq":"\u2243","simg":"\u2A9E","simgE":"\u2AA0","siml":"\u2A9D","simlE":"\u2A9F","simne":"\u2246","simplus":"\u2A24","simrarr":"\u2972","slarr":"\u2190","SmallCircle":"\u2218","smallsetminus":"\u2216","smashp":"\u2A33","smeparsl":"\u29E4","smid":"\u2223","smile":"\u2323","smt":"\u2AAA","smte":"\u2AAC","smtes":"\u2AAC\uFE00","SOFTcy":"\u042C","softcy":"\u044C","solbar":"\u233F","solb":"\u29C4","sol":"/","Sopf":"\uD835\uDD4A","sopf":"\uD835\uDD64","spades":"\u2660","spadesuit":"\u2660","spar":"\u2225","sqcap":"\u2293","sqcaps":"\u2293\uFE00","sqcup":"\u2294","sqcups":"\u2294\uFE00","Sqrt":"\u221A","sqsub":"\u228F","sqsube":"\u2291","sqsubset":"\u228F","sqsubseteq":"\u2291","sqsup":"\u2290","sqsupe":"\u2292","sqsupset":"\u2290","sqsupseteq":"\u2292","square":"\u25A1","Square":"\u25A1","SquareIntersection":"\u2293","SquareSubset":"\u228F","SquareSubsetEqual":"\u2291","SquareSuperset":"\u2290","SquareSupersetEqual":"\u2292","SquareUnion":"\u2294","squarf":"\u25AA","squ":"\u25A1","squf":"\u25AA","srarr":"\u2192","Sscr":"\uD835\uDCAE","sscr":"\uD835\uDCC8","ssetmn":"\u2216","ssmile":"\u2323","sstarf":"\u22C6","Star":"\u22C6","star":"\u2606","starf":"\u2605","straightepsilon":"\u03F5","straightphi":"\u03D5","strns":"\u00AF","sub":"\u2282","Sub":"\u22D0","subdot":"\u2ABD","subE":"\u2AC5","sube":"\u2286","subedot":"\u2AC3","submult":"\u2AC1","subnE":"\u2ACB","subne":"\u228A","subplus":"\u2ABF","subrarr":"\u2979","subset":"\u2282","Subset":"\u22D0","subseteq":"\u2286","subseteqq":"\u2AC5","SubsetEqual":"\u2286","subsetneq":"\u228A","subsetneqq":"\u2ACB","subsim":"\u2AC7","subsub":"\u2AD5","subsup":"\u2AD3","succapprox":"\u2AB8","succ":"\u227B","succcurlyeq":"\u227D","Succeeds":"\u227B","SucceedsEqual":"\u2AB0","SucceedsSlantEqual":"\u227D","SucceedsTilde":"\u227F","succeq":"\u2AB0","succnapprox":"\u2ABA","succneqq":"\u2AB6","succnsim":"\u22E9","succsim":"\u227F","SuchThat":"\u220B","sum":"\u2211","Sum":"\u2211","sung":"\u266A","sup1":"\u00B9","sup2":"\u00B2","sup3":"\u00B3","sup":"\u2283","Sup":"\u22D1","supdot":"\u2ABE","supdsub":"\u2AD8","supE":"\u2AC6","supe":"\u2287","supedot":"\u2AC4","Superset":"\u2283","SupersetEqual":"\u2287","suphsol":"\u27C9","suphsub":"\u2AD7","suplarr":"\u297B","supmult":"\u2AC2","supnE":"\u2ACC","supne":"\u228B","supplus":"\u2AC0","supset":"\u2283","Supset":"\u22D1","supseteq":"\u2287","supseteqq":"\u2AC6","supsetneq":"\u228B","supsetneqq":"\u2ACC","supsim":"\u2AC8","supsub":"\u2AD4","supsup":"\u2AD6","swarhk":"\u2926","swarr":"\u2199","swArr":"\u21D9","swarrow":"\u2199","swnwar":"\u292A","szlig":"\u00DF","Tab":"\t","target":"\u2316","Tau":"\u03A4","tau":"\u03C4","tbrk":"\u23B4","Tcaron":"\u0164","tcaron":"\u0165","Tcedil":"\u0162","tcedil":"\u0163","Tcy":"\u0422","tcy":"\u0442","tdot":"\u20DB","telrec":"\u2315","Tfr":"\uD835\uDD17","tfr":"\uD835\uDD31","there4":"\u2234","therefore":"\u2234","Therefore":"\u2234","Theta":"\u0398","theta":"\u03B8","thetasym":"\u03D1","thetav":"\u03D1","thickapprox":"\u2248","thicksim":"\u223C","ThickSpace":"\u205F\u200A","ThinSpace":"\u2009","thinsp":"\u2009","thkap":"\u2248","thksim":"\u223C","THORN":"\u00DE","thorn":"\u00FE","tilde":"\u02DC","Tilde":"\u223C","TildeEqual":"\u2243","TildeFullEqual":"\u2245","TildeTilde":"\u2248","timesbar":"\u2A31","timesb":"\u22A0","times":"\u00D7","timesd":"\u2A30","tint":"\u222D","toea":"\u2928","topbot":"\u2336","topcir":"\u2AF1","top":"\u22A4","Topf":"\uD835\uDD4B","topf":"\uD835\uDD65","topfork":"\u2ADA","tosa":"\u2929","tprime":"\u2034","trade":"\u2122","TRADE":"\u2122","triangle":"\u25B5","triangledown":"\u25BF","triangleleft":"\u25C3","trianglelefteq":"\u22B4","triangleq":"\u225C","triangleright":"\u25B9","trianglerighteq":"\u22B5","tridot":"\u25EC","trie":"\u225C","triminus":"\u2A3A","TripleDot":"\u20DB","triplus":"\u2A39","trisb":"\u29CD","tritime":"\u2A3B","trpezium":"\u23E2","Tscr":"\uD835\uDCAF","tscr":"\uD835\uDCC9","TScy":"\u0426","tscy":"\u0446","TSHcy":"\u040B","tshcy":"\u045B","Tstrok":"\u0166","tstrok":"\u0167","twixt":"\u226C","twoheadleftarrow":"\u219E","twoheadrightarrow":"\u21A0","Uacute":"\u00DA","uacute":"\u00FA","uarr":"\u2191","Uarr":"\u219F","uArr":"\u21D1","Uarrocir":"\u2949","Ubrcy":"\u040E","ubrcy":"\u045E","Ubreve":"\u016C","ubreve":"\u016D","Ucirc":"\u00DB","ucirc":"\u00FB","Ucy":"\u0423","ucy":"\u0443","udarr":"\u21C5","Udblac":"\u0170","udblac":"\u0171","udhar":"\u296E","ufisht":"\u297E","Ufr":"\uD835\uDD18","ufr":"\uD835\uDD32","Ugrave":"\u00D9","ugrave":"\u00F9","uHar":"\u2963","uharl":"\u21BF","uharr":"\u21BE","uhblk":"\u2580","ulcorn":"\u231C","ulcorner":"\u231C","ulcrop":"\u230F","ultri":"\u25F8","Umacr":"\u016A","umacr":"\u016B","uml":"\u00A8","UnderBar":"_","UnderBrace":"\u23DF","UnderBracket":"\u23B5","UnderParenthesis":"\u23DD","Union":"\u22C3","UnionPlus":"\u228E","Uogon":"\u0172","uogon":"\u0173","Uopf":"\uD835\uDD4C","uopf":"\uD835\uDD66","UpArrowBar":"\u2912","uparrow":"\u2191","UpArrow":"\u2191","Uparrow":"\u21D1","UpArrowDownArrow":"\u21C5","updownarrow":"\u2195","UpDownArrow":"\u2195","Updownarrow":"\u21D5","UpEquilibrium":"\u296E","upharpoonleft":"\u21BF","upharpoonright":"\u21BE","uplus":"\u228E","UpperLeftArrow":"\u2196","UpperRightArrow":"\u2197","upsi":"\u03C5","Upsi":"\u03D2","upsih":"\u03D2","Upsilon":"\u03A5","upsilon":"\u03C5","UpTeeArrow":"\u21A5","UpTee":"\u22A5","upuparrows":"\u21C8","urcorn":"\u231D","urcorner":"\u231D","urcrop":"\u230E","Uring":"\u016E","uring":"\u016F","urtri":"\u25F9","Uscr":"\uD835\uDCB0","uscr":"\uD835\uDCCA","utdot":"\u22F0","Utilde":"\u0168","utilde":"\u0169","utri":"\u25B5","utrif":"\u25B4","uuarr":"\u21C8","Uuml":"\u00DC","uuml":"\u00FC","uwangle":"\u29A7","vangrt":"\u299C","varepsilon":"\u03F5","varkappa":"\u03F0","varnothing":"\u2205","varphi":"\u03D5","varpi":"\u03D6","varpropto":"\u221D","varr":"\u2195","vArr":"\u21D5","varrho":"\u03F1","varsigma":"\u03C2","varsubsetneq":"\u228A\uFE00","varsubsetneqq":"\u2ACB\uFE00","varsupsetneq":"\u228B\uFE00","varsupsetneqq":"\u2ACC\uFE00","vartheta":"\u03D1","vartriangleleft":"\u22B2","vartriangleright":"\u22B3","vBar":"\u2AE8","Vbar":"\u2AEB","vBarv":"\u2AE9","Vcy":"\u0412","vcy":"\u0432","vdash":"\u22A2","vDash":"\u22A8","Vdash":"\u22A9","VDash":"\u22AB","Vdashl":"\u2AE6","veebar":"\u22BB","vee":"\u2228","Vee":"\u22C1","veeeq":"\u225A","vellip":"\u22EE","verbar":"|","Verbar":"\u2016","vert":"|","Vert":"\u2016","VerticalBar":"\u2223","VerticalLine":"|","VerticalSeparator":"\u2758","VerticalTilde":"\u2240","VeryThinSpace":"\u200A","Vfr":"\uD835\uDD19","vfr":"\uD835\uDD33","vltri":"\u22B2","vnsub":"\u2282\u20D2","vnsup":"\u2283\u20D2","Vopf":"\uD835\uDD4D","vopf":"\uD835\uDD67","vprop":"\u221D","vrtri":"\u22B3","Vscr":"\uD835\uDCB1","vscr":"\uD835\uDCCB","vsubnE":"\u2ACB\uFE00","vsubne":"\u228A\uFE00","vsupnE":"\u2ACC\uFE00","vsupne":"\u228B\uFE00","Vvdash":"\u22AA","vzigzag":"\u299A","Wcirc":"\u0174","wcirc":"\u0175","wedbar":"\u2A5F","wedge":"\u2227","Wedge":"\u22C0","wedgeq":"\u2259","weierp":"\u2118","Wfr":"\uD835\uDD1A","wfr":"\uD835\uDD34","Wopf":"\uD835\uDD4E","wopf":"\uD835\uDD68","wp":"\u2118","wr":"\u2240","wreath":"\u2240","Wscr":"\uD835\uDCB2","wscr":"\uD835\uDCCC","xcap":"\u22C2","xcirc":"\u25EF","xcup":"\u22C3","xdtri":"\u25BD","Xfr":"\uD835\uDD1B","xfr":"\uD835\uDD35","xharr":"\u27F7","xhArr":"\u27FA","Xi":"\u039E","xi":"\u03BE","xlarr":"\u27F5","xlArr":"\u27F8","xmap":"\u27FC","xnis":"\u22FB","xodot":"\u2A00","Xopf":"\uD835\uDD4F","xopf":"\uD835\uDD69","xoplus":"\u2A01","xotime":"\u2A02","xrarr":"\u27F6","xrArr":"\u27F9","Xscr":"\uD835\uDCB3","xscr":"\uD835\uDCCD","xsqcup":"\u2A06","xuplus":"\u2A04","xutri":"\u25B3","xvee":"\u22C1","xwedge":"\u22C0","Yacute":"\u00DD","yacute":"\u00FD","YAcy":"\u042F","yacy":"\u044F","Ycirc":"\u0176","ycirc":"\u0177","Ycy":"\u042B","ycy":"\u044B","yen":"\u00A5","Yfr":"\uD835\uDD1C","yfr":"\uD835\uDD36","YIcy":"\u0407","yicy":"\u0457","Yopf":"\uD835\uDD50","yopf":"\uD835\uDD6A","Yscr":"\uD835\uDCB4","yscr":"\uD835\uDCCE","YUcy":"\u042E","yucy":"\u044E","yuml":"\u00FF","Yuml":"\u0178","Zacute":"\u0179","zacute":"\u017A","Zcaron":"\u017D","zcaron":"\u017E","Zcy":"\u0417","zcy":"\u0437","Zdot":"\u017B","zdot":"\u017C","zeetrf":"\u2128","ZeroWidthSpace":"\u200B","Zeta":"\u0396","zeta":"\u03B6","zfr":"\uD835\uDD37","Zfr":"\u2128","ZHcy":"\u0416","zhcy":"\u0436","zigrarr":"\u21DD","zopf":"\uD835\uDD6B","Zopf":"\u2124","Zscr":"\uD835\uDCB5","zscr":"\uD835\uDCCF","zwj":"\u200D","zwnj":"\u200C"}
 },{}],67:[function(require,module,exports){
+module.exports={"Aacute":"\u00C1","aacute":"\u00E1","Abreve":"\u0102","abreve":"\u0103","ac":"\u223E","acd":"\u223F","acE":"\u223E\u0333","Acirc":"\u00C2","acirc":"\u00E2","acute":"\u00B4","Acy":"\u0410","acy":"\u0430","AElig":"\u00C6","aelig":"\u00E6","af":"\u2061","Afr":"\uD835\uDD04","afr":"\uD835\uDD1E","Agrave":"\u00C0","agrave":"\u00E0","alefsym":"\u2135","aleph":"\u2135","Alpha":"\u0391","alpha":"\u03B1","Amacr":"\u0100","amacr":"\u0101","amalg":"\u2A3F","amp":"&","AMP":"&","andand":"\u2A55","And":"\u2A53","and":"\u2227","andd":"\u2A5C","andslope":"\u2A58","andv":"\u2A5A","ang":"\u2220","ange":"\u29A4","angle":"\u2220","angmsdaa":"\u29A8","angmsdab":"\u29A9","angmsdac":"\u29AA","angmsdad":"\u29AB","angmsdae":"\u29AC","angmsdaf":"\u29AD","angmsdag":"\u29AE","angmsdah":"\u29AF","angmsd":"\u2221","angrt":"\u221F","angrtvb":"\u22BE","angrtvbd":"\u299D","angsph":"\u2222","angst":"\u00C5","angzarr":"\u237C","Aogon":"\u0104","aogon":"\u0105","Aopf":"\uD835\uDD38","aopf":"\uD835\uDD52","apacir":"\u2A6F","ap":"\u2248","apE":"\u2A70","ape":"\u224A","apid":"\u224B","apos":"'","ApplyFunction":"\u2061","approx":"\u2248","approxeq":"\u224A","Aring":"\u00C5","aring":"\u00E5","Ascr":"\uD835\uDC9C","ascr":"\uD835\uDCB6","Assign":"\u2254","ast":"*","asymp":"\u2248","asympeq":"\u224D","Atilde":"\u00C3","atilde":"\u00E3","Auml":"\u00C4","auml":"\u00E4","awconint":"\u2233","awint":"\u2A11","backcong":"\u224C","backepsilon":"\u03F6","backprime":"\u2035","backsim":"\u223D","backsimeq":"\u22CD","Backslash":"\u2216","Barv":"\u2AE7","barvee":"\u22BD","barwed":"\u2305","Barwed":"\u2306","barwedge":"\u2305","bbrk":"\u23B5","bbrktbrk":"\u23B6","bcong":"\u224C","Bcy":"\u0411","bcy":"\u0431","bdquo":"\u201E","becaus":"\u2235","because":"\u2235","Because":"\u2235","bemptyv":"\u29B0","bepsi":"\u03F6","bernou":"\u212C","Bernoullis":"\u212C","Beta":"\u0392","beta":"\u03B2","beth":"\u2136","between":"\u226C","Bfr":"\uD835\uDD05","bfr":"\uD835\uDD1F","bigcap":"\u22C2","bigcirc":"\u25EF","bigcup":"\u22C3","bigodot":"\u2A00","bigoplus":"\u2A01","bigotimes":"\u2A02","bigsqcup":"\u2A06","bigstar":"\u2605","bigtriangledown":"\u25BD","bigtriangleup":"\u25B3","biguplus":"\u2A04","bigvee":"\u22C1","bigwedge":"\u22C0","bkarow":"\u290D","blacklozenge":"\u29EB","blacksquare":"\u25AA","blacktriangle":"\u25B4","blacktriangledown":"\u25BE","blacktriangleleft":"\u25C2","blacktriangleright":"\u25B8","blank":"\u2423","blk12":"\u2592","blk14":"\u2591","blk34":"\u2593","block":"\u2588","bne":"=\u20E5","bnequiv":"\u2261\u20E5","bNot":"\u2AED","bnot":"\u2310","Bopf":"\uD835\uDD39","bopf":"\uD835\uDD53","bot":"\u22A5","bottom":"\u22A5","bowtie":"\u22C8","boxbox":"\u29C9","boxdl":"\u2510","boxdL":"\u2555","boxDl":"\u2556","boxDL":"\u2557","boxdr":"\u250C","boxdR":"\u2552","boxDr":"\u2553","boxDR":"\u2554","boxh":"\u2500","boxH":"\u2550","boxhd":"\u252C","boxHd":"\u2564","boxhD":"\u2565","boxHD":"\u2566","boxhu":"\u2534","boxHu":"\u2567","boxhU":"\u2568","boxHU":"\u2569","boxminus":"\u229F","boxplus":"\u229E","boxtimes":"\u22A0","boxul":"\u2518","boxuL":"\u255B","boxUl":"\u255C","boxUL":"\u255D","boxur":"\u2514","boxuR":"\u2558","boxUr":"\u2559","boxUR":"\u255A","boxv":"\u2502","boxV":"\u2551","boxvh":"\u253C","boxvH":"\u256A","boxVh":"\u256B","boxVH":"\u256C","boxvl":"\u2524","boxvL":"\u2561","boxVl":"\u2562","boxVL":"\u2563","boxvr":"\u251C","boxvR":"\u255E","boxVr":"\u255F","boxVR":"\u2560","bprime":"\u2035","breve":"\u02D8","Breve":"\u02D8","brvbar":"\u00A6","bscr":"\uD835\uDCB7","Bscr":"\u212C","bsemi":"\u204F","bsim":"\u223D","bsime":"\u22CD","bsolb":"\u29C5","bsol":"\\","bsolhsub":"\u27C8","bull":"\u2022","bullet":"\u2022","bump":"\u224E","bumpE":"\u2AAE","bumpe":"\u224F","Bumpeq":"\u224E","bumpeq":"\u224F","Cacute":"\u0106","cacute":"\u0107","capand":"\u2A44","capbrcup":"\u2A49","capcap":"\u2A4B","cap":"\u2229","Cap":"\u22D2","capcup":"\u2A47","capdot":"\u2A40","CapitalDifferentialD":"\u2145","caps":"\u2229\uFE00","caret":"\u2041","caron":"\u02C7","Cayleys":"\u212D","ccaps":"\u2A4D","Ccaron":"\u010C","ccaron":"\u010D","Ccedil":"\u00C7","ccedil":"\u00E7","Ccirc":"\u0108","ccirc":"\u0109","Cconint":"\u2230","ccups":"\u2A4C","ccupssm":"\u2A50","Cdot":"\u010A","cdot":"\u010B","cedil":"\u00B8","Cedilla":"\u00B8","cemptyv":"\u29B2","cent":"\u00A2","centerdot":"\u00B7","CenterDot":"\u00B7","cfr":"\uD835\uDD20","Cfr":"\u212D","CHcy":"\u0427","chcy":"\u0447","check":"\u2713","checkmark":"\u2713","Chi":"\u03A7","chi":"\u03C7","circ":"\u02C6","circeq":"\u2257","circlearrowleft":"\u21BA","circlearrowright":"\u21BB","circledast":"\u229B","circledcirc":"\u229A","circleddash":"\u229D","CircleDot":"\u2299","circledR":"\u00AE","circledS":"\u24C8","CircleMinus":"\u2296","CirclePlus":"\u2295","CircleTimes":"\u2297","cir":"\u25CB","cirE":"\u29C3","cire":"\u2257","cirfnint":"\u2A10","cirmid":"\u2AEF","cirscir":"\u29C2","ClockwiseContourIntegral":"\u2232","CloseCurlyDoubleQuote":"\u201D","CloseCurlyQuote":"\u2019","clubs":"\u2663","clubsuit":"\u2663","colon":":","Colon":"\u2237","Colone":"\u2A74","colone":"\u2254","coloneq":"\u2254","comma":",","commat":"@","comp":"\u2201","compfn":"\u2218","complement":"\u2201","complexes":"\u2102","cong":"\u2245","congdot":"\u2A6D","Congruent":"\u2261","conint":"\u222E","Conint":"\u222F","ContourIntegral":"\u222E","copf":"\uD835\uDD54","Copf":"\u2102","coprod":"\u2210","Coproduct":"\u2210","copy":"\u00A9","COPY":"\u00A9","copysr":"\u2117","CounterClockwiseContourIntegral":"\u2233","crarr":"\u21B5","cross":"\u2717","Cross":"\u2A2F","Cscr":"\uD835\uDC9E","cscr":"\uD835\uDCB8","csub":"\u2ACF","csube":"\u2AD1","csup":"\u2AD0","csupe":"\u2AD2","ctdot":"\u22EF","cudarrl":"\u2938","cudarrr":"\u2935","cuepr":"\u22DE","cuesc":"\u22DF","cularr":"\u21B6","cularrp":"\u293D","cupbrcap":"\u2A48","cupcap":"\u2A46","CupCap":"\u224D","cup":"\u222A","Cup":"\u22D3","cupcup":"\u2A4A","cupdot":"\u228D","cupor":"\u2A45","cups":"\u222A\uFE00","curarr":"\u21B7","curarrm":"\u293C","curlyeqprec":"\u22DE","curlyeqsucc":"\u22DF","curlyvee":"\u22CE","curlywedge":"\u22CF","curren":"\u00A4","curvearrowleft":"\u21B6","curvearrowright":"\u21B7","cuvee":"\u22CE","cuwed":"\u22CF","cwconint":"\u2232","cwint":"\u2231","cylcty":"\u232D","dagger":"\u2020","Dagger":"\u2021","daleth":"\u2138","darr":"\u2193","Darr":"\u21A1","dArr":"\u21D3","dash":"\u2010","Dashv":"\u2AE4","dashv":"\u22A3","dbkarow":"\u290F","dblac":"\u02DD","Dcaron":"\u010E","dcaron":"\u010F","Dcy":"\u0414","dcy":"\u0434","ddagger":"\u2021","ddarr":"\u21CA","DD":"\u2145","dd":"\u2146","DDotrahd":"\u2911","ddotseq":"\u2A77","deg":"\u00B0","Del":"\u2207","Delta":"\u0394","delta":"\u03B4","demptyv":"\u29B1","dfisht":"\u297F","Dfr":"\uD835\uDD07","dfr":"\uD835\uDD21","dHar":"\u2965","dharl":"\u21C3","dharr":"\u21C2","DiacriticalAcute":"\u00B4","DiacriticalDot":"\u02D9","DiacriticalDoubleAcute":"\u02DD","DiacriticalGrave":"`","DiacriticalTilde":"\u02DC","diam":"\u22C4","diamond":"\u22C4","Diamond":"\u22C4","diamondsuit":"\u2666","diams":"\u2666","die":"\u00A8","DifferentialD":"\u2146","digamma":"\u03DD","disin":"\u22F2","div":"\u00F7","divide":"\u00F7","divideontimes":"\u22C7","divonx":"\u22C7","DJcy":"\u0402","djcy":"\u0452","dlcorn":"\u231E","dlcrop":"\u230D","dollar":"$","Dopf":"\uD835\uDD3B","dopf":"\uD835\uDD55","Dot":"\u00A8","dot":"\u02D9","DotDot":"\u20DC","doteq":"\u2250","doteqdot":"\u2251","DotEqual":"\u2250","dotminus":"\u2238","dotplus":"\u2214","dotsquare":"\u22A1","doublebarwedge":"\u2306","DoubleContourIntegral":"\u222F","DoubleDot":"\u00A8","DoubleDownArrow":"\u21D3","DoubleLeftArrow":"\u21D0","DoubleLeftRightArrow":"\u21D4","DoubleLeftTee":"\u2AE4","DoubleLongLeftArrow":"\u27F8","DoubleLongLeftRightArrow":"\u27FA","DoubleLongRightArrow":"\u27F9","DoubleRightArrow":"\u21D2","DoubleRightTee":"\u22A8","DoubleUpArrow":"\u21D1","DoubleUpDownArrow":"\u21D5","DoubleVerticalBar":"\u2225","DownArrowBar":"\u2913","downarrow":"\u2193","DownArrow":"\u2193","Downarrow":"\u21D3","DownArrowUpArrow":"\u21F5","DownBreve":"\u0311","downdownarrows":"\u21CA","downharpoonleft":"\u21C3","downharpoonright":"\u21C2","DownLeftRightVector":"\u2950","DownLeftTeeVector":"\u295E","DownLeftVectorBar":"\u2956","DownLeftVector":"\u21BD","DownRightTeeVector":"\u295F","DownRightVectorBar":"\u2957","DownRightVector":"\u21C1","DownTeeArrow":"\u21A7","DownTee":"\u22A4","drbkarow":"\u2910","drcorn":"\u231F","drcrop":"\u230C","Dscr":"\uD835\uDC9F","dscr":"\uD835\uDCB9","DScy":"\u0405","dscy":"\u0455","dsol":"\u29F6","Dstrok":"\u0110","dstrok":"\u0111","dtdot":"\u22F1","dtri":"\u25BF","dtrif":"\u25BE","duarr":"\u21F5","duhar":"\u296F","dwangle":"\u29A6","DZcy":"\u040F","dzcy":"\u045F","dzigrarr":"\u27FF","Eacute":"\u00C9","eacute":"\u00E9","easter":"\u2A6E","Ecaron":"\u011A","ecaron":"\u011B","Ecirc":"\u00CA","ecirc":"\u00EA","ecir":"\u2256","ecolon":"\u2255","Ecy":"\u042D","ecy":"\u044D","eDDot":"\u2A77","Edot":"\u0116","edot":"\u0117","eDot":"\u2251","ee":"\u2147","efDot":"\u2252","Efr":"\uD835\uDD08","efr":"\uD835\uDD22","eg":"\u2A9A","Egrave":"\u00C8","egrave":"\u00E8","egs":"\u2A96","egsdot":"\u2A98","el":"\u2A99","Element":"\u2208","elinters":"\u23E7","ell":"\u2113","els":"\u2A95","elsdot":"\u2A97","Emacr":"\u0112","emacr":"\u0113","empty":"\u2205","emptyset":"\u2205","EmptySmallSquare":"\u25FB","emptyv":"\u2205","EmptyVerySmallSquare":"\u25AB","emsp13":"\u2004","emsp14":"\u2005","emsp":"\u2003","ENG":"\u014A","eng":"\u014B","ensp":"\u2002","Eogon":"\u0118","eogon":"\u0119","Eopf":"\uD835\uDD3C","eopf":"\uD835\uDD56","epar":"\u22D5","eparsl":"\u29E3","eplus":"\u2A71","epsi":"\u03B5","Epsilon":"\u0395","epsilon":"\u03B5","epsiv":"\u03F5","eqcirc":"\u2256","eqcolon":"\u2255","eqsim":"\u2242","eqslantgtr":"\u2A96","eqslantless":"\u2A95","Equal":"\u2A75","equals":"=","EqualTilde":"\u2242","equest":"\u225F","Equilibrium":"\u21CC","equiv":"\u2261","equivDD":"\u2A78","eqvparsl":"\u29E5","erarr":"\u2971","erDot":"\u2253","escr":"\u212F","Escr":"\u2130","esdot":"\u2250","Esim":"\u2A73","esim":"\u2242","Eta":"\u0397","eta":"\u03B7","ETH":"\u00D0","eth":"\u00F0","Euml":"\u00CB","euml":"\u00EB","euro":"\u20AC","excl":"!","exist":"\u2203","Exists":"\u2203","expectation":"\u2130","exponentiale":"\u2147","ExponentialE":"\u2147","fallingdotseq":"\u2252","Fcy":"\u0424","fcy":"\u0444","female":"\u2640","ffilig":"\uFB03","fflig":"\uFB00","ffllig":"\uFB04","Ffr":"\uD835\uDD09","ffr":"\uD835\uDD23","filig":"\uFB01","FilledSmallSquare":"\u25FC","FilledVerySmallSquare":"\u25AA","fjlig":"fj","flat":"\u266D","fllig":"\uFB02","fltns":"\u25B1","fnof":"\u0192","Fopf":"\uD835\uDD3D","fopf":"\uD835\uDD57","forall":"\u2200","ForAll":"\u2200","fork":"\u22D4","forkv":"\u2AD9","Fouriertrf":"\u2131","fpartint":"\u2A0D","frac12":"\u00BD","frac13":"\u2153","frac14":"\u00BC","frac15":"\u2155","frac16":"\u2159","frac18":"\u215B","frac23":"\u2154","frac25":"\u2156","frac34":"\u00BE","frac35":"\u2157","frac38":"\u215C","frac45":"\u2158","frac56":"\u215A","frac58":"\u215D","frac78":"\u215E","frasl":"\u2044","frown":"\u2322","fscr":"\uD835\uDCBB","Fscr":"\u2131","gacute":"\u01F5","Gamma":"\u0393","gamma":"\u03B3","Gammad":"\u03DC","gammad":"\u03DD","gap":"\u2A86","Gbreve":"\u011E","gbreve":"\u011F","Gcedil":"\u0122","Gcirc":"\u011C","gcirc":"\u011D","Gcy":"\u0413","gcy":"\u0433","Gdot":"\u0120","gdot":"\u0121","ge":"\u2265","gE":"\u2267","gEl":"\u2A8C","gel":"\u22DB","geq":"\u2265","geqq":"\u2267","geqslant":"\u2A7E","gescc":"\u2AA9","ges":"\u2A7E","gesdot":"\u2A80","gesdoto":"\u2A82","gesdotol":"\u2A84","gesl":"\u22DB\uFE00","gesles":"\u2A94","Gfr":"\uD835\uDD0A","gfr":"\uD835\uDD24","gg":"\u226B","Gg":"\u22D9","ggg":"\u22D9","gimel":"\u2137","GJcy":"\u0403","gjcy":"\u0453","gla":"\u2AA5","gl":"\u2277","glE":"\u2A92","glj":"\u2AA4","gnap":"\u2A8A","gnapprox":"\u2A8A","gne":"\u2A88","gnE":"\u2269","gneq":"\u2A88","gneqq":"\u2269","gnsim":"\u22E7","Gopf":"\uD835\uDD3E","gopf":"\uD835\uDD58","grave":"`","GreaterEqual":"\u2265","GreaterEqualLess":"\u22DB","GreaterFullEqual":"\u2267","GreaterGreater":"\u2AA2","GreaterLess":"\u2277","GreaterSlantEqual":"\u2A7E","GreaterTilde":"\u2273","Gscr":"\uD835\uDCA2","gscr":"\u210A","gsim":"\u2273","gsime":"\u2A8E","gsiml":"\u2A90","gtcc":"\u2AA7","gtcir":"\u2A7A","gt":">","GT":">","Gt":"\u226B","gtdot":"\u22D7","gtlPar":"\u2995","gtquest":"\u2A7C","gtrapprox":"\u2A86","gtrarr":"\u2978","gtrdot":"\u22D7","gtreqless":"\u22DB","gtreqqless":"\u2A8C","gtrless":"\u2277","gtrsim":"\u2273","gvertneqq":"\u2269\uFE00","gvnE":"\u2269\uFE00","Hacek":"\u02C7","hairsp":"\u200A","half":"\u00BD","hamilt":"\u210B","HARDcy":"\u042A","hardcy":"\u044A","harrcir":"\u2948","harr":"\u2194","hArr":"\u21D4","harrw":"\u21AD","Hat":"^","hbar":"\u210F","Hcirc":"\u0124","hcirc":"\u0125","hearts":"\u2665","heartsuit":"\u2665","hellip":"\u2026","hercon":"\u22B9","hfr":"\uD835\uDD25","Hfr":"\u210C","HilbertSpace":"\u210B","hksearow":"\u2925","hkswarow":"\u2926","hoarr":"\u21FF","homtht":"\u223B","hookleftarrow":"\u21A9","hookrightarrow":"\u21AA","hopf":"\uD835\uDD59","Hopf":"\u210D","horbar":"\u2015","HorizontalLine":"\u2500","hscr":"\uD835\uDCBD","Hscr":"\u210B","hslash":"\u210F","Hstrok":"\u0126","hstrok":"\u0127","HumpDownHump":"\u224E","HumpEqual":"\u224F","hybull":"\u2043","hyphen":"\u2010","Iacute":"\u00CD","iacute":"\u00ED","ic":"\u2063","Icirc":"\u00CE","icirc":"\u00EE","Icy":"\u0418","icy":"\u0438","Idot":"\u0130","IEcy":"\u0415","iecy":"\u0435","iexcl":"\u00A1","iff":"\u21D4","ifr":"\uD835\uDD26","Ifr":"\u2111","Igrave":"\u00CC","igrave":"\u00EC","ii":"\u2148","iiiint":"\u2A0C","iiint":"\u222D","iinfin":"\u29DC","iiota":"\u2129","IJlig":"\u0132","ijlig":"\u0133","Imacr":"\u012A","imacr":"\u012B","image":"\u2111","ImaginaryI":"\u2148","imagline":"\u2110","imagpart":"\u2111","imath":"\u0131","Im":"\u2111","imof":"\u22B7","imped":"\u01B5","Implies":"\u21D2","incare":"\u2105","in":"\u2208","infin":"\u221E","infintie":"\u29DD","inodot":"\u0131","intcal":"\u22BA","int":"\u222B","Int":"\u222C","integers":"\u2124","Integral":"\u222B","intercal":"\u22BA","Intersection":"\u22C2","intlarhk":"\u2A17","intprod":"\u2A3C","InvisibleComma":"\u2063","InvisibleTimes":"\u2062","IOcy":"\u0401","iocy":"\u0451","Iogon":"\u012E","iogon":"\u012F","Iopf":"\uD835\uDD40","iopf":"\uD835\uDD5A","Iota":"\u0399","iota":"\u03B9","iprod":"\u2A3C","iquest":"\u00BF","iscr":"\uD835\uDCBE","Iscr":"\u2110","isin":"\u2208","isindot":"\u22F5","isinE":"\u22F9","isins":"\u22F4","isinsv":"\u22F3","isinv":"\u2208","it":"\u2062","Itilde":"\u0128","itilde":"\u0129","Iukcy":"\u0406","iukcy":"\u0456","Iuml":"\u00CF","iuml":"\u00EF","Jcirc":"\u0134","jcirc":"\u0135","Jcy":"\u0419","jcy":"\u0439","Jfr":"\uD835\uDD0D","jfr":"\uD835\uDD27","jmath":"\u0237","Jopf":"\uD835\uDD41","jopf":"\uD835\uDD5B","Jscr":"\uD835\uDCA5","jscr":"\uD835\uDCBF","Jsercy":"\u0408","jsercy":"\u0458","Jukcy":"\u0404","jukcy":"\u0454","Kappa":"\u039A","kappa":"\u03BA","kappav":"\u03F0","Kcedil":"\u0136","kcedil":"\u0137","Kcy":"\u041A","kcy":"\u043A","Kfr":"\uD835\uDD0E","kfr":"\uD835\uDD28","kgreen":"\u0138","KHcy":"\u0425","khcy":"\u0445","KJcy":"\u040C","kjcy":"\u045C","Kopf":"\uD835\uDD42","kopf":"\uD835\uDD5C","Kscr":"\uD835\uDCA6","kscr":"\uD835\uDCC0","lAarr":"\u21DA","Lacute":"\u0139","lacute":"\u013A","laemptyv":"\u29B4","lagran":"\u2112","Lambda":"\u039B","lambda":"\u03BB","lang":"\u27E8","Lang":"\u27EA","langd":"\u2991","langle":"\u27E8","lap":"\u2A85","Laplacetrf":"\u2112","laquo":"\u00AB","larrb":"\u21E4","larrbfs":"\u291F","larr":"\u2190","Larr":"\u219E","lArr":"\u21D0","larrfs":"\u291D","larrhk":"\u21A9","larrlp":"\u21AB","larrpl":"\u2939","larrsim":"\u2973","larrtl":"\u21A2","latail":"\u2919","lAtail":"\u291B","lat":"\u2AAB","late":"\u2AAD","lates":"\u2AAD\uFE00","lbarr":"\u290C","lBarr":"\u290E","lbbrk":"\u2772","lbrace":"{","lbrack":"[","lbrke":"\u298B","lbrksld":"\u298F","lbrkslu":"\u298D","Lcaron":"\u013D","lcaron":"\u013E","Lcedil":"\u013B","lcedil":"\u013C","lceil":"\u2308","lcub":"{","Lcy":"\u041B","lcy":"\u043B","ldca":"\u2936","ldquo":"\u201C","ldquor":"\u201E","ldrdhar":"\u2967","ldrushar":"\u294B","ldsh":"\u21B2","le":"\u2264","lE":"\u2266","LeftAngleBracket":"\u27E8","LeftArrowBar":"\u21E4","leftarrow":"\u2190","LeftArrow":"\u2190","Leftarrow":"\u21D0","LeftArrowRightArrow":"\u21C6","leftarrowtail":"\u21A2","LeftCeiling":"\u2308","LeftDoubleBracket":"\u27E6","LeftDownTeeVector":"\u2961","LeftDownVectorBar":"\u2959","LeftDownVector":"\u21C3","LeftFloor":"\u230A","leftharpoondown":"\u21BD","leftharpoonup":"\u21BC","leftleftarrows":"\u21C7","leftrightarrow":"\u2194","LeftRightArrow":"\u2194","Leftrightarrow":"\u21D4","leftrightarrows":"\u21C6","leftrightharpoons":"\u21CB","leftrightsquigarrow":"\u21AD","LeftRightVector":"\u294E","LeftTeeArrow":"\u21A4","LeftTee":"\u22A3","LeftTeeVector":"\u295A","leftthreetimes":"\u22CB","LeftTriangleBar":"\u29CF","LeftTriangle":"\u22B2","LeftTriangleEqual":"\u22B4","LeftUpDownVector":"\u2951","LeftUpTeeVector":"\u2960","LeftUpVectorBar":"\u2958","LeftUpVector":"\u21BF","LeftVectorBar":"\u2952","LeftVector":"\u21BC","lEg":"\u2A8B","leg":"\u22DA","leq":"\u2264","leqq":"\u2266","leqslant":"\u2A7D","lescc":"\u2AA8","les":"\u2A7D","lesdot":"\u2A7F","lesdoto":"\u2A81","lesdotor":"\u2A83","lesg":"\u22DA\uFE00","lesges":"\u2A93","lessapprox":"\u2A85","lessdot":"\u22D6","lesseqgtr":"\u22DA","lesseqqgtr":"\u2A8B","LessEqualGreater":"\u22DA","LessFullEqual":"\u2266","LessGreater":"\u2276","lessgtr":"\u2276","LessLess":"\u2AA1","lesssim":"\u2272","LessSlantEqual":"\u2A7D","LessTilde":"\u2272","lfisht":"\u297C","lfloor":"\u230A","Lfr":"\uD835\uDD0F","lfr":"\uD835\uDD29","lg":"\u2276","lgE":"\u2A91","lHar":"\u2962","lhard":"\u21BD","lharu":"\u21BC","lharul":"\u296A","lhblk":"\u2584","LJcy":"\u0409","ljcy":"\u0459","llarr":"\u21C7","ll":"\u226A","Ll":"\u22D8","llcorner":"\u231E","Lleftarrow":"\u21DA","llhard":"\u296B","lltri":"\u25FA","Lmidot":"\u013F","lmidot":"\u0140","lmoustache":"\u23B0","lmoust":"\u23B0","lnap":"\u2A89","lnapprox":"\u2A89","lne":"\u2A87","lnE":"\u2268","lneq":"\u2A87","lneqq":"\u2268","lnsim":"\u22E6","loang":"\u27EC","loarr":"\u21FD","lobrk":"\u27E6","longleftarrow":"\u27F5","LongLeftArrow":"\u27F5","Longleftarrow":"\u27F8","longleftrightarrow":"\u27F7","LongLeftRightArrow":"\u27F7","Longleftrightarrow":"\u27FA","longmapsto":"\u27FC","longrightarrow":"\u27F6","LongRightArrow":"\u27F6","Longrightarrow":"\u27F9","looparrowleft":"\u21AB","looparrowright":"\u21AC","lopar":"\u2985","Lopf":"\uD835\uDD43","lopf":"\uD835\uDD5D","loplus":"\u2A2D","lotimes":"\u2A34","lowast":"\u2217","lowbar":"_","LowerLeftArrow":"\u2199","LowerRightArrow":"\u2198","loz":"\u25CA","lozenge":"\u25CA","lozf":"\u29EB","lpar":"(","lparlt":"\u2993","lrarr":"\u21C6","lrcorner":"\u231F","lrhar":"\u21CB","lrhard":"\u296D","lrm":"\u200E","lrtri":"\u22BF","lsaquo":"\u2039","lscr":"\uD835\uDCC1","Lscr":"\u2112","lsh":"\u21B0","Lsh":"\u21B0","lsim":"\u2272","lsime":"\u2A8D","lsimg":"\u2A8F","lsqb":"[","lsquo":"\u2018","lsquor":"\u201A","Lstrok":"\u0141","lstrok":"\u0142","ltcc":"\u2AA6","ltcir":"\u2A79","lt":"<","LT":"<","Lt":"\u226A","ltdot":"\u22D6","lthree":"\u22CB","ltimes":"\u22C9","ltlarr":"\u2976","ltquest":"\u2A7B","ltri":"\u25C3","ltrie":"\u22B4","ltrif":"\u25C2","ltrPar":"\u2996","lurdshar":"\u294A","luruhar":"\u2966","lvertneqq":"\u2268\uFE00","lvnE":"\u2268\uFE00","macr":"\u00AF","male":"\u2642","malt":"\u2720","maltese":"\u2720","Map":"\u2905","map":"\u21A6","mapsto":"\u21A6","mapstodown":"\u21A7","mapstoleft":"\u21A4","mapstoup":"\u21A5","marker":"\u25AE","mcomma":"\u2A29","Mcy":"\u041C","mcy":"\u043C","mdash":"\u2014","mDDot":"\u223A","measuredangle":"\u2221","MediumSpace":"\u205F","Mellintrf":"\u2133","Mfr":"\uD835\uDD10","mfr":"\uD835\uDD2A","mho":"\u2127","micro":"\u00B5","midast":"*","midcir":"\u2AF0","mid":"\u2223","middot":"\u00B7","minusb":"\u229F","minus":"\u2212","minusd":"\u2238","minusdu":"\u2A2A","MinusPlus":"\u2213","mlcp":"\u2ADB","mldr":"\u2026","mnplus":"\u2213","models":"\u22A7","Mopf":"\uD835\uDD44","mopf":"\uD835\uDD5E","mp":"\u2213","mscr":"\uD835\uDCC2","Mscr":"\u2133","mstpos":"\u223E","Mu":"\u039C","mu":"\u03BC","multimap":"\u22B8","mumap":"\u22B8","nabla":"\u2207","Nacute":"\u0143","nacute":"\u0144","nang":"\u2220\u20D2","nap":"\u2249","napE":"\u2A70\u0338","napid":"\u224B\u0338","napos":"\u0149","napprox":"\u2249","natural":"\u266E","naturals":"\u2115","natur":"\u266E","nbsp":"\u00A0","nbump":"\u224E\u0338","nbumpe":"\u224F\u0338","ncap":"\u2A43","Ncaron":"\u0147","ncaron":"\u0148","Ncedil":"\u0145","ncedil":"\u0146","ncong":"\u2247","ncongdot":"\u2A6D\u0338","ncup":"\u2A42","Ncy":"\u041D","ncy":"\u043D","ndash":"\u2013","nearhk":"\u2924","nearr":"\u2197","neArr":"\u21D7","nearrow":"\u2197","ne":"\u2260","nedot":"\u2250\u0338","NegativeMediumSpace":"\u200B","NegativeThickSpace":"\u200B","NegativeThinSpace":"\u200B","NegativeVeryThinSpace":"\u200B","nequiv":"\u2262","nesear":"\u2928","nesim":"\u2242\u0338","NestedGreaterGreater":"\u226B","NestedLessLess":"\u226A","NewLine":"\n","nexist":"\u2204","nexists":"\u2204","Nfr":"\uD835\uDD11","nfr":"\uD835\uDD2B","ngE":"\u2267\u0338","nge":"\u2271","ngeq":"\u2271","ngeqq":"\u2267\u0338","ngeqslant":"\u2A7E\u0338","nges":"\u2A7E\u0338","nGg":"\u22D9\u0338","ngsim":"\u2275","nGt":"\u226B\u20D2","ngt":"\u226F","ngtr":"\u226F","nGtv":"\u226B\u0338","nharr":"\u21AE","nhArr":"\u21CE","nhpar":"\u2AF2","ni":"\u220B","nis":"\u22FC","nisd":"\u22FA","niv":"\u220B","NJcy":"\u040A","njcy":"\u045A","nlarr":"\u219A","nlArr":"\u21CD","nldr":"\u2025","nlE":"\u2266\u0338","nle":"\u2270","nleftarrow":"\u219A","nLeftarrow":"\u21CD","nleftrightarrow":"\u21AE","nLeftrightarrow":"\u21CE","nleq":"\u2270","nleqq":"\u2266\u0338","nleqslant":"\u2A7D\u0338","nles":"\u2A7D\u0338","nless":"\u226E","nLl":"\u22D8\u0338","nlsim":"\u2274","nLt":"\u226A\u20D2","nlt":"\u226E","nltri":"\u22EA","nltrie":"\u22EC","nLtv":"\u226A\u0338","nmid":"\u2224","NoBreak":"\u2060","NonBreakingSpace":"\u00A0","nopf":"\uD835\uDD5F","Nopf":"\u2115","Not":"\u2AEC","not":"\u00AC","NotCongruent":"\u2262","NotCupCap":"\u226D","NotDoubleVerticalBar":"\u2226","NotElement":"\u2209","NotEqual":"\u2260","NotEqualTilde":"\u2242\u0338","NotExists":"\u2204","NotGreater":"\u226F","NotGreaterEqual":"\u2271","NotGreaterFullEqual":"\u2267\u0338","NotGreaterGreater":"\u226B\u0338","NotGreaterLess":"\u2279","NotGreaterSlantEqual":"\u2A7E\u0338","NotGreaterTilde":"\u2275","NotHumpDownHump":"\u224E\u0338","NotHumpEqual":"\u224F\u0338","notin":"\u2209","notindot":"\u22F5\u0338","notinE":"\u22F9\u0338","notinva":"\u2209","notinvb":"\u22F7","notinvc":"\u22F6","NotLeftTriangleBar":"\u29CF\u0338","NotLeftTriangle":"\u22EA","NotLeftTriangleEqual":"\u22EC","NotLess":"\u226E","NotLessEqual":"\u2270","NotLessGreater":"\u2278","NotLessLess":"\u226A\u0338","NotLessSlantEqual":"\u2A7D\u0338","NotLessTilde":"\u2274","NotNestedGreaterGreater":"\u2AA2\u0338","NotNestedLessLess":"\u2AA1\u0338","notni":"\u220C","notniva":"\u220C","notnivb":"\u22FE","notnivc":"\u22FD","NotPrecedes":"\u2280","NotPrecedesEqual":"\u2AAF\u0338","NotPrecedesSlantEqual":"\u22E0","NotReverseElement":"\u220C","NotRightTriangleBar":"\u29D0\u0338","NotRightTriangle":"\u22EB","NotRightTriangleEqual":"\u22ED","NotSquareSubset":"\u228F\u0338","NotSquareSubsetEqual":"\u22E2","NotSquareSuperset":"\u2290\u0338","NotSquareSupersetEqual":"\u22E3","NotSubset":"\u2282\u20D2","NotSubsetEqual":"\u2288","NotSucceeds":"\u2281","NotSucceedsEqual":"\u2AB0\u0338","NotSucceedsSlantEqual":"\u22E1","NotSucceedsTilde":"\u227F\u0338","NotSuperset":"\u2283\u20D2","NotSupersetEqual":"\u2289","NotTilde":"\u2241","NotTildeEqual":"\u2244","NotTildeFullEqual":"\u2247","NotTildeTilde":"\u2249","NotVerticalBar":"\u2224","nparallel":"\u2226","npar":"\u2226","nparsl":"\u2AFD\u20E5","npart":"\u2202\u0338","npolint":"\u2A14","npr":"\u2280","nprcue":"\u22E0","nprec":"\u2280","npreceq":"\u2AAF\u0338","npre":"\u2AAF\u0338","nrarrc":"\u2933\u0338","nrarr":"\u219B","nrArr":"\u21CF","nrarrw":"\u219D\u0338","nrightarrow":"\u219B","nRightarrow":"\u21CF","nrtri":"\u22EB","nrtrie":"\u22ED","nsc":"\u2281","nsccue":"\u22E1","nsce":"\u2AB0\u0338","Nscr":"\uD835\uDCA9","nscr":"\uD835\uDCC3","nshortmid":"\u2224","nshortparallel":"\u2226","nsim":"\u2241","nsime":"\u2244","nsimeq":"\u2244","nsmid":"\u2224","nspar":"\u2226","nsqsube":"\u22E2","nsqsupe":"\u22E3","nsub":"\u2284","nsubE":"\u2AC5\u0338","nsube":"\u2288","nsubset":"\u2282\u20D2","nsubseteq":"\u2288","nsubseteqq":"\u2AC5\u0338","nsucc":"\u2281","nsucceq":"\u2AB0\u0338","nsup":"\u2285","nsupE":"\u2AC6\u0338","nsupe":"\u2289","nsupset":"\u2283\u20D2","nsupseteq":"\u2289","nsupseteqq":"\u2AC6\u0338","ntgl":"\u2279","Ntilde":"\u00D1","ntilde":"\u00F1","ntlg":"\u2278","ntriangleleft":"\u22EA","ntrianglelefteq":"\u22EC","ntriangleright":"\u22EB","ntrianglerighteq":"\u22ED","Nu":"\u039D","nu":"\u03BD","num":"#","numero":"\u2116","numsp":"\u2007","nvap":"\u224D\u20D2","nvdash":"\u22AC","nvDash":"\u22AD","nVdash":"\u22AE","nVDash":"\u22AF","nvge":"\u2265\u20D2","nvgt":">\u20D2","nvHarr":"\u2904","nvinfin":"\u29DE","nvlArr":"\u2902","nvle":"\u2264\u20D2","nvlt":"<\u20D2","nvltrie":"\u22B4\u20D2","nvrArr":"\u2903","nvrtrie":"\u22B5\u20D2","nvsim":"\u223C\u20D2","nwarhk":"\u2923","nwarr":"\u2196","nwArr":"\u21D6","nwarrow":"\u2196","nwnear":"\u2927","Oacute":"\u00D3","oacute":"\u00F3","oast":"\u229B","Ocirc":"\u00D4","ocirc":"\u00F4","ocir":"\u229A","Ocy":"\u041E","ocy":"\u043E","odash":"\u229D","Odblac":"\u0150","odblac":"\u0151","odiv":"\u2A38","odot":"\u2299","odsold":"\u29BC","OElig":"\u0152","oelig":"\u0153","ofcir":"\u29BF","Ofr":"\uD835\uDD12","ofr":"\uD835\uDD2C","ogon":"\u02DB","Ograve":"\u00D2","ograve":"\u00F2","ogt":"\u29C1","ohbar":"\u29B5","ohm":"\u03A9","oint":"\u222E","olarr":"\u21BA","olcir":"\u29BE","olcross":"\u29BB","oline":"\u203E","olt":"\u29C0","Omacr":"\u014C","omacr":"\u014D","Omega":"\u03A9","omega":"\u03C9","Omicron":"\u039F","omicron":"\u03BF","omid":"\u29B6","ominus":"\u2296","Oopf":"\uD835\uDD46","oopf":"\uD835\uDD60","opar":"\u29B7","OpenCurlyDoubleQuote":"\u201C","OpenCurlyQuote":"\u2018","operp":"\u29B9","oplus":"\u2295","orarr":"\u21BB","Or":"\u2A54","or":"\u2228","ord":"\u2A5D","order":"\u2134","orderof":"\u2134","ordf":"\u00AA","ordm":"\u00BA","origof":"\u22B6","oror":"\u2A56","orslope":"\u2A57","orv":"\u2A5B","oS":"\u24C8","Oscr":"\uD835\uDCAA","oscr":"\u2134","Oslash":"\u00D8","oslash":"\u00F8","osol":"\u2298","Otilde":"\u00D5","otilde":"\u00F5","otimesas":"\u2A36","Otimes":"\u2A37","otimes":"\u2297","Ouml":"\u00D6","ouml":"\u00F6","ovbar":"\u233D","OverBar":"\u203E","OverBrace":"\u23DE","OverBracket":"\u23B4","OverParenthesis":"\u23DC","para":"\u00B6","parallel":"\u2225","par":"\u2225","parsim":"\u2AF3","parsl":"\u2AFD","part":"\u2202","PartialD":"\u2202","Pcy":"\u041F","pcy":"\u043F","percnt":"%","period":".","permil":"\u2030","perp":"\u22A5","pertenk":"\u2031","Pfr":"\uD835\uDD13","pfr":"\uD835\uDD2D","Phi":"\u03A6","phi":"\u03C6","phiv":"\u03D5","phmmat":"\u2133","phone":"\u260E","Pi":"\u03A0","pi":"\u03C0","pitchfork":"\u22D4","piv":"\u03D6","planck":"\u210F","planckh":"\u210E","plankv":"\u210F","plusacir":"\u2A23","plusb":"\u229E","pluscir":"\u2A22","plus":"+","plusdo":"\u2214","plusdu":"\u2A25","pluse":"\u2A72","PlusMinus":"\u00B1","plusmn":"\u00B1","plussim":"\u2A26","plustwo":"\u2A27","pm":"\u00B1","Poincareplane":"\u210C","pointint":"\u2A15","popf":"\uD835\uDD61","Popf":"\u2119","pound":"\u00A3","prap":"\u2AB7","Pr":"\u2ABB","pr":"\u227A","prcue":"\u227C","precapprox":"\u2AB7","prec":"\u227A","preccurlyeq":"\u227C","Precedes":"\u227A","PrecedesEqual":"\u2AAF","PrecedesSlantEqual":"\u227C","PrecedesTilde":"\u227E","preceq":"\u2AAF","precnapprox":"\u2AB9","precneqq":"\u2AB5","precnsim":"\u22E8","pre":"\u2AAF","prE":"\u2AB3","precsim":"\u227E","prime":"\u2032","Prime":"\u2033","primes":"\u2119","prnap":"\u2AB9","prnE":"\u2AB5","prnsim":"\u22E8","prod":"\u220F","Product":"\u220F","profalar":"\u232E","profline":"\u2312","profsurf":"\u2313","prop":"\u221D","Proportional":"\u221D","Proportion":"\u2237","propto":"\u221D","prsim":"\u227E","prurel":"\u22B0","Pscr":"\uD835\uDCAB","pscr":"\uD835\uDCC5","Psi":"\u03A8","psi":"\u03C8","puncsp":"\u2008","Qfr":"\uD835\uDD14","qfr":"\uD835\uDD2E","qint":"\u2A0C","qopf":"\uD835\uDD62","Qopf":"\u211A","qprime":"\u2057","Qscr":"\uD835\uDCAC","qscr":"\uD835\uDCC6","quaternions":"\u210D","quatint":"\u2A16","quest":"?","questeq":"\u225F","quot":"\"","QUOT":"\"","rAarr":"\u21DB","race":"\u223D\u0331","Racute":"\u0154","racute":"\u0155","radic":"\u221A","raemptyv":"\u29B3","rang":"\u27E9","Rang":"\u27EB","rangd":"\u2992","range":"\u29A5","rangle":"\u27E9","raquo":"\u00BB","rarrap":"\u2975","rarrb":"\u21E5","rarrbfs":"\u2920","rarrc":"\u2933","rarr":"\u2192","Rarr":"\u21A0","rArr":"\u21D2","rarrfs":"\u291E","rarrhk":"\u21AA","rarrlp":"\u21AC","rarrpl":"\u2945","rarrsim":"\u2974","Rarrtl":"\u2916","rarrtl":"\u21A3","rarrw":"\u219D","ratail":"\u291A","rAtail":"\u291C","ratio":"\u2236","rationals":"\u211A","rbarr":"\u290D","rBarr":"\u290F","RBarr":"\u2910","rbbrk":"\u2773","rbrace":"}","rbrack":"]","rbrke":"\u298C","rbrksld":"\u298E","rbrkslu":"\u2990","Rcaron":"\u0158","rcaron":"\u0159","Rcedil":"\u0156","rcedil":"\u0157","rceil":"\u2309","rcub":"}","Rcy":"\u0420","rcy":"\u0440","rdca":"\u2937","rdldhar":"\u2969","rdquo":"\u201D","rdquor":"\u201D","rdsh":"\u21B3","real":"\u211C","realine":"\u211B","realpart":"\u211C","reals":"\u211D","Re":"\u211C","rect":"\u25AD","reg":"\u00AE","REG":"\u00AE","ReverseElement":"\u220B","ReverseEquilibrium":"\u21CB","ReverseUpEquilibrium":"\u296F","rfisht":"\u297D","rfloor":"\u230B","rfr":"\uD835\uDD2F","Rfr":"\u211C","rHar":"\u2964","rhard":"\u21C1","rharu":"\u21C0","rharul":"\u296C","Rho":"\u03A1","rho":"\u03C1","rhov":"\u03F1","RightAngleBracket":"\u27E9","RightArrowBar":"\u21E5","rightarrow":"\u2192","RightArrow":"\u2192","Rightarrow":"\u21D2","RightArrowLeftArrow":"\u21C4","rightarrowtail":"\u21A3","RightCeiling":"\u2309","RightDoubleBracket":"\u27E7","RightDownTeeVector":"\u295D","RightDownVectorBar":"\u2955","RightDownVector":"\u21C2","RightFloor":"\u230B","rightharpoondown":"\u21C1","rightharpoonup":"\u21C0","rightleftarrows":"\u21C4","rightleftharpoons":"\u21CC","rightrightarrows":"\u21C9","rightsquigarrow":"\u219D","RightTeeArrow":"\u21A6","RightTee":"\u22A2","RightTeeVector":"\u295B","rightthreetimes":"\u22CC","RightTriangleBar":"\u29D0","RightTriangle":"\u22B3","RightTriangleEqual":"\u22B5","RightUpDownVector":"\u294F","RightUpTeeVector":"\u295C","RightUpVectorBar":"\u2954","RightUpVector":"\u21BE","RightVectorBar":"\u2953","RightVector":"\u21C0","ring":"\u02DA","risingdotseq":"\u2253","rlarr":"\u21C4","rlhar":"\u21CC","rlm":"\u200F","rmoustache":"\u23B1","rmoust":"\u23B1","rnmid":"\u2AEE","roang":"\u27ED","roarr":"\u21FE","robrk":"\u27E7","ropar":"\u2986","ropf":"\uD835\uDD63","Ropf":"\u211D","roplus":"\u2A2E","rotimes":"\u2A35","RoundImplies":"\u2970","rpar":")","rpargt":"\u2994","rppolint":"\u2A12","rrarr":"\u21C9","Rrightarrow":"\u21DB","rsaquo":"\u203A","rscr":"\uD835\uDCC7","Rscr":"\u211B","rsh":"\u21B1","Rsh":"\u21B1","rsqb":"]","rsquo":"\u2019","rsquor":"\u2019","rthree":"\u22CC","rtimes":"\u22CA","rtri":"\u25B9","rtrie":"\u22B5","rtrif":"\u25B8","rtriltri":"\u29CE","RuleDelayed":"\u29F4","ruluhar":"\u2968","rx":"\u211E","Sacute":"\u015A","sacute":"\u015B","sbquo":"\u201A","scap":"\u2AB8","Scaron":"\u0160","scaron":"\u0161","Sc":"\u2ABC","sc":"\u227B","sccue":"\u227D","sce":"\u2AB0","scE":"\u2AB4","Scedil":"\u015E","scedil":"\u015F","Scirc":"\u015C","scirc":"\u015D","scnap":"\u2ABA","scnE":"\u2AB6","scnsim":"\u22E9","scpolint":"\u2A13","scsim":"\u227F","Scy":"\u0421","scy":"\u0441","sdotb":"\u22A1","sdot":"\u22C5","sdote":"\u2A66","searhk":"\u2925","searr":"\u2198","seArr":"\u21D8","searrow":"\u2198","sect":"\u00A7","semi":";","seswar":"\u2929","setminus":"\u2216","setmn":"\u2216","sext":"\u2736","Sfr":"\uD835\uDD16","sfr":"\uD835\uDD30","sfrown":"\u2322","sharp":"\u266F","SHCHcy":"\u0429","shchcy":"\u0449","SHcy":"\u0428","shcy":"\u0448","ShortDownArrow":"\u2193","ShortLeftArrow":"\u2190","shortmid":"\u2223","shortparallel":"\u2225","ShortRightArrow":"\u2192","ShortUpArrow":"\u2191","shy":"\u00AD","Sigma":"\u03A3","sigma":"\u03C3","sigmaf":"\u03C2","sigmav":"\u03C2","sim":"\u223C","simdot":"\u2A6A","sime":"\u2243","simeq":"\u2243","simg":"\u2A9E","simgE":"\u2AA0","siml":"\u2A9D","simlE":"\u2A9F","simne":"\u2246","simplus":"\u2A24","simrarr":"\u2972","slarr":"\u2190","SmallCircle":"\u2218","smallsetminus":"\u2216","smashp":"\u2A33","smeparsl":"\u29E4","smid":"\u2223","smile":"\u2323","smt":"\u2AAA","smte":"\u2AAC","smtes":"\u2AAC\uFE00","SOFTcy":"\u042C","softcy":"\u044C","solbar":"\u233F","solb":"\u29C4","sol":"/","Sopf":"\uD835\uDD4A","sopf":"\uD835\uDD64","spades":"\u2660","spadesuit":"\u2660","spar":"\u2225","sqcap":"\u2293","sqcaps":"\u2293\uFE00","sqcup":"\u2294","sqcups":"\u2294\uFE00","Sqrt":"\u221A","sqsub":"\u228F","sqsube":"\u2291","sqsubset":"\u228F","sqsubseteq":"\u2291","sqsup":"\u2290","sqsupe":"\u2292","sqsupset":"\u2290","sqsupseteq":"\u2292","square":"\u25A1","Square":"\u25A1","SquareIntersection":"\u2293","SquareSubset":"\u228F","SquareSubsetEqual":"\u2291","SquareSuperset":"\u2290","SquareSupersetEqual":"\u2292","SquareUnion":"\u2294","squarf":"\u25AA","squ":"\u25A1","squf":"\u25AA","srarr":"\u2192","Sscr":"\uD835\uDCAE","sscr":"\uD835\uDCC8","ssetmn":"\u2216","ssmile":"\u2323","sstarf":"\u22C6","Star":"\u22C6","star":"\u2606","starf":"\u2605","straightepsilon":"\u03F5","straightphi":"\u03D5","strns":"\u00AF","sub":"\u2282","Sub":"\u22D0","subdot":"\u2ABD","subE":"\u2AC5","sube":"\u2286","subedot":"\u2AC3","submult":"\u2AC1","subnE":"\u2ACB","subne":"\u228A","subplus":"\u2ABF","subrarr":"\u2979","subset":"\u2282","Subset":"\u22D0","subseteq":"\u2286","subseteqq":"\u2AC5","SubsetEqual":"\u2286","subsetneq":"\u228A","subsetneqq":"\u2ACB","subsim":"\u2AC7","subsub":"\u2AD5","subsup":"\u2AD3","succapprox":"\u2AB8","succ":"\u227B","succcurlyeq":"\u227D","Succeeds":"\u227B","SucceedsEqual":"\u2AB0","SucceedsSlantEqual":"\u227D","SucceedsTilde":"\u227F","succeq":"\u2AB0","succnapprox":"\u2ABA","succneqq":"\u2AB6","succnsim":"\u22E9","succsim":"\u227F","SuchThat":"\u220B","sum":"\u2211","Sum":"\u2211","sung":"\u266A","sup1":"\u00B9","sup2":"\u00B2","sup3":"\u00B3","sup":"\u2283","Sup":"\u22D1","supdot":"\u2ABE","supdsub":"\u2AD8","supE":"\u2AC6","supe":"\u2287","supedot":"\u2AC4","Superset":"\u2283","SupersetEqual":"\u2287","suphsol":"\u27C9","suphsub":"\u2AD7","suplarr":"\u297B","supmult":"\u2AC2","supnE":"\u2ACC","supne":"\u228B","supplus":"\u2AC0","supset":"\u2283","Supset":"\u22D1","supseteq":"\u2287","supseteqq":"\u2AC6","supsetneq":"\u228B","supsetneqq":"\u2ACC","supsim":"\u2AC8","supsub":"\u2AD4","supsup":"\u2AD6","swarhk":"\u2926","swarr":"\u2199","swArr":"\u21D9","swarrow":"\u2199","swnwar":"\u292A","szlig":"\u00DF","Tab":"\t","target":"\u2316","Tau":"\u03A4","tau":"\u03C4","tbrk":"\u23B4","Tcaron":"\u0164","tcaron":"\u0165","Tcedil":"\u0162","tcedil":"\u0163","Tcy":"\u0422","tcy":"\u0442","tdot":"\u20DB","telrec":"\u2315","Tfr":"\uD835\uDD17","tfr":"\uD835\uDD31","there4":"\u2234","therefore":"\u2234","Therefore":"\u2234","Theta":"\u0398","theta":"\u03B8","thetasym":"\u03D1","thetav":"\u03D1","thickapprox":"\u2248","thicksim":"\u223C","ThickSpace":"\u205F\u200A","ThinSpace":"\u2009","thinsp":"\u2009","thkap":"\u2248","thksim":"\u223C","THORN":"\u00DE","thorn":"\u00FE","tilde":"\u02DC","Tilde":"\u223C","TildeEqual":"\u2243","TildeFullEqual":"\u2245","TildeTilde":"\u2248","timesbar":"\u2A31","timesb":"\u22A0","times":"\u00D7","timesd":"\u2A30","tint":"\u222D","toea":"\u2928","topbot":"\u2336","topcir":"\u2AF1","top":"\u22A4","Topf":"\uD835\uDD4B","topf":"\uD835\uDD65","topfork":"\u2ADA","tosa":"\u2929","tprime":"\u2034","trade":"\u2122","TRADE":"\u2122","triangle":"\u25B5","triangledown":"\u25BF","triangleleft":"\u25C3","trianglelefteq":"\u22B4","triangleq":"\u225C","triangleright":"\u25B9","trianglerighteq":"\u22B5","tridot":"\u25EC","trie":"\u225C","triminus":"\u2A3A","TripleDot":"\u20DB","triplus":"\u2A39","trisb":"\u29CD","tritime":"\u2A3B","trpezium":"\u23E2","Tscr":"\uD835\uDCAF","tscr":"\uD835\uDCC9","TScy":"\u0426","tscy":"\u0446","TSHcy":"\u040B","tshcy":"\u045B","Tstrok":"\u0166","tstrok":"\u0167","twixt":"\u226C","twoheadleftarrow":"\u219E","twoheadrightarrow":"\u21A0","Uacute":"\u00DA","uacute":"\u00FA","uarr":"\u2191","Uarr":"\u219F","uArr":"\u21D1","Uarrocir":"\u2949","Ubrcy":"\u040E","ubrcy":"\u045E","Ubreve":"\u016C","ubreve":"\u016D","Ucirc":"\u00DB","ucirc":"\u00FB","Ucy":"\u0423","ucy":"\u0443","udarr":"\u21C5","Udblac":"\u0170","udblac":"\u0171","udhar":"\u296E","ufisht":"\u297E","Ufr":"\uD835\uDD18","ufr":"\uD835\uDD32","Ugrave":"\u00D9","ugrave":"\u00F9","uHar":"\u2963","uharl":"\u21BF","uharr":"\u21BE","uhblk":"\u2580","ulcorn":"\u231C","ulcorner":"\u231C","ulcrop":"\u230F","ultri":"\u25F8","Umacr":"\u016A","umacr":"\u016B","uml":"\u00A8","UnderBar":"_","UnderBrace":"\u23DF","UnderBracket":"\u23B5","UnderParenthesis":"\u23DD","Union":"\u22C3","UnionPlus":"\u228E","Uogon":"\u0172","uogon":"\u0173","Uopf":"\uD835\uDD4C","uopf":"\uD835\uDD66","UpArrowBar":"\u2912","uparrow":"\u2191","UpArrow":"\u2191","Uparrow":"\u21D1","UpArrowDownArrow":"\u21C5","updownarrow":"\u2195","UpDownArrow":"\u2195","Updownarrow":"\u21D5","UpEquilibrium":"\u296E","upharpoonleft":"\u21BF","upharpoonright":"\u21BE","uplus":"\u228E","UpperLeftArrow":"\u2196","UpperRightArrow":"\u2197","upsi":"\u03C5","Upsi":"\u03D2","upsih":"\u03D2","Upsilon":"\u03A5","upsilon":"\u03C5","UpTeeArrow":"\u21A5","UpTee":"\u22A5","upuparrows":"\u21C8","urcorn":"\u231D","urcorner":"\u231D","urcrop":"\u230E","Uring":"\u016E","uring":"\u016F","urtri":"\u25F9","Uscr":"\uD835\uDCB0","uscr":"\uD835\uDCCA","utdot":"\u22F0","Utilde":"\u0168","utilde":"\u0169","utri":"\u25B5","utrif":"\u25B4","uuarr":"\u21C8","Uuml":"\u00DC","uuml":"\u00FC","uwangle":"\u29A7","vangrt":"\u299C","varepsilon":"\u03F5","varkappa":"\u03F0","varnothing":"\u2205","varphi":"\u03D5","varpi":"\u03D6","varpropto":"\u221D","varr":"\u2195","vArr":"\u21D5","varrho":"\u03F1","varsigma":"\u03C2","varsubsetneq":"\u228A\uFE00","varsubsetneqq":"\u2ACB\uFE00","varsupsetneq":"\u228B\uFE00","varsupsetneqq":"\u2ACC\uFE00","vartheta":"\u03D1","vartriangleleft":"\u22B2","vartriangleright":"\u22B3","vBar":"\u2AE8","Vbar":"\u2AEB","vBarv":"\u2AE9","Vcy":"\u0412","vcy":"\u0432","vdash":"\u22A2","vDash":"\u22A8","Vdash":"\u22A9","VDash":"\u22AB","Vdashl":"\u2AE6","veebar":"\u22BB","vee":"\u2228","Vee":"\u22C1","veeeq":"\u225A","vellip":"\u22EE","verbar":"|","Verbar":"\u2016","vert":"|","Vert":"\u2016","VerticalBar":"\u2223","VerticalLine":"|","VerticalSeparator":"\u2758","VerticalTilde":"\u2240","VeryThinSpace":"\u200A","Vfr":"\uD835\uDD19","vfr":"\uD835\uDD33","vltri":"\u22B2","vnsub":"\u2282\u20D2","vnsup":"\u2283\u20D2","Vopf":"\uD835\uDD4D","vopf":"\uD835\uDD67","vprop":"\u221D","vrtri":"\u22B3","Vscr":"\uD835\uDCB1","vscr":"\uD835\uDCCB","vsubnE":"\u2ACB\uFE00","vsubne":"\u228A\uFE00","vsupnE":"\u2ACC\uFE00","vsupne":"\u228B\uFE00","Vvdash":"\u22AA","vzigzag":"\u299A","Wcirc":"\u0174","wcirc":"\u0175","wedbar":"\u2A5F","wedge":"\u2227","Wedge":"\u22C0","wedgeq":"\u2259","weierp":"\u2118","Wfr":"\uD835\uDD1A","wfr":"\uD835\uDD34","Wopf":"\uD835\uDD4E","wopf":"\uD835\uDD68","wp":"\u2118","wr":"\u2240","wreath":"\u2240","Wscr":"\uD835\uDCB2","wscr":"\uD835\uDCCC","xcap":"\u22C2","xcirc":"\u25EF","xcup":"\u22C3","xdtri":"\u25BD","Xfr":"\uD835\uDD1B","xfr":"\uD835\uDD35","xharr":"\u27F7","xhArr":"\u27FA","Xi":"\u039E","xi":"\u03BE","xlarr":"\u27F5","xlArr":"\u27F8","xmap":"\u27FC","xnis":"\u22FB","xodot":"\u2A00","Xopf":"\uD835\uDD4F","xopf":"\uD835\uDD69","xoplus":"\u2A01","xotime":"\u2A02","xrarr":"\u27F6","xrArr":"\u27F9","Xscr":"\uD835\uDCB3","xscr":"\uD835\uDCCD","xsqcup":"\u2A06","xuplus":"\u2A04","xutri":"\u25B3","xvee":"\u22C1","xwedge":"\u22C0","Yacute":"\u00DD","yacute":"\u00FD","YAcy":"\u042F","yacy":"\u044F","Ycirc":"\u0176","ycirc":"\u0177","Ycy":"\u042B","ycy":"\u044B","yen":"\u00A5","Yfr":"\uD835\uDD1C","yfr":"\uD835\uDD36","YIcy":"\u0407","yicy":"\u0457","Yopf":"\uD835\uDD50","yopf":"\uD835\uDD6A","Yscr":"\uD835\uDCB4","yscr":"\uD835\uDCCE","YUcy":"\u042E","yucy":"\u044E","yuml":"\u00FF","Yuml":"\u0178","Zacute":"\u0179","zacute":"\u017A","Zcaron":"\u017D","zcaron":"\u017E","Zcy":"\u0417","zcy":"\u0437","Zdot":"\u017B","zdot":"\u017C","zeetrf":"\u2128","ZeroWidthSpace":"\u200B","Zeta":"\u0396","zeta":"\u03B6","zfr":"\uD835\uDD37","Zfr":"\u2128","ZHcy":"\u0416","zhcy":"\u0436","zigrarr":"\u21DD","zopf":"\uD835\uDD6B","Zopf":"\u2124","Zscr":"\uD835\uDCB5","zscr":"\uD835\uDCCF","zwj":"\u200D","zwnj":"\u200C"}
+},{}],68:[function(require,module,exports){
 "use strict";
 
 /**
@@ -20197,7 +20278,7 @@ emptyFunction.thatReturnsArgument = function (arg) {
 };
 
 module.exports = emptyFunction;
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -20255,7 +20336,7 @@ function invariant(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 }).call(this,require('_process'))
-},{"_process":232}],69:[function(require,module,exports){
+},{"_process":233}],70:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -20324,7 +20405,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = warning;
 }).call(this,require('_process'))
-},{"./emptyFunction":67,"_process":232}],70:[function(require,module,exports){
+},{"./emptyFunction":68,"_process":233}],71:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20556,7 +20637,7 @@ var GraphQLLanguageService = exports.GraphQLLanguageService = function () {
 
   return GraphQLLanguageService;
 }();
-},{"./getAutocompleteSuggestions":72,"./getDefinition":73,"./getDiagnostics":74,"graphql":95,"graphql-language-service-utils":84,"graphql/language/kinds":105}],71:[function(require,module,exports){
+},{"./getAutocompleteSuggestions":73,"./getDefinition":74,"./getDiagnostics":75,"graphql":96,"graphql-language-service-utils":85,"graphql/language/kinds":106}],72:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20746,7 +20827,7 @@ function lexicalDistance(a, b) {
 
   return d[aLength][bLength];
 }
-},{"graphql":95,"graphql/type/introspection":118}],72:[function(require,module,exports){
+},{"graphql":96,"graphql/type/introspection":119}],73:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21280,7 +21361,7 @@ function find(array, predicate) {
   }
   return null;
 }
-},{"./autocompleteUtils":71,"graphql":95,"graphql-language-service-parser":80}],73:[function(require,module,exports){
+},{"./autocompleteUtils":72,"graphql":96,"graphql-language-service-parser":81}],74:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -21386,7 +21467,7 @@ function getDefinitionForFragmentDefinition(path, text, definition) {
   };
 }
 }).call(this,require('_process'))
-},{"_process":232,"assert":35,"graphql-language-service-utils":84}],74:[function(require,module,exports){
+},{"_process":233,"assert":36,"graphql-language-service-utils":85}],75:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21524,7 +21605,7 @@ function getRange(location, queryText) {
 
   return new _graphqlLanguageServiceUtils.Range(new _graphqlLanguageServiceUtils.Position(line, start), new _graphqlLanguageServiceUtils.Position(line, end));
 }
-},{"assert":35,"graphql":95,"graphql-language-service-parser":80,"graphql-language-service-utils":84}],75:[function(require,module,exports){
+},{"assert":36,"graphql":96,"graphql-language-service-parser":81,"graphql-language-service-utils":85}],76:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21643,7 +21724,7 @@ function concatMap(arr, fn) {
   }
   return res;
 }
-},{"graphql":95,"graphql-language-service-utils":84,"graphql/language/kinds":105}],76:[function(require,module,exports){
+},{"graphql":96,"graphql-language-service-utils":85,"graphql/language/kinds":106}],77:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21739,7 +21820,7 @@ Object.defineProperty(exports, 'GraphQLLanguageService', {
     return _GraphQLLanguageService.GraphQLLanguageService;
   }
 });
-},{"./GraphQLLanguageService":70,"./autocompleteUtils":71,"./getAutocompleteSuggestions":72,"./getDefinition":73,"./getDiagnostics":74,"./getOutline":75}],77:[function(require,module,exports){
+},{"./GraphQLLanguageService":71,"./autocompleteUtils":72,"./getAutocompleteSuggestions":73,"./getDefinition":74,"./getDiagnostics":75,"./getOutline":76}],78:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21927,7 +22008,7 @@ var CharacterStream = function () {
  */
 
 exports.default = CharacterStream;
-},{}],78:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21993,7 +22074,7 @@ function p(value, style) {
     }
   };
 }
-},{}],79:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22208,7 +22289,7 @@ function type(style) {
     }
   };
 }
-},{"./RuleHelpers":78}],80:[function(require,module,exports){
+},{"./RuleHelpers":79}],81:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22288,7 +22369,7 @@ Object.defineProperty(exports, 'onlineParser', {
 });
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./CharacterStream":77,"./RuleHelpers":78,"./Rules":79,"./onlineParser":81}],81:[function(require,module,exports){
+},{"./CharacterStream":78,"./RuleHelpers":79,"./Rules":80,"./onlineParser":82}],82:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22585,7 +22666,7 @@ function lex(lexRules, stream) {
     }
   }
 }
-},{"./Rules":79}],82:[function(require,module,exports){
+},{"./Rules":80}],83:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22675,7 +22756,7 @@ function locToRange(text, loc) {
   var end = offsetToPosition(text, loc.end);
   return new Range(start, end);
 }
-},{}],83:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22726,7 +22807,7 @@ function pointToOffset(text, point) {
     return a + b;
   }, 0);
 }
-},{"./Range":82,"graphql":95}],84:[function(require,module,exports){
+},{"./Range":83,"graphql":96}],85:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22783,7 +22864,7 @@ Object.defineProperty(exports, 'validateWithCustomRules', {
     return _validateWithCustomRules.validateWithCustomRules;
   }
 });
-},{"./Range":82,"./getASTNodeAtPosition":83,"./validateWithCustomRules":85}],85:[function(require,module,exports){
+},{"./Range":83,"./getASTNodeAtPosition":84,"./validateWithCustomRules":86}],86:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22828,7 +22909,7 @@ function validateWithCustomRules(schema, ast, customRules) {
    *
    *  
    */
-},{"graphql":95,"graphql/validation/rules/NoUnusedFragments":152}],86:[function(require,module,exports){
+},{"graphql":96,"graphql/validation/rules/NoUnusedFragments":153}],87:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22944,7 +23025,7 @@ GraphQLError.prototype = Object.create(Error.prototype, {
   constructor: { value: GraphQLError },
   name: { value: 'GraphQLError' }
 });
-},{"../language/location":107}],87:[function(require,module,exports){
+},{"../language/location":108}],88:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22978,7 +23059,7 @@ function formatError(error) {
  *  LICENSE file in the root directory of this source tree. An additional grant
  *  of patent rights can be found in the PATENTS file in the same directory.
  */
-},{"../jsutils/invariant":97}],88:[function(require,module,exports){
+},{"../jsutils/invariant":98}],89:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -23020,7 +23101,7 @@ Object.defineProperty(exports, 'formatError', {
     return _formatError.formatError;
   }
 });
-},{"./GraphQLError":86,"./formatError":87,"./locatedError":89,"./syntaxError":90}],89:[function(require,module,exports){
+},{"./GraphQLError":87,"./formatError":88,"./locatedError":90,"./syntaxError":91}],90:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -23053,7 +23134,7 @@ function locatedError(originalError, nodes, path) {
  *  LICENSE file in the root directory of this source tree. An additional grant
  *  of patent rights can be found in the PATENTS file in the same directory.
  */
-},{"./GraphQLError":86}],90:[function(require,module,exports){
+},{"./GraphQLError":87}],91:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -23102,7 +23183,7 @@ function highlightSourceAtLocation(source, location) {
 function lpad(len, str) {
   return Array(len - str.length + 1).join(' ') + str;
 }
-},{"../language/location":107,"./GraphQLError":86}],91:[function(require,module,exports){
+},{"../language/location":108,"./GraphQLError":87}],92:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -23932,7 +24013,7 @@ function getFieldDef(schema, parentType, fieldName) {
   }
   return parentType.getFields()[fieldName];
 }
-},{"../error":88,"../jsutils/invariant":97,"../jsutils/isNullish":99,"../language/kinds":105,"../type/definition":115,"../type/directives":116,"../type/introspection":118,"../type/schema":120,"../utilities/typeFromAST":138,"./values":93,"iterall":172}],92:[function(require,module,exports){
+},{"../error":89,"../jsutils/invariant":98,"../jsutils/isNullish":100,"../language/kinds":106,"../type/definition":116,"../type/directives":117,"../type/introspection":119,"../type/schema":121,"../utilities/typeFromAST":139,"./values":94,"iterall":173}],93:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -23968,7 +24049,7 @@ Object.defineProperty(exports, 'getDirectiveValues', {
     return _values.getDirectiveValues;
   }
 });
-},{"./execute":91,"./values":93}],93:[function(require,module,exports){
+},{"./execute":92,"./values":94}],94:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -24226,7 +24307,7 @@ function coerceValue(type, value) {
 
   return parsed;
 }
-},{"../error":88,"../jsutils/find":96,"../jsutils/invariant":97,"../jsutils/isInvalid":98,"../jsutils/isNullish":99,"../jsutils/keyMap":100,"../language/kinds":105,"../language/printer":109,"../type/definition":115,"../utilities/isValidJSValue":133,"../utilities/isValidLiteralValue":134,"../utilities/typeFromAST":138,"../utilities/valueFromAST":139,"iterall":172}],94:[function(require,module,exports){
+},{"../error":89,"../jsutils/find":97,"../jsutils/invariant":98,"../jsutils/isInvalid":99,"../jsutils/isNullish":100,"../jsutils/keyMap":101,"../language/kinds":106,"../language/printer":110,"../type/definition":116,"../utilities/isValidJSValue":134,"../utilities/isValidLiteralValue":135,"../utilities/typeFromAST":139,"../utilities/valueFromAST":140,"iterall":173}],95:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -24307,7 +24388,7 @@ function graphqlImpl(schema, source, rootValue, contextValue, variableValues, op
     resolve((0, _execute.execute)(schema, document, rootValue, contextValue, variableValues, operationName, fieldResolver));
   });
 }
-},{"./execution/execute":91,"./language/parser":108,"./validation/validate":168}],95:[function(require,module,exports){
+},{"./execution/execute":92,"./language/parser":109,"./validation/validate":169}],96:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -25087,7 +25168,7 @@ Object.defineProperty(exports, 'findDeprecatedUsages', {
     return _utilities.findDeprecatedUsages;
   }
 });
-},{"./error":88,"./execution":92,"./graphql":94,"./language":104,"./subscription":112,"./type":117,"./utilities":131,"./validation":140}],96:[function(require,module,exports){
+},{"./error":89,"./execution":93,"./graphql":95,"./language":105,"./subscription":113,"./type":118,"./utilities":132,"./validation":141}],97:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25111,7 +25192,7 @@ function find(list, predicate) {
     }
   }
 }
-},{}],97:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25133,7 +25214,7 @@ function invariant(condition, message) {
     throw new Error(message);
   }
 }
-},{}],98:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25156,7 +25237,7 @@ exports.default = isInvalid;
 function isInvalid(value) {
   return value === undefined || value !== value;
 }
-},{}],99:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25179,7 +25260,7 @@ exports.default = isNullish;
 function isNullish(value) {
   return value === null || value === undefined || value !== value;
 }
-},{}],100:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25224,7 +25305,7 @@ function keyMap(list, keyFn) {
     return map[keyFn(item)] = item, map;
   }, Object.create(null));
 }
-},{}],101:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25263,7 +25344,7 @@ function keyValMap(list, keyFn, valFn) {
     return map[keyFn(item)] = valFn(item), map;
   }, Object.create(null));
 }
-},{}],102:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -25293,7 +25374,7 @@ function quotedOrList(items) {
     return list + (selected.length > 2 ? ', ' : ' ') + (index === selected.length - 1 ? 'or ' : '') + quoted;
   });
 }
-},{}],103:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25373,7 +25454,7 @@ function lexicalDistance(a, b) {
 
   return d[aLength][bLength];
 }
-},{}],104:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -25484,7 +25565,7 @@ var Kind = _interopRequireWildcard(_kinds);
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 exports.Kind = Kind;
-},{"./kinds":105,"./lexer":106,"./location":107,"./parser":108,"./printer":109,"./source":110,"./visitor":111}],105:[function(require,module,exports){
+},{"./kinds":106,"./lexer":107,"./location":108,"./parser":109,"./printer":110,"./source":111,"./visitor":112}],106:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -25566,7 +25647,7 @@ var TYPE_EXTENSION_DEFINITION = exports.TYPE_EXTENSION_DEFINITION = 'TypeExtensi
 // Directive Definitions
 
 var DIRECTIVE_DEFINITION = exports.DIRECTIVE_DEFINITION = 'DirectiveDefinition';
-},{}],106:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -26069,7 +26150,7 @@ function readName(source, position, line, col, prev) {
   }
   return new Tok(NAME, position, end, line, col, prev, slice.call(body, position, end));
 }
-},{"../error":88}],107:[function(require,module,exports){
+},{"../error":89}],108:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -26107,7 +26188,7 @@ function getLocation(source, position) {
 /**
  * Represents a location in a Source.
  */
-},{}],108:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -27135,7 +27216,7 @@ function many(lexer, openKind, parseFn, closeKind) {
   }
   return nodes;
 }
-},{"../error":88,"./kinds":105,"./lexer":106,"./source":110}],109:[function(require,module,exports){
+},{"../error":89,"./kinds":106,"./lexer":107,"./source":111}],110:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -27418,7 +27499,7 @@ function wrap(start, maybeString, end) {
 function indent(maybeString) {
   return maybeString && maybeString.replace(/\n/g, '\n  ');
 }
-},{"./visitor":111}],110:[function(require,module,exports){
+},{"./visitor":112}],111:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -27448,7 +27529,7 @@ var Source = exports.Source = function Source(body, name) {
   this.body = body;
   this.name = name || 'GraphQL request';
 };
-},{}],111:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -27840,7 +27921,7 @@ function getVisitFn(visitor, kind, isLeaving) {
     }
   }
 }
-},{}],112:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -27861,7 +27942,7 @@ Object.defineProperty(exports, 'createSourceEventStream', {
     return _subscribe.createSourceEventStream;
   }
 });
-},{"./subscribe":114}],113:[function(require,module,exports){
+},{"./subscribe":115}],114:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -27931,7 +28012,7 @@ function asyncMapValue(value, callback) {
 function iteratorResult(value) {
   return { value: value, done: false };
 }
-},{"iterall":172}],114:[function(require,module,exports){
+},{"iterall":173}],115:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -28050,7 +28131,7 @@ function createSourceEventStream(schema, document, rootValue, contextValue, vari
 
   return subscription;
 }
-},{"../execution/execute":91,"../jsutils/invariant":97,"../type/schema":120,"./mapAsyncIterator":113,"iterall":172}],115:[function(require,module,exports){
+},{"../execution/execute":92,"../jsutils/invariant":98,"../type/schema":121,"./mapAsyncIterator":114,"iterall":173}],116:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -28834,7 +28915,7 @@ var GraphQLNonNull = exports.GraphQLNonNull = function () {
 
 
 GraphQLNonNull.prototype.toJSON = GraphQLNonNull.prototype.inspect = GraphQLNonNull.prototype.toString;
-},{"../jsutils/invariant":97,"../jsutils/isNullish":99,"../language/kinds":105,"../utilities/assertValidName":122}],116:[function(require,module,exports){
+},{"../jsutils/invariant":98,"../jsutils/isNullish":100,"../language/kinds":106,"../utilities/assertValidName":123}],117:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -28977,7 +29058,7 @@ var GraphQLDeprecatedDirective = exports.GraphQLDeprecatedDirective = new GraphQ
  * The full list of specified directives.
  */
 var specifiedDirectives = exports.specifiedDirectives = [GraphQLIncludeDirective, GraphQLSkipDirective, GraphQLDeprecatedDirective];
-},{"../jsutils/invariant":97,"../utilities/assertValidName":122,"./definition":115,"./scalars":119}],117:[function(require,module,exports){
+},{"../jsutils/invariant":98,"../utilities/assertValidName":123,"./definition":116,"./scalars":120}],118:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29292,7 +29373,7 @@ Object.defineProperty(exports, 'TypeNameMetaFieldDef', {
     return _introspection.TypeNameMetaFieldDef;
   }
 });
-},{"./definition":115,"./directives":116,"./introspection":118,"./scalars":119,"./schema":120}],118:[function(require,module,exports){
+},{"./definition":116,"./directives":117,"./introspection":119,"./scalars":120,"./schema":121}],119:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29752,7 +29833,7 @@ var TypeNameMetaFieldDef = exports.TypeNameMetaFieldDef = {
     return parentType.name;
   }
 };
-},{"../jsutils/isInvalid":98,"../language/printer":109,"../utilities/astFromValue":123,"./definition":115,"./directives":116,"./scalars":119}],119:[function(require,module,exports){
+},{"../jsutils/isInvalid":99,"../language/printer":110,"../utilities/astFromValue":124,"./definition":116,"./directives":117,"./scalars":120}],120:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29867,7 +29948,7 @@ var GraphQLID = exports.GraphQLID = new _definition.GraphQLScalarType({
     return ast.kind === Kind.STRING || ast.kind === Kind.INT ? ast.value : null;
   }
 });
-},{"../language/kinds":105,"./definition":115}],120:[function(require,module,exports){
+},{"../language/kinds":106,"./definition":116}],121:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30141,7 +30222,7 @@ function assertObjectImplementsInterface(schema, object, iface) {
     });
   });
 }
-},{"../jsutils/find":96,"../jsutils/invariant":97,"../utilities/typeComparators":137,"./definition":115,"./directives":116,"./introspection":118}],121:[function(require,module,exports){
+},{"../jsutils/find":97,"../jsutils/invariant":98,"../utilities/typeComparators":138,"./definition":116,"./directives":117,"./introspection":119}],122:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30377,7 +30458,7 @@ function getFieldDef(schema, parentType, fieldNode) {
     return parentType.getFields()[name];
   }
 }
-},{"../jsutils/find":96,"../language/kinds":105,"../type/definition":115,"../type/introspection":118,"./typeFromAST":138}],122:[function(require,module,exports){
+},{"../jsutils/find":97,"../language/kinds":106,"../type/definition":116,"../type/introspection":119,"./typeFromAST":139}],123:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -30443,7 +30524,7 @@ function formatWarning(error) {
   return formatted.trim();
 }
 }).call(this,require('_process'))
-},{"_process":232}],123:[function(require,module,exports){
+},{"_process":233}],124:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30605,7 +30686,7 @@ function astFromValue(value, type) {
  *  LICENSE file in the root directory of this source tree. An additional grant
  *  of patent rights can be found in the PATENTS file in the same directory.
  */
-},{"../jsutils/invariant":97,"../jsutils/isInvalid":98,"../jsutils/isNullish":99,"../language/kinds":105,"../type/definition":115,"../type/scalars":119,"iterall":172}],124:[function(require,module,exports){
+},{"../jsutils/invariant":98,"../jsutils/isInvalid":99,"../jsutils/isNullish":100,"../language/kinds":106,"../type/definition":116,"../type/scalars":120,"iterall":173}],125:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31080,7 +31161,7 @@ function leadingSpaces(str) {
 function cannotExecuteSchema() {
   throw new Error('Generated Schema cannot use Interface or Union types for execution.');
 }
-},{"../execution/values":93,"../jsutils/invariant":97,"../jsutils/keyValMap":101,"../language/kinds":105,"../language/lexer":106,"../language/parser":108,"../type/definition":115,"../type/directives":116,"../type/introspection":118,"../type/scalars":119,"../type/schema":120,"./valueFromAST":139}],125:[function(require,module,exports){
+},{"../execution/values":94,"../jsutils/invariant":98,"../jsutils/keyValMap":102,"../language/kinds":106,"../language/lexer":107,"../language/parser":109,"../type/definition":116,"../type/directives":117,"../type/introspection":119,"../type/scalars":120,"../type/schema":121,"./valueFromAST":140}],126:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31390,7 +31471,7 @@ function buildClientSchema(introspection) {
 function cannotExecuteClientSchema() {
   throw new Error('Client Schema cannot use Interface or Union types for execution.');
 }
-},{"../jsutils/invariant":97,"../jsutils/keyMap":100,"../jsutils/keyValMap":101,"../language/parser":108,"../type/definition":115,"../type/directives":116,"../type/introspection":118,"../type/scalars":119,"../type/schema":120,"./valueFromAST":139}],126:[function(require,module,exports){
+},{"../jsutils/invariant":98,"../jsutils/keyMap":101,"../jsutils/keyValMap":102,"../language/parser":109,"../type/definition":116,"../type/directives":117,"../type/introspection":119,"../type/scalars":120,"../type/schema":121,"./valueFromAST":140}],127:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31425,7 +31506,7 @@ function concatAST(asts) {
  *  LICENSE file in the root directory of this source tree. An additional grant
  *  of patent rights can be found in the PATENTS file in the same directory.
  */
-},{}],127:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31960,7 +32041,7 @@ function extendSchema(schema, documentAST) {
 function cannotExecuteExtendedSchema() {
   throw new Error('Extended Schema cannot use Interface or Union types for execution.');
 }
-},{"../error/GraphQLError":86,"../jsutils/invariant":97,"../jsutils/keyMap":100,"../jsutils/keyValMap":101,"../language/kinds":105,"../type/definition":115,"../type/directives":116,"../type/introspection":118,"../type/scalars":119,"../type/schema":120,"./buildASTSchema":124,"./valueFromAST":139}],128:[function(require,module,exports){
+},{"../error/GraphQLError":87,"../jsutils/invariant":98,"../jsutils/keyMap":101,"../jsutils/keyValMap":102,"../language/kinds":106,"../type/definition":116,"../type/directives":117,"../type/introspection":119,"../type/scalars":120,"../type/schema":121,"./buildASTSchema":125,"./valueFromAST":140}],129:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32397,7 +32478,7 @@ function findInterfacesRemovedFromObjectTypes(oldSchema, newSchema) {
   });
   return breakingChanges;
 }
-},{"../type/definition":115,"../type/schema":120}],129:[function(require,module,exports){
+},{"../type/definition":116,"../type/schema":121}],130:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32457,7 +32538,7 @@ function findDeprecatedUsages(schema, ast) {
  *  LICENSE file in the root directory of this source tree. An additional grant
  *  of patent rights can be found in the PATENTS file in the same directory.
  */
-},{"../error/GraphQLError":86,"../language/visitor":111,"../type/definition":115,"../type/schema":120,"./TypeInfo":121}],130:[function(require,module,exports){
+},{"../error/GraphQLError":87,"../language/visitor":112,"../type/definition":116,"../type/schema":121,"./TypeInfo":122}],131:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32500,7 +32581,7 @@ function getOperationAST(documentAST, operationName) {
  *  LICENSE file in the root directory of this source tree. An additional grant
  *  of patent rights can be found in the PATENTS file in the same directory.
  */
-},{"../language/kinds":105}],131:[function(require,module,exports){
+},{"../language/kinds":106}],132:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32710,7 +32791,7 @@ Object.defineProperty(exports, 'findDeprecatedUsages', {
     return _findDeprecatedUsages.findDeprecatedUsages;
   }
 });
-},{"./TypeInfo":121,"./assertValidName":122,"./astFromValue":123,"./buildASTSchema":124,"./buildClientSchema":125,"./concatAST":126,"./extendSchema":127,"./findBreakingChanges":128,"./findDeprecatedUsages":129,"./getOperationAST":130,"./introspectionQuery":132,"./isValidJSValue":133,"./isValidLiteralValue":134,"./schemaPrinter":135,"./separateOperations":136,"./typeComparators":137,"./typeFromAST":138,"./valueFromAST":139}],132:[function(require,module,exports){
+},{"./TypeInfo":122,"./assertValidName":123,"./astFromValue":124,"./buildASTSchema":125,"./buildClientSchema":126,"./concatAST":127,"./extendSchema":128,"./findBreakingChanges":129,"./findDeprecatedUsages":130,"./getOperationAST":131,"./introspectionQuery":133,"./isValidJSValue":134,"./isValidLiteralValue":135,"./schemaPrinter":136,"./separateOperations":137,"./typeComparators":138,"./typeFromAST":139,"./valueFromAST":140}],133:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32725,7 +32806,7 @@ var introspectionQuery = exports.introspectionQuery = '\n  query IntrospectionQu
  *  LICENSE file in the root directory of this source tree. An additional grant
  *  of patent rights can be found in the PATENTS file in the same directory.
  */
-},{}],133:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32832,7 +32913,7 @@ function isValidJSValue(value, type) {
 
   return [];
 }
-},{"../jsutils/invariant":97,"../jsutils/isNullish":99,"../type/definition":115,"iterall":172}],134:[function(require,module,exports){
+},{"../jsutils/invariant":98,"../jsutils/isNullish":100,"../type/definition":116,"iterall":173}],135:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32948,7 +33029,7 @@ function isValidLiteralValue(type, valueNode) {
  *  LICENSE file in the root directory of this source tree. An additional grant
  *  of patent rights can be found in the PATENTS file in the same directory.
  */
-},{"../jsutils/invariant":97,"../jsutils/keyMap":100,"../language/kinds":105,"../language/printer":109,"../type/definition":115}],135:[function(require,module,exports){
+},{"../jsutils/invariant":98,"../jsutils/keyMap":101,"../language/kinds":106,"../language/printer":110,"../type/definition":116}],136:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33233,7 +33314,7 @@ function breakLine(line, len) {
   }
   return sublines;
 }
-},{"../jsutils/invariant":97,"../jsutils/isInvalid":98,"../jsutils/isNullish":99,"../language/printer":109,"../type/definition":115,"../type/directives":116,"../type/scalars":119,"../utilities/astFromValue":123}],136:[function(require,module,exports){
+},{"../jsutils/invariant":98,"../jsutils/isInvalid":99,"../jsutils/isNullish":100,"../language/printer":110,"../type/definition":116,"../type/directives":117,"../type/scalars":120,"../utilities/astFromValue":124}],137:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33329,7 +33410,7 @@ function collectTransitiveDependencies(collected, depGraph, fromName) {
     });
   }
 }
-},{"../language/visitor":111}],137:[function(require,module,exports){
+},{"../language/visitor":112}],138:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33454,7 +33535,7 @@ function doTypesOverlap(schema, typeA, typeB) {
   // Otherwise the types do not overlap.
   return false;
 }
-},{"../type/definition":115}],138:[function(require,module,exports){
+},{"../type/definition":116}],139:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33512,7 +33593,7 @@ function typeFromASTImpl(schema, typeNode) {
  */
 
 var typeFromAST = exports.typeFromAST = typeFromASTImpl;
-},{"../jsutils/invariant":97,"../language/kinds":105,"../type/definition":115}],139:[function(require,module,exports){
+},{"../jsutils/invariant":98,"../language/kinds":106,"../type/definition":116}],140:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33685,7 +33766,7 @@ function valueFromAST(valueNode, type, variables) {
 function isMissingVariable(valueNode, variables) {
   return valueNode.kind === Kind.VARIABLE && (!variables || (0, _isInvalid2.default)(variables[valueNode.name.value]));
 }
-},{"../jsutils/invariant":97,"../jsutils/isInvalid":98,"../jsutils/isNullish":99,"../jsutils/keyMap":100,"../language/kinds":105,"../type/definition":115}],140:[function(require,module,exports){
+},{"../jsutils/invariant":98,"../jsutils/isInvalid":99,"../jsutils/isNullish":100,"../jsutils/keyMap":101,"../language/kinds":106,"../type/definition":116}],141:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33949,7 +34030,7 @@ Object.defineProperty(exports, 'VariablesInAllowedPositionRule', {
     return _VariablesInAllowedPosition.VariablesInAllowedPosition;
   }
 });
-},{"./rules/ArgumentsOfCorrectType":141,"./rules/DefaultValuesOfCorrectType":142,"./rules/FieldsOnCorrectType":143,"./rules/FragmentsOnCompositeTypes":144,"./rules/KnownArgumentNames":145,"./rules/KnownDirectives":146,"./rules/KnownFragmentNames":147,"./rules/KnownTypeNames":148,"./rules/LoneAnonymousOperation":149,"./rules/NoFragmentCycles":150,"./rules/NoUndefinedVariables":151,"./rules/NoUnusedFragments":152,"./rules/NoUnusedVariables":153,"./rules/OverlappingFieldsCanBeMerged":154,"./rules/PossibleFragmentSpreads":155,"./rules/ProvidedNonNullArguments":156,"./rules/ScalarLeafs":157,"./rules/SingleFieldSubscriptions":158,"./rules/UniqueArgumentNames":159,"./rules/UniqueDirectivesPerLocation":160,"./rules/UniqueFragmentNames":161,"./rules/UniqueInputFieldNames":162,"./rules/UniqueOperationNames":163,"./rules/UniqueVariableNames":164,"./rules/VariablesAreInputTypes":165,"./rules/VariablesInAllowedPosition":166,"./specifiedRules":167,"./validate":168}],141:[function(require,module,exports){
+},{"./rules/ArgumentsOfCorrectType":142,"./rules/DefaultValuesOfCorrectType":143,"./rules/FieldsOnCorrectType":144,"./rules/FragmentsOnCompositeTypes":145,"./rules/KnownArgumentNames":146,"./rules/KnownDirectives":147,"./rules/KnownFragmentNames":148,"./rules/KnownTypeNames":149,"./rules/LoneAnonymousOperation":150,"./rules/NoFragmentCycles":151,"./rules/NoUndefinedVariables":152,"./rules/NoUnusedFragments":153,"./rules/NoUnusedVariables":154,"./rules/OverlappingFieldsCanBeMerged":155,"./rules/PossibleFragmentSpreads":156,"./rules/ProvidedNonNullArguments":157,"./rules/ScalarLeafs":158,"./rules/SingleFieldSubscriptions":159,"./rules/UniqueArgumentNames":160,"./rules/UniqueDirectivesPerLocation":161,"./rules/UniqueFragmentNames":162,"./rules/UniqueInputFieldNames":163,"./rules/UniqueOperationNames":164,"./rules/UniqueVariableNames":165,"./rules/VariablesAreInputTypes":166,"./rules/VariablesInAllowedPosition":167,"./specifiedRules":168,"./validate":169}],142:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33998,7 +34079,7 @@ function ArgumentsOfCorrectType(context) {
     }
   };
 }
-},{"../../error":88,"../../language/printer":109,"../../utilities/isValidLiteralValue":134}],142:[function(require,module,exports){
+},{"../../error":89,"../../language/printer":110,"../../utilities/isValidLiteralValue":135}],143:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34065,7 +34146,7 @@ function DefaultValuesOfCorrectType(context) {
     }
   };
 }
-},{"../../error":88,"../../language/printer":109,"../../type/definition":115,"../../utilities/isValidLiteralValue":134}],143:[function(require,module,exports){
+},{"../../error":89,"../../language/printer":110,"../../type/definition":116,"../../utilities/isValidLiteralValue":135}],144:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34188,7 +34269,7 @@ function getSuggestedFieldNames(schema, type, fieldName) {
   // Otherwise, must be a Union type, which does not define fields.
   return [];
 }
-},{"../../error":88,"../../jsutils/quotedOrList":102,"../../jsutils/suggestionList":103,"../../type/definition":115}],144:[function(require,module,exports){
+},{"../../error":89,"../../jsutils/quotedOrList":103,"../../jsutils/suggestionList":104,"../../type/definition":116}],145:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34247,7 +34328,7 @@ function FragmentsOnCompositeTypes(context) {
     }
   };
 }
-},{"../../error":88,"../../language/printer":109,"../../type/definition":115,"../../utilities/typeFromAST":138}],145:[function(require,module,exports){
+},{"../../error":89,"../../language/printer":110,"../../type/definition":116,"../../utilities/typeFromAST":139}],146:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34347,7 +34428,7 @@ function KnownArgumentNames(context) {
     }
   };
 }
-},{"../../error":88,"../../jsutils/find":96,"../../jsutils/invariant":97,"../../jsutils/quotedOrList":102,"../../jsutils/suggestionList":103,"../../language/kinds":105}],146:[function(require,module,exports){
+},{"../../error":89,"../../jsutils/find":97,"../../jsutils/invariant":98,"../../jsutils/quotedOrList":103,"../../jsutils/suggestionList":104,"../../language/kinds":106}],147:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34459,7 +34540,7 @@ function getDirectiveLocationForASTPath(ancestors) {
       return parentNode.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION ? _directives.DirectiveLocation.INPUT_FIELD_DEFINITION : _directives.DirectiveLocation.ARGUMENT_DEFINITION;
   }
 }
-},{"../../error":88,"../../jsutils/find":96,"../../language/kinds":105,"../../type/directives":116}],147:[function(require,module,exports){
+},{"../../error":89,"../../jsutils/find":97,"../../language/kinds":106,"../../type/directives":117}],148:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34500,7 +34581,7 @@ function KnownFragmentNames(context) {
     }
   };
 }
-},{"../../error":88}],148:[function(require,module,exports){
+},{"../../error":89}],149:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34571,7 +34652,7 @@ function KnownTypeNames(context) {
     }
   };
 }
-},{"../../error":88,"../../jsutils/quotedOrList":102,"../../jsutils/suggestionList":103}],149:[function(require,module,exports){
+},{"../../error":89,"../../jsutils/quotedOrList":103,"../../jsutils/suggestionList":104}],150:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34619,7 +34700,7 @@ function LoneAnonymousOperation(context) {
     }
   };
 }
-},{"../../error":88,"../../language/kinds":105}],150:[function(require,module,exports){
+},{"../../error":89,"../../language/kinds":106}],151:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34706,7 +34787,7 @@ function NoFragmentCycles(context) {
     spreadPathIndexByName[fragmentName] = undefined;
   }
 }
-},{"../../error":88}],151:[function(require,module,exports){
+},{"../../error":89}],152:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34762,7 +34843,7 @@ function NoUndefinedVariables(context) {
     }
   };
 }
-},{"../../error":88}],152:[function(require,module,exports){
+},{"../../error":89}],153:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34825,7 +34906,7 @@ function NoUnusedFragments(context) {
     }
   };
 }
-},{"../../error":88}],153:[function(require,module,exports){
+},{"../../error":89}],154:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34887,7 +34968,7 @@ function NoUnusedVariables(context) {
     }
   };
 }
-},{"../../error":88}],154:[function(require,module,exports){
+},{"../../error":89}],155:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -35445,7 +35526,7 @@ function _pairSetAdd(data, a, b, areMutuallyExclusive) {
   }
   map[b] = areMutuallyExclusive;
 }
-},{"../../error":88,"../../jsutils/find":96,"../../language/kinds":105,"../../language/printer":109,"../../type/definition":115,"../../utilities/typeFromAST":138}],155:[function(require,module,exports){
+},{"../../error":89,"../../jsutils/find":97,"../../language/kinds":106,"../../language/printer":110,"../../type/definition":116,"../../utilities/typeFromAST":139}],156:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -35509,7 +35590,7 @@ function getFragmentType(context, name) {
   var frag = context.getFragment(name);
   return frag && (0, _typeFromAST.typeFromAST)(context.getSchema(), frag.typeCondition);
 }
-},{"../../error":88,"../../utilities/typeComparators":137,"../../utilities/typeFromAST":138}],156:[function(require,module,exports){
+},{"../../error":89,"../../utilities/typeComparators":138,"../../utilities/typeFromAST":139}],157:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -35597,7 +35678,7 @@ function ProvidedNonNullArguments(context) {
     }
   };
 }
-},{"../../error":88,"../../jsutils/keyMap":100,"../../type/definition":115}],157:[function(require,module,exports){
+},{"../../error":89,"../../jsutils/keyMap":101,"../../type/definition":116}],158:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -35649,7 +35730,7 @@ function ScalarLeafs(context) {
     }
   };
 }
-},{"../../error":88,"../../type/definition":115}],158:[function(require,module,exports){
+},{"../../error":89,"../../type/definition":116}],159:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -35689,7 +35770,7 @@ function SingleFieldSubscriptions(context) {
     }
   };
 }
-},{"../../error":88}],159:[function(require,module,exports){
+},{"../../error":89}],160:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -35739,7 +35820,7 @@ function UniqueArgumentNames(context) {
     }
   };
 }
-},{"../../error":88}],160:[function(require,module,exports){
+},{"../../error":89}],161:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -35789,7 +35870,7 @@ function UniqueDirectivesPerLocation(context) {
     }
   };
 }
-},{"../../error":88}],161:[function(require,module,exports){
+},{"../../error":89}],162:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -35835,7 +35916,7 @@ function UniqueFragmentNames(context) {
     }
   };
 }
-},{"../../error":88}],162:[function(require,module,exports){
+},{"../../error":89}],163:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -35890,7 +35971,7 @@ function UniqueInputFieldNames(context) {
     }
   };
 }
-},{"../../error":88}],163:[function(require,module,exports){
+},{"../../error":89}],164:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -35939,7 +36020,7 @@ function UniqueOperationNames(context) {
     }
   };
 }
-},{"../../error":88}],164:[function(require,module,exports){
+},{"../../error":89}],165:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -35985,7 +36066,7 @@ function UniqueVariableNames(context) {
     }
   };
 }
-},{"../../error":88}],165:[function(require,module,exports){
+},{"../../error":89}],166:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36035,7 +36116,7 @@ function VariablesAreInputTypes(context) {
     }
   };
 }
-},{"../../error":88,"../../language/printer":109,"../../type/definition":115,"../../utilities/typeFromAST":138}],166:[function(require,module,exports){
+},{"../../error":89,"../../language/printer":110,"../../type/definition":116,"../../utilities/typeFromAST":139}],167:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36111,7 +36192,7 @@ function VariablesInAllowedPosition(context) {
 function effectiveType(varType, varDef) {
   return !varDef.defaultValue || varType instanceof _definition.GraphQLNonNull ? varType : new _definition.GraphQLNonNull(varType);
 }
-},{"../../error":88,"../../type/definition":115,"../../utilities/typeComparators":137,"../../utilities/typeFromAST":138}],167:[function(require,module,exports){
+},{"../../error":89,"../../type/definition":116,"../../utilities/typeComparators":138,"../../utilities/typeFromAST":139}],168:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36263,7 +36344,7 @@ var specifiedRules = exports.specifiedRules = [_UniqueOperationNames.UniqueOpera
 
 
 // Spec Section: "Lone Anonymous Operation"
-},{"./rules/ArgumentsOfCorrectType":141,"./rules/DefaultValuesOfCorrectType":142,"./rules/FieldsOnCorrectType":143,"./rules/FragmentsOnCompositeTypes":144,"./rules/KnownArgumentNames":145,"./rules/KnownDirectives":146,"./rules/KnownFragmentNames":147,"./rules/KnownTypeNames":148,"./rules/LoneAnonymousOperation":149,"./rules/NoFragmentCycles":150,"./rules/NoUndefinedVariables":151,"./rules/NoUnusedFragments":152,"./rules/NoUnusedVariables":153,"./rules/OverlappingFieldsCanBeMerged":154,"./rules/PossibleFragmentSpreads":155,"./rules/ProvidedNonNullArguments":156,"./rules/ScalarLeafs":157,"./rules/SingleFieldSubscriptions":158,"./rules/UniqueArgumentNames":159,"./rules/UniqueDirectivesPerLocation":160,"./rules/UniqueFragmentNames":161,"./rules/UniqueInputFieldNames":162,"./rules/UniqueOperationNames":163,"./rules/UniqueVariableNames":164,"./rules/VariablesAreInputTypes":165,"./rules/VariablesInAllowedPosition":166}],168:[function(require,module,exports){
+},{"./rules/ArgumentsOfCorrectType":142,"./rules/DefaultValuesOfCorrectType":143,"./rules/FieldsOnCorrectType":144,"./rules/FragmentsOnCompositeTypes":145,"./rules/KnownArgumentNames":146,"./rules/KnownDirectives":147,"./rules/KnownFragmentNames":148,"./rules/KnownTypeNames":149,"./rules/LoneAnonymousOperation":150,"./rules/NoFragmentCycles":151,"./rules/NoUndefinedVariables":152,"./rules/NoUnusedFragments":153,"./rules/NoUnusedVariables":154,"./rules/OverlappingFieldsCanBeMerged":155,"./rules/PossibleFragmentSpreads":156,"./rules/ProvidedNonNullArguments":157,"./rules/ScalarLeafs":158,"./rules/SingleFieldSubscriptions":159,"./rules/UniqueArgumentNames":160,"./rules/UniqueDirectivesPerLocation":161,"./rules/UniqueFragmentNames":162,"./rules/UniqueInputFieldNames":163,"./rules/UniqueOperationNames":164,"./rules/UniqueVariableNames":165,"./rules/VariablesAreInputTypes":166,"./rules/VariablesInAllowedPosition":167}],169:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36496,7 +36577,7 @@ var ValidationContext = exports.ValidationContext = function () {
 
   return ValidationContext;
 }();
-},{"../error":88,"../jsutils/invariant":97,"../language/kinds":105,"../language/visitor":111,"../type/schema":120,"../utilities/TypeInfo":121,"./specifiedRules":167}],169:[function(require,module,exports){
+},{"../error":89,"../jsutils/invariant":98,"../language/kinds":106,"../language/visitor":112,"../type/schema":121,"../utilities/TypeInfo":122,"./specifiedRules":168}],170:[function(require,module,exports){
 /*!
  * hotkeys-js v3.3.8
  * A simple micro-library for defining and dispatching keyboard shortcuts. It has no dependencies.
@@ -36901,10 +36982,10 @@ if (typeof window !== 'undefined') {
 
 module.exports = hotkeys;
 
-},{}],170:[function(require,module,exports){
+},{}],171:[function(require,module,exports){
 /*! hotkeys-js v3.3.8 | MIT (c) 2018 kenny wong <wowohoo@qq.com> | http://jaywcjlove.github.io/hotkeys */
 "use strict";var isff="undefined"!=typeof navigator&&0<navigator.userAgent.toLowerCase().indexOf("firefox");function addEvent(e,o,t){e.addEventListener?e.addEventListener(o,t,!1):e.attachEvent&&e.attachEvent("on"+o,function(){t(window.event)})}function getMods(e,o){for(var t=o.slice(0,o.length-1),n=0;n<t.length;n++)t[n]=e[t[n].toLowerCase()];return t}function getKeys(e){e||(e="");for(var o=(e=e.replace(/\s/g,"")).split(","),t=o.lastIndexOf("");0<=t;)o[t-1]+=",",o.splice(t,1),t=o.lastIndexOf("");return o}function compareArray(e,o){for(var t=e.length<o.length?o:e,n=e.length<o.length?e:o,r=!0,s=0;s<t.length;s++)-1===n.indexOf(t[s])&&(r=!1);return r}for(var _keyMap={backspace:8,tab:9,clear:12,enter:13,return:13,esc:27,escape:27,space:32,left:37,up:38,right:39,down:40,del:46,delete:46,ins:45,insert:45,home:36,end:35,pageup:33,pagedown:34,capslock:20,"\u21ea":20,",":188,".":190,"/":191,"`":192,"-":isff?173:189,"=":isff?61:187,";":isff?59:186,"'":222,"[":219,"]":221,"\\":220},_modifier={"\u21e7":16,shift:16,"\u2325":18,alt:18,option:18,"\u2303":17,ctrl:17,control:17,"\u2318":isff?224:91,cmd:isff?224:91,command:isff?224:91},_downKeys=[],modifierMap={16:"shiftKey",18:"altKey",17:"ctrlKey"},_mods={16:!1,18:!1,17:!1},_handlers={},k=1;k<20;k++)_keyMap["f"+k]=111+k;var _scope="all",isBindElement=_mods[isff?224:91]=!(modifierMap[isff?224:91]="metaKey"),code=function(e){return _keyMap[e.toLowerCase()]||_modifier[e.toLowerCase()]||e.toUpperCase().charCodeAt(0)};function setScope(e){_scope=e||"all"}function getScope(){return _scope||"all"}function getPressedKeyCodes(){return _downKeys.slice(0)}function filter(e){var o=e.target||e.srcElement,t=o.tagName;return!("INPUT"===t||"SELECT"===t||"TEXTAREA"===t||o.isContentEditable)}function isPressed(e){return"string"==typeof e&&(e=code(e)),-1!==_downKeys.indexOf(e)}function deleteScope(e,o){var t=void 0,n=void 0;for(var r in e||(e=getScope()),_handlers)if(Object.prototype.hasOwnProperty.call(_handlers,r))for(t=_handlers[r],n=0;n<t.length;)t[n].scope===e?t.splice(n,1):n++;getScope()===e&&setScope(o||"all")}function clearModifier(e){var o=e.keyCode||e.which||e.charCode,t=_downKeys.indexOf(o);if(t<0||_downKeys.splice(t,1),93!==o&&224!==o||(o=91),o in _mods)for(var n in _mods[o]=!1,_modifier)_modifier[n]===o&&(hotkeys[n]=!1)}function unbind(e,o){for(var t=getKeys(e),n=void 0,r=[],s=void 0,i=0;i<t.length;i++){if(1<(n=t[i].split("+")).length&&(r=getMods(_modifier,n)),e="*"===(e=n[n.length-1])?"*":code(e),o||(o=getScope()),!_handlers[e])return;for(var d=0;d<_handlers[e].length;d++)(s=_handlers[e][d]).scope===o&&compareArray(s.mods,r)&&(_handlers[e][d]={})}}function eventHandler(e,o,t){var n=void 0;if(o.scope===t||"all"===o.scope){for(var r in n=0<o.mods.length,_mods)Object.prototype.hasOwnProperty.call(_mods,r)&&(!_mods[r]&&-1<o.mods.indexOf(+r)||_mods[r]&&-1===o.mods.indexOf(+r))&&(n=!1);(0!==o.mods.length||_mods[16]||_mods[18]||_mods[17]||_mods[91])&&!n&&"*"!==o.shortcut||!1===o.method(e,o)&&(e.preventDefault?e.preventDefault():e.returnValue=!1,e.stopPropagation&&e.stopPropagation(),e.cancelBubble&&(e.cancelBubble=!0))}}function dispatch(e){var o=_handlers["*"],t=e.keyCode||e.which||e.charCode;if(-1===_downKeys.indexOf(t)&&_downKeys.push(t),93!==t&&224!==t||(t=91),t in _mods){for(var n in _mods[t]=!0,_modifier)_modifier[n]===t&&(hotkeys[n]=!0);if(!o)return}for(var r in _mods)Object.prototype.hasOwnProperty.call(_mods,r)&&(_mods[r]=e[modifierMap[r]]);if(hotkeys.filter.call(this,e)){var s=getScope();if(o)for(var i=0;i<o.length;i++)o[i].scope===s&&eventHandler(e,o[i],s);if(t in _handlers)for(var d=0;d<_handlers[t].length;d++)eventHandler(e,_handlers[t][d],s)}}function hotkeys(e,o,t){var n=getKeys(e),r=[],s="all",i=document,d=0;for(void 0===t&&"function"==typeof o&&(t=o),"[object Object]"===Object.prototype.toString.call(o)&&(o.scope&&(s=o.scope),o.element&&(i=o.element)),"string"==typeof o&&(s=o);d<n.length;d++)r=[],1<(e=n[d].split("+")).length&&(r=getMods(_modifier,e)),(e="*"===(e=e[e.length-1])?"*":code(e))in _handlers||(_handlers[e]=[]),_handlers[e].push({scope:s,mods:r,shortcut:n[d],method:t,key:n[d]});void 0===i||isBindElement||(isBindElement=!0,addEvent(i,"keydown",function(e){dispatch(e)}),addEvent(i,"keyup",function(e){clearModifier(e)}))}var _api={setScope:setScope,getScope:getScope,deleteScope:deleteScope,getPressedKeyCodes:getPressedKeyCodes,isPressed:isPressed,filter:filter,unbind:unbind};for(var a in _api)Object.prototype.hasOwnProperty.call(_api,a)&&(hotkeys[a]=_api[a]);if("undefined"!=typeof window){var _hotkeys=window.hotkeys;hotkeys.noConflict=function(e){return e&&window.hotkeys===hotkeys&&(window.hotkeys=_hotkeys),hotkeys},window.hotkeys=hotkeys}module.exports=hotkeys;
-},{}],171:[function(require,module,exports){
+},{}],172:[function(require,module,exports){
 (function (process){
 
 if (process.env.NODE_ENV === 'production') {
@@ -36914,7 +36995,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./dist/hotkeys.common.js":169,"./dist/hotkeys.common.min.js":170,"_process":232}],172:[function(require,module,exports){
+},{"./dist/hotkeys.common.js":170,"./dist/hotkeys.common.min.js":171,"_process":233}],173:[function(require,module,exports){
 /**
  * Copyright (c) 2016, Lee Byron
  * All rights reserved.
@@ -37572,7 +37653,7 @@ function forAwaitEach(source, callback, thisArg) {
 }
 exports.forAwaitEach = forAwaitEach
 
-},{}],173:[function(require,module,exports){
+},{}],174:[function(require,module,exports){
 'use strict';
 
 
@@ -38211,7 +38292,7 @@ LinkifyIt.prototype.onCompile = function onCompile() {
 
 module.exports = LinkifyIt;
 
-},{"./lib/re":174}],174:[function(require,module,exports){
+},{"./lib/re":175}],175:[function(require,module,exports){
 'use strict';
 
 
@@ -38390,13 +38471,13 @@ module.exports = function (opts) {
   return re;
 };
 
-},{"uc.micro/categories/Cc/regex":240,"uc.micro/categories/P/regex":242,"uc.micro/categories/Z/regex":243,"uc.micro/properties/Any/regex":245}],175:[function(require,module,exports){
+},{"uc.micro/categories/Cc/regex":241,"uc.micro/categories/P/regex":243,"uc.micro/categories/Z/regex":244,"uc.micro/properties/Any/regex":246}],176:[function(require,module,exports){
 'use strict';
 
 
 module.exports = require('./lib/');
 
-},{"./lib/":184}],176:[function(require,module,exports){
+},{"./lib/":185}],177:[function(require,module,exports){
 // HTML5 entities map: { name -> utf16string }
 //
 'use strict';
@@ -38404,7 +38485,7 @@ module.exports = require('./lib/');
 /*eslint quotes:0*/
 module.exports = require('entities/maps/entities.json');
 
-},{"entities/maps/entities.json":66}],177:[function(require,module,exports){
+},{"entities/maps/entities.json":67}],178:[function(require,module,exports){
 // List of valid html blocks names, accorting to commonmark spec
 // http://jgm.github.io/CommonMark/spec.html#html-blocks
 
@@ -38477,7 +38558,7 @@ module.exports = [
   'ul'
 ];
 
-},{}],178:[function(require,module,exports){
+},{}],179:[function(require,module,exports){
 // Regexps to match html elements
 
 'use strict';
@@ -38507,7 +38588,7 @@ var HTML_OPEN_CLOSE_TAG_RE = new RegExp('^(?:' + open_tag + '|' + close_tag + ')
 module.exports.HTML_TAG_RE = HTML_TAG_RE;
 module.exports.HTML_OPEN_CLOSE_TAG_RE = HTML_OPEN_CLOSE_TAG_RE;
 
-},{}],179:[function(require,module,exports){
+},{}],180:[function(require,module,exports){
 // Utilities
 //
 'use strict';
@@ -38784,7 +38865,7 @@ exports.isPunctChar         = isPunctChar;
 exports.escapeRE            = escapeRE;
 exports.normalizeReference  = normalizeReference;
 
-},{"./entities":176,"mdurl":230,"uc.micro":244,"uc.micro/categories/P/regex":242}],180:[function(require,module,exports){
+},{"./entities":177,"mdurl":231,"uc.micro":245,"uc.micro/categories/P/regex":243}],181:[function(require,module,exports){
 // Just a shortcut for bulk export
 'use strict';
 
@@ -38793,7 +38874,7 @@ exports.parseLinkLabel       = require('./parse_link_label');
 exports.parseLinkDestination = require('./parse_link_destination');
 exports.parseLinkTitle       = require('./parse_link_title');
 
-},{"./parse_link_destination":181,"./parse_link_label":182,"./parse_link_title":183}],181:[function(require,module,exports){
+},{"./parse_link_destination":182,"./parse_link_label":183,"./parse_link_title":184}],182:[function(require,module,exports){
 // Parse link destination
 //
 'use strict';
@@ -38875,7 +38956,7 @@ module.exports = function parseLinkDestination(str, pos, max) {
   return result;
 };
 
-},{"../common/utils":179}],182:[function(require,module,exports){
+},{"../common/utils":180}],183:[function(require,module,exports){
 // Parse link label
 //
 // this function assumes that first character ("[") already matches;
@@ -38925,7 +39006,7 @@ module.exports = function parseLinkLabel(state, start, disableNested) {
   return labelEnd;
 };
 
-},{}],183:[function(require,module,exports){
+},{}],184:[function(require,module,exports){
 // Parse link title
 //
 'use strict';
@@ -38980,7 +39061,7 @@ module.exports = function parseLinkTitle(str, pos, max) {
   return result;
 };
 
-},{"../common/utils":179}],184:[function(require,module,exports){
+},{"../common/utils":180}],185:[function(require,module,exports){
 // Main parser class
 
 'use strict';
@@ -39563,7 +39644,7 @@ MarkdownIt.prototype.renderInline = function (src, env) {
 
 module.exports = MarkdownIt;
 
-},{"./common/utils":179,"./helpers":180,"./parser_block":185,"./parser_core":186,"./parser_inline":187,"./presets/commonmark":188,"./presets/default":189,"./presets/zero":190,"./renderer":191,"linkify-it":173,"mdurl":230,"punycode":238}],185:[function(require,module,exports){
+},{"./common/utils":180,"./helpers":181,"./parser_block":186,"./parser_core":187,"./parser_inline":188,"./presets/commonmark":189,"./presets/default":190,"./presets/zero":191,"./renderer":192,"linkify-it":174,"mdurl":231,"punycode":239}],186:[function(require,module,exports){
 /** internal
  * class ParserBlock
  *
@@ -39687,7 +39768,7 @@ ParserBlock.prototype.State = require('./rules_block/state_block');
 
 module.exports = ParserBlock;
 
-},{"./ruler":192,"./rules_block/blockquote":193,"./rules_block/code":194,"./rules_block/fence":195,"./rules_block/heading":196,"./rules_block/hr":197,"./rules_block/html_block":198,"./rules_block/lheading":199,"./rules_block/list":200,"./rules_block/paragraph":201,"./rules_block/reference":202,"./rules_block/state_block":203,"./rules_block/table":204}],186:[function(require,module,exports){
+},{"./ruler":193,"./rules_block/blockquote":194,"./rules_block/code":195,"./rules_block/fence":196,"./rules_block/heading":197,"./rules_block/hr":198,"./rules_block/html_block":199,"./rules_block/lheading":200,"./rules_block/list":201,"./rules_block/paragraph":202,"./rules_block/reference":203,"./rules_block/state_block":204,"./rules_block/table":205}],187:[function(require,module,exports){
 /** internal
  * class Core
  *
@@ -39747,7 +39828,7 @@ Core.prototype.State = require('./rules_core/state_core');
 
 module.exports = Core;
 
-},{"./ruler":192,"./rules_core/block":205,"./rules_core/inline":206,"./rules_core/linkify":207,"./rules_core/normalize":208,"./rules_core/replacements":209,"./rules_core/smartquotes":210,"./rules_core/state_core":211}],187:[function(require,module,exports){
+},{"./ruler":193,"./rules_core/block":206,"./rules_core/inline":207,"./rules_core/linkify":208,"./rules_core/normalize":209,"./rules_core/replacements":210,"./rules_core/smartquotes":211,"./rules_core/state_core":212}],188:[function(require,module,exports){
 /** internal
  * class ParserInline
  *
@@ -39926,7 +40007,7 @@ ParserInline.prototype.State = require('./rules_inline/state_inline');
 
 module.exports = ParserInline;
 
-},{"./ruler":192,"./rules_inline/autolink":212,"./rules_inline/backticks":213,"./rules_inline/balance_pairs":214,"./rules_inline/emphasis":215,"./rules_inline/entity":216,"./rules_inline/escape":217,"./rules_inline/html_inline":218,"./rules_inline/image":219,"./rules_inline/link":220,"./rules_inline/newline":221,"./rules_inline/state_inline":222,"./rules_inline/strikethrough":223,"./rules_inline/text":224,"./rules_inline/text_collapse":225}],188:[function(require,module,exports){
+},{"./ruler":193,"./rules_inline/autolink":213,"./rules_inline/backticks":214,"./rules_inline/balance_pairs":215,"./rules_inline/emphasis":216,"./rules_inline/entity":217,"./rules_inline/escape":218,"./rules_inline/html_inline":219,"./rules_inline/image":220,"./rules_inline/link":221,"./rules_inline/newline":222,"./rules_inline/state_inline":223,"./rules_inline/strikethrough":224,"./rules_inline/text":225,"./rules_inline/text_collapse":226}],189:[function(require,module,exports){
 // Commonmark default options
 
 'use strict';
@@ -40008,7 +40089,7 @@ module.exports = {
   }
 };
 
-},{}],189:[function(require,module,exports){
+},{}],190:[function(require,module,exports){
 // markdown-it default options
 
 'use strict';
@@ -40051,7 +40132,7 @@ module.exports = {
   }
 };
 
-},{}],190:[function(require,module,exports){
+},{}],191:[function(require,module,exports){
 // "Zero" preset, with nothing enabled. Useful for manual configuring of simple
 // modes. For example, to parse bold/italic only.
 
@@ -40115,7 +40196,7 @@ module.exports = {
   }
 };
 
-},{}],191:[function(require,module,exports){
+},{}],192:[function(require,module,exports){
 /**
  * class Renderer
  *
@@ -40452,7 +40533,7 @@ Renderer.prototype.render = function (tokens, options, env) {
 
 module.exports = Renderer;
 
-},{"./common/utils":179}],192:[function(require,module,exports){
+},{"./common/utils":180}],193:[function(require,module,exports){
 /**
  * class Ruler
  *
@@ -40806,7 +40887,7 @@ Ruler.prototype.getRules = function (chainName) {
 
 module.exports = Ruler;
 
-},{}],193:[function(require,module,exports){
+},{}],194:[function(require,module,exports){
 // Block quotes
 
 'use strict';
@@ -41093,7 +41174,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/utils":179}],194:[function(require,module,exports){
+},{"../common/utils":180}],195:[function(require,module,exports){
 // Code block (4 spaces padded)
 
 'use strict';
@@ -41129,7 +41210,7 @@ module.exports = function code(state, startLine, endLine/*, silent*/) {
   return true;
 };
 
-},{}],195:[function(require,module,exports){
+},{}],196:[function(require,module,exports){
 // fences (``` lang, ~~~ lang)
 
 'use strict';
@@ -41225,7 +41306,7 @@ module.exports = function fence(state, startLine, endLine, silent) {
   return true;
 };
 
-},{}],196:[function(require,module,exports){
+},{}],197:[function(require,module,exports){
 // heading (#, ##, ...)
 
 'use strict';
@@ -41282,7 +41363,7 @@ module.exports = function heading(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/utils":179}],197:[function(require,module,exports){
+},{"../common/utils":180}],198:[function(require,module,exports){
 // Horizontal rule
 
 'use strict';
@@ -41329,7 +41410,7 @@ module.exports = function hr(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/utils":179}],198:[function(require,module,exports){
+},{"../common/utils":180}],199:[function(require,module,exports){
 // HTML block
 
 'use strict';
@@ -41405,7 +41486,7 @@ module.exports = function html_block(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/html_blocks":177,"../common/html_re":178}],199:[function(require,module,exports){
+},{"../common/html_blocks":178,"../common/html_re":179}],200:[function(require,module,exports){
 // lheading (---, ===)
 
 'use strict';
@@ -41490,7 +41571,7 @@ module.exports = function lheading(state, startLine, endLine/*, silent*/) {
   return true;
 };
 
-},{}],200:[function(require,module,exports){
+},{}],201:[function(require,module,exports){
 // Lists
 
 'use strict';
@@ -41828,7 +41909,7 @@ module.exports = function list(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/utils":179}],201:[function(require,module,exports){
+},{"../common/utils":180}],202:[function(require,module,exports){
 // Paragraph
 
 'use strict';
@@ -41882,7 +41963,7 @@ module.exports = function paragraph(state, startLine/*, endLine*/) {
   return true;
 };
 
-},{}],202:[function(require,module,exports){
+},{}],203:[function(require,module,exports){
 'use strict';
 
 
@@ -42082,7 +42163,7 @@ module.exports = function reference(state, startLine, _endLine, silent) {
   return true;
 };
 
-},{"../common/utils":179}],203:[function(require,module,exports){
+},{"../common/utils":180}],204:[function(require,module,exports){
 // Parser state class
 
 'use strict';
@@ -42314,7 +42395,7 @@ StateBlock.prototype.Token = Token;
 
 module.exports = StateBlock;
 
-},{"../common/utils":179,"../token":226}],204:[function(require,module,exports){
+},{"../common/utils":180,"../token":227}],205:[function(require,module,exports){
 // GFM table, non-standard
 
 'use strict';
@@ -42512,7 +42593,7 @@ module.exports = function table(state, startLine, endLine, silent) {
   return true;
 };
 
-},{"../common/utils":179}],205:[function(require,module,exports){
+},{"../common/utils":180}],206:[function(require,module,exports){
 'use strict';
 
 
@@ -42530,7 +42611,7 @@ module.exports = function block(state) {
   }
 };
 
-},{}],206:[function(require,module,exports){
+},{}],207:[function(require,module,exports){
 'use strict';
 
 module.exports = function inline(state) {
@@ -42545,7 +42626,7 @@ module.exports = function inline(state) {
   }
 };
 
-},{}],207:[function(require,module,exports){
+},{}],208:[function(require,module,exports){
 // Replace link-like texts with link nodes.
 //
 // Currently restricted by `md.validateLink()` to http/https/ftp
@@ -42680,7 +42761,7 @@ module.exports = function linkify(state) {
   }
 };
 
-},{"../common/utils":179}],208:[function(require,module,exports){
+},{"../common/utils":180}],209:[function(require,module,exports){
 // Normalize input string
 
 'use strict';
@@ -42702,7 +42783,7 @@ module.exports = function inline(state) {
   state.src = str;
 };
 
-},{}],209:[function(require,module,exports){
+},{}],210:[function(require,module,exports){
 // Simple typographyc replacements
 //
 // (c) (C) → ©
@@ -42811,7 +42892,7 @@ module.exports = function replace(state) {
   }
 };
 
-},{}],210:[function(require,module,exports){
+},{}],211:[function(require,module,exports){
 // Convert straight quotation marks to typographic ones
 //
 'use strict';
@@ -43006,7 +43087,7 @@ module.exports = function smartquotes(state) {
   }
 };
 
-},{"../common/utils":179}],211:[function(require,module,exports){
+},{"../common/utils":180}],212:[function(require,module,exports){
 // Core state object
 //
 'use strict';
@@ -43028,7 +43109,7 @@ StateCore.prototype.Token = Token;
 
 module.exports = StateCore;
 
-},{"../token":226}],212:[function(require,module,exports){
+},{"../token":227}],213:[function(require,module,exports){
 // Process autolinks '<protocol:...>'
 
 'use strict';
@@ -43102,7 +43183,7 @@ module.exports = function autolink(state, silent) {
   return false;
 };
 
-},{}],213:[function(require,module,exports){
+},{}],214:[function(require,module,exports){
 // Parse backticks
 
 'use strict';
@@ -43147,7 +43228,7 @@ module.exports = function backtick(state, silent) {
   return true;
 };
 
-},{}],214:[function(require,module,exports){
+},{}],215:[function(require,module,exports){
 // For each opening emphasis-like marker find a matching closing one
 //
 'use strict';
@@ -43193,7 +43274,7 @@ module.exports = function link_pairs(state) {
   }
 };
 
-},{}],215:[function(require,module,exports){
+},{}],216:[function(require,module,exports){
 // Process *this* and _that_
 //
 'use strict';
@@ -43322,7 +43403,7 @@ module.exports.postProcess = function emphasis(state) {
   }
 };
 
-},{}],216:[function(require,module,exports){
+},{}],217:[function(require,module,exports){
 // Process html entity - &#123;, &#xAF;, &quot;, ...
 
 'use strict';
@@ -43372,7 +43453,7 @@ module.exports = function entity(state, silent) {
   return true;
 };
 
-},{"../common/entities":176,"../common/utils":179}],217:[function(require,module,exports){
+},{"../common/entities":177,"../common/utils":180}],218:[function(require,module,exports){
 // Process escaped chars and hardbreaks
 
 'use strict';
@@ -43426,7 +43507,7 @@ module.exports = function escape(state, silent) {
   return true;
 };
 
-},{"../common/utils":179}],218:[function(require,module,exports){
+},{"../common/utils":180}],219:[function(require,module,exports){
 // Process html tags
 
 'use strict';
@@ -43475,7 +43556,7 @@ module.exports = function html_inline(state, silent) {
   return true;
 };
 
-},{"../common/html_re":178}],219:[function(require,module,exports){
+},{"../common/html_re":179}],220:[function(require,module,exports){
 // Process ![image](<src> "title")
 
 'use strict';
@@ -43629,7 +43710,7 @@ module.exports = function image(state, silent) {
   return true;
 };
 
-},{"../common/utils":179}],220:[function(require,module,exports){
+},{"../common/utils":180}],221:[function(require,module,exports){
 // Process [link](<to> "stuff")
 
 'use strict';
@@ -43781,7 +43862,7 @@ module.exports = function link(state, silent) {
   return true;
 };
 
-},{"../common/utils":179}],221:[function(require,module,exports){
+},{"../common/utils":180}],222:[function(require,module,exports){
 // Proceess '\n'
 
 'use strict';
@@ -43825,7 +43906,7 @@ module.exports = function newline(state, silent) {
   return true;
 };
 
-},{"../common/utils":179}],222:[function(require,module,exports){
+},{"../common/utils":180}],223:[function(require,module,exports){
 // Inline parser state
 
 'use strict';
@@ -43957,7 +44038,7 @@ StateInline.prototype.Token = Token;
 
 module.exports = StateInline;
 
-},{"../common/utils":179,"../token":226}],223:[function(require,module,exports){
+},{"../common/utils":180,"../token":227}],224:[function(require,module,exports){
 // ~~strike through~~
 //
 'use strict';
@@ -44076,7 +44157,7 @@ module.exports.postProcess = function strikethrough(state) {
   }
 };
 
-},{}],224:[function(require,module,exports){
+},{}],225:[function(require,module,exports){
 // Skip text characters for text token, place those to pending buffer
 // and increment current pos
 
@@ -44167,7 +44248,7 @@ module.exports = function text(state, silent) {
   return true;
 };*/
 
-},{}],225:[function(require,module,exports){
+},{}],226:[function(require,module,exports){
 // Merge adjacent text nodes into one, and re-calculate all token levels
 //
 'use strict';
@@ -44202,7 +44283,7 @@ module.exports = function text_collapse(state) {
   }
 };
 
-},{}],226:[function(require,module,exports){
+},{}],227:[function(require,module,exports){
 // Token class
 
 'use strict';
@@ -44401,7 +44482,7 @@ Token.prototype.attrJoin = function attrJoin(name, value) {
 
 module.exports = Token;
 
-},{}],227:[function(require,module,exports){
+},{}],228:[function(require,module,exports){
 
 'use strict';
 
@@ -44525,7 +44606,7 @@ decode.componentChars = '';
 
 module.exports = decode;
 
-},{}],228:[function(require,module,exports){
+},{}],229:[function(require,module,exports){
 
 'use strict';
 
@@ -44625,7 +44706,7 @@ encode.componentChars = "-_.!~*'()";
 
 module.exports = encode;
 
-},{}],229:[function(require,module,exports){
+},{}],230:[function(require,module,exports){
 
 'use strict';
 
@@ -44652,7 +44733,7 @@ module.exports = function format(url) {
   return result;
 };
 
-},{}],230:[function(require,module,exports){
+},{}],231:[function(require,module,exports){
 'use strict';
 
 
@@ -44661,7 +44742,7 @@ module.exports.decode = require('./decode');
 module.exports.format = require('./format');
 module.exports.parse  = require('./parse');
 
-},{"./decode":227,"./encode":228,"./format":229,"./parse":231}],231:[function(require,module,exports){
+},{"./decode":228,"./encode":229,"./format":230,"./parse":232}],232:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -44975,7 +45056,7 @@ Url.prototype.parseHost = function(host) {
 
 module.exports = urlParse;
 
-},{}],232:[function(require,module,exports){
+},{}],233:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -45161,7 +45242,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],233:[function(require,module,exports){
+},{}],234:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -45226,7 +45307,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 module.exports = checkPropTypes;
 
 }).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":237,"_process":232,"fbjs/lib/invariant":68,"fbjs/lib/warning":69}],234:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":238,"_process":233,"fbjs/lib/invariant":69,"fbjs/lib/warning":70}],235:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -45282,7 +45363,7 @@ module.exports = function() {
   return ReactPropTypes;
 };
 
-},{"fbjs/lib/emptyFunction":67,"fbjs/lib/invariant":68}],235:[function(require,module,exports){
+},{"fbjs/lib/emptyFunction":68,"fbjs/lib/invariant":69}],236:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -45764,7 +45845,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 };
 
 }).call(this,require('_process'))
-},{"./checkPropTypes":233,"./lib/ReactPropTypesSecret":237,"_process":232,"fbjs/lib/emptyFunction":67,"fbjs/lib/invariant":68,"fbjs/lib/warning":69}],236:[function(require,module,exports){
+},{"./checkPropTypes":234,"./lib/ReactPropTypesSecret":238,"_process":233,"fbjs/lib/emptyFunction":68,"fbjs/lib/invariant":69,"fbjs/lib/warning":70}],237:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -45798,7 +45879,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./factoryWithThrowingShims":234,"./factoryWithTypeCheckers":235,"_process":232}],237:[function(require,module,exports){
+},{"./factoryWithThrowingShims":235,"./factoryWithTypeCheckers":236,"_process":233}],238:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -45814,7 +45895,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],238:[function(require,module,exports){
+},{}],239:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -46351,7 +46432,7 @@ module.exports = ReactPropTypesSecret;
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],239:[function(require,module,exports){
+},{}],240:[function(require,module,exports){
 (function (process,global){
 'use strict';
 
@@ -46458,15 +46539,15 @@ ReactHotkeys.defaultProps = {
 };
 module.exports = exports['default'];
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":232,"hotkeys-js":171,"prop-types":236}],240:[function(require,module,exports){
+},{"_process":233,"hotkeys-js":172,"prop-types":237}],241:[function(require,module,exports){
 module.exports=/[\0-\x1F\x7F-\x9F]/
-},{}],241:[function(require,module,exports){
-module.exports=/[\xAD\u0600-\u0605\u061C\u06DD\u070F\u08E2\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u206F\uFEFF\uFFF9-\uFFFB]|\uD804\uDCBD|\uD82F[\uDCA0-\uDCA3]|\uD834[\uDD73-\uDD7A]|\uDB40[\uDC01\uDC20-\uDC7F]/
 },{}],242:[function(require,module,exports){
-module.exports=/[!-#%-\*,-/:;\?@\[-\]_\{\}\xA1\xA7\xAB\xB6\xB7\xBB\xBF\u037E\u0387\u055A-\u055F\u0589\u058A\u05BE\u05C0\u05C3\u05C6\u05F3\u05F4\u0609\u060A\u060C\u060D\u061B\u061E\u061F\u066A-\u066D\u06D4\u0700-\u070D\u07F7-\u07F9\u0830-\u083E\u085E\u0964\u0965\u0970\u0AF0\u0DF4\u0E4F\u0E5A\u0E5B\u0F04-\u0F12\u0F14\u0F3A-\u0F3D\u0F85\u0FD0-\u0FD4\u0FD9\u0FDA\u104A-\u104F\u10FB\u1360-\u1368\u1400\u166D\u166E\u169B\u169C\u16EB-\u16ED\u1735\u1736\u17D4-\u17D6\u17D8-\u17DA\u1800-\u180A\u1944\u1945\u1A1E\u1A1F\u1AA0-\u1AA6\u1AA8-\u1AAD\u1B5A-\u1B60\u1BFC-\u1BFF\u1C3B-\u1C3F\u1C7E\u1C7F\u1CC0-\u1CC7\u1CD3\u2010-\u2027\u2030-\u2043\u2045-\u2051\u2053-\u205E\u207D\u207E\u208D\u208E\u2308-\u230B\u2329\u232A\u2768-\u2775\u27C5\u27C6\u27E6-\u27EF\u2983-\u2998\u29D8-\u29DB\u29FC\u29FD\u2CF9-\u2CFC\u2CFE\u2CFF\u2D70\u2E00-\u2E2E\u2E30-\u2E44\u3001-\u3003\u3008-\u3011\u3014-\u301F\u3030\u303D\u30A0\u30FB\uA4FE\uA4FF\uA60D-\uA60F\uA673\uA67E\uA6F2-\uA6F7\uA874-\uA877\uA8CE\uA8CF\uA8F8-\uA8FA\uA8FC\uA92E\uA92F\uA95F\uA9C1-\uA9CD\uA9DE\uA9DF\uAA5C-\uAA5F\uAADE\uAADF\uAAF0\uAAF1\uABEB\uFD3E\uFD3F\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE61\uFE63\uFE68\uFE6A\uFE6B\uFF01-\uFF03\uFF05-\uFF0A\uFF0C-\uFF0F\uFF1A\uFF1B\uFF1F\uFF20\uFF3B-\uFF3D\uFF3F\uFF5B\uFF5D\uFF5F-\uFF65]|\uD800[\uDD00-\uDD02\uDF9F\uDFD0]|\uD801\uDD6F|\uD802[\uDC57\uDD1F\uDD3F\uDE50-\uDE58\uDE7F\uDEF0-\uDEF6\uDF39-\uDF3F\uDF99-\uDF9C]|\uD804[\uDC47-\uDC4D\uDCBB\uDCBC\uDCBE-\uDCC1\uDD40-\uDD43\uDD74\uDD75\uDDC5-\uDDC9\uDDCD\uDDDB\uDDDD-\uDDDF\uDE38-\uDE3D\uDEA9]|\uD805[\uDC4B-\uDC4F\uDC5B\uDC5D\uDCC6\uDDC1-\uDDD7\uDE41-\uDE43\uDE60-\uDE6C\uDF3C-\uDF3E]|\uD807[\uDC41-\uDC45\uDC70\uDC71]|\uD809[\uDC70-\uDC74]|\uD81A[\uDE6E\uDE6F\uDEF5\uDF37-\uDF3B\uDF44]|\uD82F\uDC9F|\uD836[\uDE87-\uDE8B]|\uD83A[\uDD5E\uDD5F]/
+module.exports=/[\xAD\u0600-\u0605\u061C\u06DD\u070F\u08E2\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u206F\uFEFF\uFFF9-\uFFFB]|\uD804\uDCBD|\uD82F[\uDCA0-\uDCA3]|\uD834[\uDD73-\uDD7A]|\uDB40[\uDC01\uDC20-\uDC7F]/
 },{}],243:[function(require,module,exports){
-module.exports=/[ \xA0\u1680\u2000-\u200A\u202F\u205F\u3000]/
+module.exports=/[!-#%-\*,-/:;\?@\[-\]_\{\}\xA1\xA7\xAB\xB6\xB7\xBB\xBF\u037E\u0387\u055A-\u055F\u0589\u058A\u05BE\u05C0\u05C3\u05C6\u05F3\u05F4\u0609\u060A\u060C\u060D\u061B\u061E\u061F\u066A-\u066D\u06D4\u0700-\u070D\u07F7-\u07F9\u0830-\u083E\u085E\u0964\u0965\u0970\u0AF0\u0DF4\u0E4F\u0E5A\u0E5B\u0F04-\u0F12\u0F14\u0F3A-\u0F3D\u0F85\u0FD0-\u0FD4\u0FD9\u0FDA\u104A-\u104F\u10FB\u1360-\u1368\u1400\u166D\u166E\u169B\u169C\u16EB-\u16ED\u1735\u1736\u17D4-\u17D6\u17D8-\u17DA\u1800-\u180A\u1944\u1945\u1A1E\u1A1F\u1AA0-\u1AA6\u1AA8-\u1AAD\u1B5A-\u1B60\u1BFC-\u1BFF\u1C3B-\u1C3F\u1C7E\u1C7F\u1CC0-\u1CC7\u1CD3\u2010-\u2027\u2030-\u2043\u2045-\u2051\u2053-\u205E\u207D\u207E\u208D\u208E\u2308-\u230B\u2329\u232A\u2768-\u2775\u27C5\u27C6\u27E6-\u27EF\u2983-\u2998\u29D8-\u29DB\u29FC\u29FD\u2CF9-\u2CFC\u2CFE\u2CFF\u2D70\u2E00-\u2E2E\u2E30-\u2E44\u3001-\u3003\u3008-\u3011\u3014-\u301F\u3030\u303D\u30A0\u30FB\uA4FE\uA4FF\uA60D-\uA60F\uA673\uA67E\uA6F2-\uA6F7\uA874-\uA877\uA8CE\uA8CF\uA8F8-\uA8FA\uA8FC\uA92E\uA92F\uA95F\uA9C1-\uA9CD\uA9DE\uA9DF\uAA5C-\uAA5F\uAADE\uAADF\uAAF0\uAAF1\uABEB\uFD3E\uFD3F\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE61\uFE63\uFE68\uFE6A\uFE6B\uFF01-\uFF03\uFF05-\uFF0A\uFF0C-\uFF0F\uFF1A\uFF1B\uFF1F\uFF20\uFF3B-\uFF3D\uFF3F\uFF5B\uFF5D\uFF5F-\uFF65]|\uD800[\uDD00-\uDD02\uDF9F\uDFD0]|\uD801\uDD6F|\uD802[\uDC57\uDD1F\uDD3F\uDE50-\uDE58\uDE7F\uDEF0-\uDEF6\uDF39-\uDF3F\uDF99-\uDF9C]|\uD804[\uDC47-\uDC4D\uDCBB\uDCBC\uDCBE-\uDCC1\uDD40-\uDD43\uDD74\uDD75\uDDC5-\uDDC9\uDDCD\uDDDB\uDDDD-\uDDDF\uDE38-\uDE3D\uDEA9]|\uD805[\uDC4B-\uDC4F\uDC5B\uDC5D\uDCC6\uDDC1-\uDDD7\uDE41-\uDE43\uDE60-\uDE6C\uDF3C-\uDF3E]|\uD807[\uDC41-\uDC45\uDC70\uDC71]|\uD809[\uDC70-\uDC74]|\uD81A[\uDE6E\uDE6F\uDEF5\uDF37-\uDF3B\uDF44]|\uD82F\uDC9F|\uD836[\uDE87-\uDE8B]|\uD83A[\uDD5E\uDD5F]/
 },{}],244:[function(require,module,exports){
+module.exports=/[ \xA0\u1680\u2000-\u200A\u202F\u205F\u3000]/
+},{}],245:[function(require,module,exports){
 'use strict';
 
 exports.Any = require('./properties/Any/regex');
@@ -46475,9 +46556,9 @@ exports.Cf  = require('./categories/Cf/regex');
 exports.P   = require('./categories/P/regex');
 exports.Z   = require('./categories/Z/regex');
 
-},{"./categories/Cc/regex":240,"./categories/Cf/regex":241,"./categories/P/regex":242,"./categories/Z/regex":243,"./properties/Any/regex":245}],245:[function(require,module,exports){
+},{"./categories/Cc/regex":241,"./categories/Cf/regex":242,"./categories/P/regex":243,"./categories/Z/regex":244,"./properties/Any/regex":246}],246:[function(require,module,exports){
 module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/
-},{}],246:[function(require,module,exports){
+},{}],247:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -46502,14 +46583,14 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],247:[function(require,module,exports){
+},{}],248:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],248:[function(require,module,exports){
+},{}],249:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -47099,5 +47180,5 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":247,"_process":232,"inherits":246}]},{},[22])(22)
+},{"./support/isBuffer":248,"_process":233,"inherits":247}]},{},[23])(23)
 });

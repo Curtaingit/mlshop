@@ -21,7 +21,6 @@ public class ValidationAutoConfig implements WebMvcConfigurer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidationAutoConfig.class);
 
-
     private boolean isMutationValidator;
 
     @Bean

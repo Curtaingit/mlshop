@@ -64,23 +64,26 @@ public class JpaDataFetcher implements DataFetcher {
 //            }
 //        }
 
-/*        //查询过滤
-        if(this.getClass().isAssignableFrom(JpaDataFetcher.class)){
-            //获取实体类型
-            Class clazz = this.entityType.getJavaType();
-
-            //todo  这里是不是应该 先通过数据做一个过滤  只留下要需要权限校验、约束判断的
-
-            //遍历得到用户的约束条件
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication==null){
-                throw new AccessDeniedException("权限不足。。。。");
-            }
-
-            authentication.getPrincipal()
-
-        }*/
-
+//        //查询过滤
+//        if(this.getClass().isAssignableFrom(JpaDataFetcher.class)){
+//            //获取实体类型
+//            Class clazz = this.entityType.getJavaType();
+//
+//            //todo  这里是不是应该 先通过数据做一个过滤  只留下要需要权限校验、约束判断的
+//            if (clazz.isAssignableFrom(Administ.class)){
+//                //访问Administ  需要角色管理权限  访问所属   或者访问本身
+//            }
+//
+//            //遍历得到用户的约束条件
+//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//            if (authentication==null){
+//                throw new AccessDeniedException("权限不足。。。。");
+//            }
+//
+//            authentication.getPrincipal();
+//
+//        }
+//
         return result;
     }
 
@@ -485,9 +488,9 @@ public class JpaDataFetcher implements DataFetcher {
             // wrapper.setAutoGrowNestedPaths(true);
             wrapper.setPropertyValues(map);
             return result;
-        } else if (graphQLInputType instanceof GraphQLList && (value instanceof Collection)) {//many2one. graphql-java 中间用的是ArrayList，需要再转一次。
+        } else if (graphQLInputType instanceof GraphQLList && (value.getClass().isAssignableFrom(ArrayValue.class))) {//many2one. graphql-java 中间用的是ArrayList，需要再转一次。
             Set set = new HashSet();
-            ((Collection) value).stream().forEach(item -> {
+            ((Collection) ((ArrayValue)value).getValues()).stream().forEach(item -> {
                 GraphQLInputType gitype = ((GraphQLInputType) ((GraphQLList) graphQLInputType).getWrappedType());
                 set.add(convertValue(environment, gitype, item));
             });

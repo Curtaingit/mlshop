@@ -28,11 +28,13 @@ public class Role extends BosEntity {
     /**
      * 角色
      */
+    @SchemaDocumentation("角色名")
     String name;
 
     /**
      * 权限集合
      */
+    @SchemaDocumentation("权限集合")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", orphanRemoval = true,fetch = FetchType.EAGER)
     Set<PrivilegeItem> privilegeItems = new HashSet<>();
 }
