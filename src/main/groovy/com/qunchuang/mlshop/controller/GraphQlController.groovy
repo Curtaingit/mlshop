@@ -28,9 +28,11 @@ class GraphQlController {
 
         def errors = result.getErrors()
         if (errors != null) {
-            ExceptionWhileDataFetching exceptionWhileDataFetching = errors.get(0);
-            if (exceptionWhileDataFetching.class.isAssignableFrom(ExceptionWhileDataFetching)) {
+            if (errors.get(0).class.isAssignableFrom(ExceptionWhileDataFetching)) {
+                ExceptionWhileDataFetching exceptionWhileDataFetching = errors.get(0);
+
                 throw exceptionWhileDataFetching.exception;
+
             }
         }
 

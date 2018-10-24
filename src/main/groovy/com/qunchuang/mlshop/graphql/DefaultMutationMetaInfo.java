@@ -75,8 +75,7 @@ public class DefaultMutationMetaInfo implements MutationMetaInfo {
                         {
                             RequestParam rp = parameter.getAnnotation(RequestParam.class);
                             if (rp == null) {
-//                                throw new RuntimeException("这方法的某参数未提供RequestParam注解!");
-                                return "";
+                                throw new RuntimeException("这方法的某参数未提供RequestParam注解!");
                             }
                             return StringUtils.hasText(rp.value()) ? rp.value() : rp.name();
                         }

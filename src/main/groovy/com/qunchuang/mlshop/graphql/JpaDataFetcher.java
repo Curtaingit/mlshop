@@ -488,9 +488,10 @@ public class JpaDataFetcher implements DataFetcher {
             // wrapper.setAutoGrowNestedPaths(true);
             wrapper.setPropertyValues(map);
             return result;
-        } else if (graphQLInputType instanceof GraphQLList && (value.getClass().isAssignableFrom(ArrayValue.class))) {//many2one. graphql-java 中间用的是ArrayList，需要再转一次。
+            //todo  处理集合   特殊情况  value.class = ValueArray
+        } else if (graphQLInputType instanceof GraphQLList && (value instanceof Collection)) {//many2one. graphql-java 中间用的是ArrayList，需要再转一次。
             Set set = new HashSet();
-            ((Collection) ((ArrayValue)value).getValues()).stream().forEach(item -> {
+            ((Collection) value).stream().forEach(item -> {
                 GraphQLInputType gitype = ((GraphQLInputType) ((GraphQLList) graphQLInputType).getWrappedType());
                 set.add(convertValue(environment, gitype, item));
             });

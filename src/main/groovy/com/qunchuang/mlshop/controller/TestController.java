@@ -7,6 +7,7 @@ import com.qunchuang.mlshop.model.Administ;
 import com.qunchuang.mlshop.repo.AdministRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,11 +35,11 @@ class TestController {
 //
 //
 //    //测试无权限
-//    @RequestMapping("/without")
-//    public String withoutAuthority(){
-////        throw new BadCredentialsException("未登录");
-//        return "without";
-//    }
+    @RequestMapping("/without")
+    public String withoutAuthority(){
+//        throw new BadCredentialsException("未登录");
+        return "without";
+    }
 
     //测试 graphql mutation 普通实体返回 + 权限
     @GRequestMapping("/testArray")
