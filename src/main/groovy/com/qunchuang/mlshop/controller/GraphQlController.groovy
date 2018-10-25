@@ -9,19 +9,17 @@ import graphql.GraphQLError
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
-import javax.servlet.http.HttpServletResponse
-
 @RestController
 class GraphQlController {
 
     @Autowired
     private GraphQLExecutor graphQLExecutor;
 
+
     @CrossOrigin(origins = "*", methods = [RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS], maxAge = 1800L, allowedHeaders = "*")
     @RequestMapping(path = "/graphql")
     ExecutionResult graphQl(
-            @RequestBody GraphQLInputQuery graphQLInput, HttpServletResponse response) throws IOException {
-
+            @RequestBody GraphQLInputQuery graphQLInput) throws IOException {
         ExecutionResult result = graphQLExecutor.execute(graphQLInput.getQuery(), graphQLInput.getArguments());
 
         result = new ExecutionResultBos(result.getData(), result.getErrors(), result.getExtensions());

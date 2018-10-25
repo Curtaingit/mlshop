@@ -44,7 +44,7 @@ public class RwlMallExceptionHandler {
     public String handler(Exception e) throws Exception {
         log.error("异常信息:" + e.getMessage());
         log.error("异常堆栈信息:" + collectExceptionStackMsg(e));
-        return "系统内部错误，请联系管理员或者添加反馈！";
+        return e.getMessage();
     }
 
     /*收集异常堆栈信息*/

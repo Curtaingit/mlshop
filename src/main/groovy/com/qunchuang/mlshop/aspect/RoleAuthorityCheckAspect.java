@@ -29,7 +29,7 @@ public class RoleAuthorityCheckAspect {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         //1.未登录用户访问 需要权限的接口
-        if (authentication == null) {
+        if (authentication.getPrincipal().getClass().isAssignableFrom(String.class)) {
             throw new BadCredentialsException("对不起你还未登录，请先登录!");
         }
         Object principal = authentication.getPrincipal();

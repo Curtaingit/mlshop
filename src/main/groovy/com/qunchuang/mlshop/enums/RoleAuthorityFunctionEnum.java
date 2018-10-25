@@ -10,14 +10,15 @@ import lombok.Getter;
 @Getter
 public enum RoleAuthorityFunctionEnum {
 
+    NO_ROLE("NO_ROLE"),
     /*登录权限即可*/
-    NO_ROLE("A0"),
+    ORDER_MANAGEMENT("ORDER_MANAGEMENT"),
     /*订单洗衣*/
-    ORDER_LAUNDRY("A1"),
+    PRODUCT_MANAGEMENT("PRODUCT_MANAGEMENT"),
     /*订单高端洗护*/
-    ORDER_HIGH_LAUNDRY("A2"),
+    ADMIN_MANAGEMENT("ADMIN_MANAGEMENT"),
     /*订单家居*/
-    ORDER_FURNITURE("A3"),
+    ROLE_MANAGEMENT("ROLE_MANAGEMENT"),
     /*订单商城*/
     ORDER_MALL("A4"),
     /*订单分析*/

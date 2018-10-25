@@ -2,18 +2,27 @@ package com.qunchuang.mlshop.model;
 
 import com.bos.domain.BosEntity;
 import com.bos.domain.Bostype;
+import com.qunchuang.mlshop.anntations.AccountType;
+import com.qunchuang.mlshop.anntations.PrivilegeType;
 import com.qunchuang.mlshop.graphql.annotation.SchemaDocumentation;
 import groovy.transform.CompileStatic;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.qunchuang.mlshop.enums.RoleAuthorityFunctionConst.ADMIN_MANAGEMENT;
 
 @Entity
 @SchemaDocumentation("管理员")
@@ -21,13 +30,15 @@ import java.util.stream.Collectors;
 @Bostype("A06")
 @Getter
 @Setter
+@AccountType("Administ")
+@PrivilegeType(ADMIN_MANAGEMENT)
 public class Administ extends BosEntity implements UserDetails {
     @SchemaDocumentation("姓名")
-    @NotNull
+//    @NotNull
     String name;
 
     @SchemaDocumentation("联系方式")
-    @Length(min = 11, max = 11, message = "长度不正确")
+//    @Length(min = 11, max = 11, message = "长度不正确")
     String tel;
 
     @SchemaDocumentation("用户名")
@@ -41,15 +52,14 @@ public class Administ extends BosEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        List<Privilege> collect = roleItems
+        Set<GrantedAuthority> collect = roleItems
                 .stream()
                 .map(roleItem -> roleItem.getRole())
                 .flatMap(role -> role.getPrivilegeItems().stream())
                 .map(privilegeItem -> privilegeItem.getPrivilege())
-                .collect(Collectors.toList());
-
-        return collect;
+                .map(privilege -> new SimpleGrantedAuthority(privilege.getAuthority()))
+                .collect(Collectors.toSet());
+        return new ArrayList<>(collect);
     }
 
     @Override

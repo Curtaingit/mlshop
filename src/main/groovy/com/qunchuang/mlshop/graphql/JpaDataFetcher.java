@@ -1,10 +1,18 @@
 package com.qunchuang.mlshop.graphql;
 
 import com.bos.domain.BosEnum;
+import com.qunchuang.mlshop.anntations.AccountType;
+import com.qunchuang.mlshop.anntations.PrivilegeType;
+import com.qunchuang.mlshop.model.Administ;
+import com.qunchuang.mlshop.model.user.User;
 import graphql.language.*;
 import graphql.schema.*;
 import org.springframework.beans.ConfigurablePropertyAccessor;
 import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
@@ -35,56 +43,68 @@ public class JpaDataFetcher implements DataFetcher {
     public final Object get(DataFetchingEnvironment environment) {
 
         QueryFilter queryFilter = extractQueryFilter(environment, environment.getFields().iterator().next());
-
-        //todo   在查询之前就坚持用户角色  和 本次请求想要获取的实体数据   如果是限制类型实体数据  那么就直接构造  queryFilter
-        //todo  比如  普通管理角色 获取订单  那么只能获取5000金额一下的   那么就 构造queryFilter  key amount value 5000 operator 小于
-        QueryFilter qf = new QueryFilter();
-        qf.setKey("order.amout");
-        qf.setValue("5000");
-        qf.setOperator(QueryFilterOperator.LESSTHAN);
-        qf.setCombinator(QueryFilterCombinator.AND);
-        qf.setNext(queryFilter);
+//
+//        QueryFilter qf = new QueryFilter();
+//        qf.setKey("order.amout");
+//        qf.setValue("5000");
+//        qf.setOperator(QueryFilterOperator.LESSTHAN);
+//        qf.setCombinator(QueryFilterCombinator.AND);
+//        qf.setNext(queryFilter);
 
         Object result = this.getResult(environment, queryFilter);
-//        if (result.getClass().isAssignableFrom(LinkedHashMap.class)) {
-//            if (((ArrayList) ((LinkedHashMap) result).get("content")).get(0).getClass().isAssignableFrom(Administ.class)) {
-////                Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-////                if (principal.getClass().isAssignableFrom(Administ.class)){
-////                    throw new BadCredentialsException("权限不足");
-////                }
-//                if (SecurityContextHolder.getContext().getAuthentication() == null) {
-//                    throw new AccessDeniedException("权限不足");
-//                }
-//            }
-//        } else {
-//            if (result.getClass().isAssignableFrom(Administ.class)) {
-//                if (SecurityContextHolder.getContext().getAuthentication() == null) {
-//                    throw new AccessDeniedException("权限不足");
-//                }
-//            }
-//        }
+//        return checkPermission(result);
 
-//        //查询过滤
-//        if(this.getClass().isAssignableFrom(JpaDataFetcher.class)){
-//            //获取实体类型
-//            Class clazz = this.entityType.getJavaType();
-//
-//            //todo  这里是不是应该 先通过数据做一个过滤  只留下要需要权限校验、约束判断的
-//            if (clazz.isAssignableFrom(Administ.class)){
-//                //访问Administ  需要角色管理权限  访问所属   或者访问本身
-//            }
-//
-//            //遍历得到用户的约束条件
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            if (authentication==null){
-//                throw new AccessDeniedException("权限不足。。。。");
-//            }
-//
-//            authentication.getPrincipal();
-//
-//        }
-//
         return result;
+    }
+
+    private Object checkPermission(Object result) {
+        //获取实体类型   获取可访问的实体信息
+        Class clazz = this.entityType.getJavaType();
+
+        AccountType accountCheck = (AccountType) clazz.getAnnotation(AccountType.class);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String accountType = accountCheck.value();
+
+        //如果是匿名用户就可以访问 那么不需要过滤
+        if(accountType.contains("anonymous")){
+            return result;
+        }
+        if(accountType.contains("User") && authentication.getPrincipal().getClass().isAssignableFrom(User.class)){
+            //过滤自身以外的其他信息    暂时不考虑
+
+            return result;
+        }
+        if(accountType.contains("Administ")  && authentication.getPrincipal().getClass().isAssignableFrom(Administ.class)){
+            //判断是否有权限   怎么判断这个权限。。  不同的查询实体。
+            PrivilegeType privilegeType = (PrivilegeType) clazz.getAnnotation(PrivilegeType.class);
+            Object principal = authentication.getPrincipal();
+            if (principal.getClass().isAssignableFrom(Administ.class)){
+                Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+                if (authorities.toString().contains(privilegeType.value())){
+                    //获取约束
+                    List<String> collect = ((Administ) principal).getRoleItems()
+                            .stream().map(roleItem -> roleItem.getRole())
+                            .flatMap(role -> role.getPrivilegeItems().stream())
+                            .filter(privilegeItem -> privilegeItem.getConstraintRule()!=null && privilegeItem.getConstraintRule().contains(clazz.getSimpleName()))
+                            .map(privilegeItem -> privilegeItem.getConstraintRule())
+                            .collect(Collectors.toList());
+
+
+                    //Administ.name == "admin"  判断  不符合  则抛出异常
+
+
+
+                    return result;
+                }
+            }
+
+        }
+
+        //不满足条件 抛出403
+        throw new AccessDeniedException("权限不足");
     }
 
 
