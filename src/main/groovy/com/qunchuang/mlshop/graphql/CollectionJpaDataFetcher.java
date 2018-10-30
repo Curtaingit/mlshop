@@ -31,9 +31,9 @@ public class CollectionJpaDataFetcher extends JpaDataFetcher {
         Optional<Field> totalElementsSelection = getSelectionField(field, "totalElements");
         Optional<Field> contentSelection = getSelectionField(field, "content");
 
-        Long totalElements=0L;
+        Long totalElements = 0L;
         if (totalElementsSelection.isPresent() || totalPagesSelection.isPresent()) {
-                totalElements = contentSelection
+            totalElements = contentSelection
                     .map(contentField -> getCountQuery(environment, contentField, queryFilter).getSingleResult())
                     // if no "content" was selected an empty Field can be used
                     .orElseGet(() -> getCountQuery(environment, new Field(), queryFilter).getSingleResult());
@@ -46,15 +46,15 @@ public class CollectionJpaDataFetcher extends JpaDataFetcher {
             List queryResult = null;
 
             //if(totalElements==0){
-              //什么都不做
+            //什么都不做
             //}else
-                if (isIncludeCollection(entityType,contentSelection.get().getSelectionSet())) {//如果查询比较复杂，含有collection，需要分步查询的话。
+            if (isIncludeCollection(entityType, contentSelection.get().getSelectionSet())) {//如果查询比较复杂，含有collection，需要分步查询的话。
                 //1.找出ids
-                TypedQuery typedQuery=getQueryForEntity(environment, queryFilter, contentSelection.get(), QueryForWhatEnum.JUSTFORIDSINTHEPAGE, null);
-                List<String> ids=new PaginatorFactory(this.entityManager,this.entityType).getPaginator(typedQuery,pageInformation);
+                TypedQuery typedQuery = getQueryForEntity(environment, queryFilter, contentSelection.get(), QueryForWhatEnum.JUSTFORIDSINTHEPAGE, null);
+                List<String> ids = new PaginatorFactory(this.entityManager, this.entityType).getPaginator(typedQuery, pageInformation);
                 //2.准备nativesql，设置参数，设定返回值，执行。
                 if (ids != null && ids.size() > 0) {
-                    QueryFilter qf = new QueryFilter("id", QueryFilterOperator.IN, StringUtils.collectionToDelimitedString(ids, ",", "'", "'"), QueryFilterCombinator.AND,null);
+                    QueryFilter qf = new QueryFilter("id", QueryFilterOperator.IN, StringUtils.collectionToDelimitedString(ids, ",", "'", "'"), QueryFilterCombinator.AND, null);
                     //3.去掉任何查询条件，只使用 ids in，并去掉paginator, 查询结果
                     queryResult = getQueryForEntity(environment, qf, contentSelection.get(), QueryForWhatEnum.NORMAL, null).getResultList();
                 }
@@ -68,15 +68,19 @@ public class CollectionJpaDataFetcher extends JpaDataFetcher {
 
         return result;
     }
-//本次查询中有没有包含collection元素，
+
+    //本次查询中有没有包含collection元素，
+    //todo  需要更新到bos graphql
     private boolean isIncludeCollection(ManagedType entityType, SelectionSet fields) {
         if (fields == null || entityType == null) {
             return false;
         }
         for (Selection select : fields.getSelections()) {
-            Optional<Attribute> selectedFieldAttributeOptional= entityType.getAttributes().stream().filter(attr->((Attribute)attr).getName().equals(((Field) select).getName()))
+            Optional<Attribute> selectedFieldAttributeOptional = entityType.getAttributes()
+                    .stream()
+                    .filter(attr -> ((Attribute) attr).getName().equals(((Field) select).getName()))
                     .findFirst();
-            if(selectedFieldAttributeOptional.isPresent()) {
+            if (selectedFieldAttributeOptional.isPresent()) {
                 Attribute selectedFieldAttribute = selectedFieldAttributeOptional.get();
                 if (selectedFieldAttribute == null) {//有时候的确没有，如__typename
                     return false;
@@ -139,11 +143,15 @@ public class CollectionJpaDataFetcher extends JpaDataFetcher {
             qfilter = (QueryFilter) this.convertValue(environment, this.graphQlTypeMapper.getGraphQLInputType(QueryFilter.class), qfilterValues);
         }
 
+
         //如果是也包含禁用条目
         if (qfilter != null && qfilter.isDisabledEntityAllowed()) {
+           //查询禁用相关的条目记录时   disable条件必须写在qfilter的第一个
             qfilter = qfilter.getNext();
+
         } else if (qfilter != null && qfilter.isOnlyDisabledEntityAllowed()) {//如果是"只"包含禁用条目
-        } else {//否则是不包含禁用条目
+
+        } else {//否则是默认不包含禁用条目
             qfilter = new QueryFilter(ENTITY_PROP_FOR_DISABLED, QueryFilterOperator.EQUEAL, "false", QueryFilterCombinator.AND, qfilter);
         }
         return qfilter;

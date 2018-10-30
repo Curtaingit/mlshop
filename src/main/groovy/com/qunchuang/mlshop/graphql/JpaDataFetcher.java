@@ -1,17 +1,17 @@
 package com.qunchuang.mlshop.graphql;
 
+import com.alibaba.fastjson.JSONObject;
 import com.bos.domain.BosEnum;
-import com.qunchuang.mlshop.anntations.AccountType;
-import com.qunchuang.mlshop.anntations.PrivilegeType;
-import com.qunchuang.mlshop.model.Administ;
-import com.qunchuang.mlshop.model.user.User;
+import com.qunchuang.mlshop.graphql.annotation.PrivilegeConstraint;
 import graphql.language.*;
 import graphql.schema.*;
 import org.springframework.beans.ConfigurablePropertyAccessor;
 import org.springframework.beans.PropertyAccessorFactory;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.expression.EvaluationContext;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.persistence.*;
@@ -43,68 +43,58 @@ public class JpaDataFetcher implements DataFetcher {
     public final Object get(DataFetchingEnvironment environment) {
 
         QueryFilter queryFilter = extractQueryFilter(environment, environment.getFields().iterator().next());
-//
-//        QueryFilter qf = new QueryFilter();
-//        qf.setKey("order.amout");
-//        qf.setValue("5000");
-//        qf.setOperator(QueryFilterOperator.LESSTHAN);
-//        qf.setCombinator(QueryFilterCombinator.AND);
-//        qf.setNext(queryFilter);
+
+        //检查权限  构造数据过滤   查询时才需要
+        if (this instanceof JpaDataFetcher) {
+            checkPermission(queryFilter);
+        }
+
 
         Object result = this.getResult(environment, queryFilter);
-//        return checkPermission(result);
-
         return result;
     }
 
-    private Object checkPermission(Object result) {
+    private Object checkPermission(QueryFilter queryFilter) {
         //获取实体类型   获取可访问的实体信息
         Class clazz = this.entityType.getJavaType();
 
-        AccountType accountCheck = (AccountType) clazz.getAnnotation(AccountType.class);
+        PrivilegeConstraint privilegeConstraint = (PrivilegeConstraint) clazz.getAnnotation(PrivilegeConstraint.class);
+
+        //如果 没有添加AccountType注解那么 默认表示无任何限制
+        if (privilegeConstraint == null) {
+            return queryFilter;
+        }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        String accountType = accountCheck.value();
-
-        //如果是匿名用户就可以访问 那么不需要过滤
-        if(accountType.contains("anonymous")){
-            return result;
+        //匿名用户直接返回未登录
+        if (authentication.getPrincipal() instanceof String) {
+            throw new BadCredentialsException("对不起，你还未登录！");
         }
-        if(accountType.contains("User") && authentication.getPrincipal().getClass().isAssignableFrom(User.class)){
-            //过滤自身以外的其他信息    暂时不考虑
+        //创建spel环境
+        EvaluationContext context = new StandardEvaluationContext();
+        context.setVariable("p", authentication.getPrincipal());
+        SpelExpressionParser parser = new SpelExpressionParser();
+        String expression = privilegeConstraint.expression();
+        String value = parser.parseExpression(expression).getValue(context, String.class);
 
-            return result;
-        }
-        if(accountType.contains("Administ")  && authentication.getPrincipal().getClass().isAssignableFrom(Administ.class)){
-            //判断是否有权限   怎么判断这个权限。。  不同的查询实体。
-            PrivilegeType privilegeType = (PrivilegeType) clazz.getAnnotation(PrivilegeType.class);
-            Object principal = authentication.getPrincipal();
-            if (principal.getClass().isAssignableFrom(Administ.class)){
-                Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-
-                if (authorities.toString().contains(privilegeType.value())){
-                    //获取约束
-                    List<String> collect = ((Administ) principal).getRoleItems()
-                            .stream().map(roleItem -> roleItem.getRole())
-                            .flatMap(role -> role.getPrivilegeItems().stream())
-                            .filter(privilegeItem -> privilegeItem.getConstraintRule()!=null && privilegeItem.getConstraintRule().contains(clazz.getSimpleName()))
-                            .map(privilegeItem -> privilegeItem.getConstraintRule())
-                            .collect(Collectors.toList());
-
-
-                    //Administ.name == "admin"  判断  不符合  则抛出异常
-
-
-
-                    return result;
-                }
+        //根据注解的值构造Qfilter
+        if (value == null) {
+            //无约束条件
+            return queryFilter;
+        } else {
+            //生成Qfilter
+            QueryFilter qf = JSONObject.parseObject(value).toJavaObject(QueryFilter.class);
+            //这里需要重新考虑  怎么整合两个 qf todo
+            QueryFilter qf2 = new QueryFilter();
+            while (qf.getNext() != null) {
+                qf2 = queryFilter.getNext();
             }
+            qf2.setCombinator(QueryFilterCombinator.AND);
+            qf2.setNext(qf);
 
+            return queryFilter;
         }
-
-        //不满足条件 抛出403
-        throw new AccessDeniedException("权限不足");
     }
 
 

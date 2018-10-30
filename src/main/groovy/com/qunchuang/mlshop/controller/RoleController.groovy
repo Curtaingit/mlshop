@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class RoleController {
 
-
     @Autowired
     private RoleService roleService;
-
+    //todo mutation 完成权限所属设置。
+//    @Authorware("address.userId==principal.id && principal.isadmin","msg")
     @SchemaDocumentation("增加角色信息")
     @GRequestMapping(path = "/add", method = RequestMethod.POST)
     @RoleAuthority(RoleAuthorityFunctionEnum.ROLE_MANAGEMENT)

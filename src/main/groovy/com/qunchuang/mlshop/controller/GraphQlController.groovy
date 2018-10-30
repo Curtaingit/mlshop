@@ -1,12 +1,16 @@
 package com.qunchuang.mlshop.controller
 
-import com.qunchuang.mlshop.graphql.GraphQLExecutor
-import com.qunchuang.mlshop.graphql.GraphQLInputQuery
+import com.qunchuang.mlshop.graphql.*
+import com.validator.bos.errors.ValidSelectError
+import com.validator.bos.exceptions.MutationValidateException
 import graphql.ExceptionWhileDataFetching
 import graphql.ExecutionResult
 import graphql.ExecutionResultImpl
 import graphql.GraphQLError
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.core.AuthenticationException
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -22,19 +26,55 @@ class GraphQlController {
             @RequestBody GraphQLInputQuery graphQLInput) throws IOException {
         ExecutionResult result = graphQLExecutor.execute(graphQLInput.getQuery(), graphQLInput.getArguments());
 
-        result = new ExecutionResultBos(result.getData(), result.getErrors(), result.getExtensions());
+        Object data = result.getData();
+        List<GraphQLError> errors = result.getErrors();
+        Map<Object, Object> extensions = result.getExtensions();
 
-        def errors = result.getErrors()
+        return new ExecutionResultBos(data, parseExceptions(errors), extensions);
+    }
+
+    /**
+     * 针对各种异常进行解析并简化处理，并返回符合 GraphQL 规范的异常信息。
+     * <p>
+     * 主要处理的异常信息有3类:
+     * 1. graphql 内置的异常信息 -- 原封不动的返回
+     * 2. 业务异常 {@link BusinessException} -- 主要返回 code 和 message {@link BusinessExceptionError}
+     * 3. 参数校验异常{@link MutationValidateException} -- 返回有且只有一个方法校验失败的信息 {@link MutationValidError}
+     *
+     * @param errors 要处理的异常信息
+     * @return 返回符合 Graphql 规范的异常信息
+     */
+    private static List<GraphQLError> parseExceptions(List<GraphQLError> errors) {
+        List<GraphQLError> list = null;
+        //针对不同类型的异常进行处理,因为 result.getErrors()是不可变集合
         if (errors != null) {
-            if (errors.get(0).class.isAssignableFrom(ExceptionWhileDataFetching)) {
-                ExceptionWhileDataFetching exceptionWhileDataFetching = errors.get(0);
+            list = new ArrayList<>(errors.size());
 
-                throw exceptionWhileDataFetching.exception;
+            for (GraphQLError error : errors) {
+                if (error instanceof ExceptionWhileDataFetching) {
+                    ExceptionWhileDataFetching e = (ExceptionWhileDataFetching) error;
 
+                    if (e.getException() instanceof BusinessException) {
+
+                        list.add(new BusinessExceptionError(error, (BusinessException) e.getException()));
+
+                    } else if (e.getException() instanceof MutationValidateException) {
+                        ValidSelectError validSelectError = ((MutationValidateException) e.getException()).getError();
+                        MutationValidError mutationValidError = new MutationValidError(validSelectError, error);
+
+                        list.add(mutationValidError);
+                        //解决401  403问题
+                    }else if(e.getException() instanceof AuthenticationException){
+                        throw new BadCredentialsException(e.getException().message);
+                    }else if (e.getException() instanceof AccessDeniedException){
+                        throw new AccessDeniedException(e.getException().message);
+                    }
+                } else {
+                    list.add(error);
+                }
             }
         }
-
-        return result;
+        return list;
     }
 
     /**

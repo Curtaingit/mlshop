@@ -4,12 +4,11 @@ import com.bos.domain.persist.CoreObject;
 import graphql.language.Field;
 import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.GraphQLInputType;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class MutationDataFetcher extends CollectionJpaDataFetcher {
 
@@ -41,23 +40,23 @@ public class MutationDataFetcher extends CollectionJpaDataFetcher {
         } else {//说明返回类型要么是实体类型，要么是实体类型的集合类型
             if (CoreObject.class.isAssignableFrom(returnValue.getClass())) {//说明返回的是拿到主键
                 //todo  这里为什么还要再去通过id过滤呢
-//                String id = ((CoreObject) returnValue).getId();
-//                queryFilter = new QueryFilter("id", QueryFilterOperator.EQUEAL, id, QueryFilterCombinator.AND, queryFilter);
-//                return super.getForEntity(environment, queryFilter);
-                return returnValue;
+                String id = ((CoreObject) returnValue).getId();
+                queryFilter = new QueryFilter("id", QueryFilterOperator.EQUEAL, id, QueryFilterCombinator.AND, queryFilter);
+                return super.getForEntity(environment, queryFilter);
+//                return returnValue;
             } else if (Collection.class.isAssignableFrom(returnValue.getClass())) {//实体类型的集合类型
-//                Collection entityCollection = ((Collection) returnValue);
-//                List<String> idList = (List<String>) entityCollection.stream().map(entity -> ((CoreObject) entity).getId()).collect(Collectors.toList());
-//                String idstring = StringUtils.collectionToDelimitedString(idList, ",", "'", "'");
-//                //设置分页和过滤条件
-//                queryFilter = new QueryFilter("id", QueryFilterOperator.IN, idstring, QueryFilterCombinator.AND, queryFilter);
-//                return super.getResult(environment, queryFilter);
+                Collection entityCollection = ((Collection) returnValue);
+                List<String> idList = (List<String>) entityCollection.stream().map(entity -> ((CoreObject) entity).getId()).collect(Collectors.toList());
+                String idstring = StringUtils.collectionToDelimitedString(idList, ",", "'", "'");
+                //设置分页和过滤条件
+                queryFilter = new QueryFilter("id", QueryFilterOperator.IN, idstring, QueryFilterCombinator.AND, queryFilter);
+                return super.getResult(environment, queryFilter);
 
 //                //todo 如果不需要分页  (因为这里不能获取到分页信息)  那么 这里直接返回就可以了
-                LinkedHashMap<String, Object> result = new LinkedHashMap<>();
-                result.put("content",returnValue);
-                result.put("totalElements",((Collection)returnValue).size());  //这个似乎也不需要
-                return result;
+//                LinkedHashMap<String, Object> result = new LinkedHashMap<>();
+//                result.put("content",returnValue);
+//                result.put("totalElements",((Collection)returnValue).size());  //这个似乎也不需要
+//                return result;
             } else {
                 //TODO 只能抛错
                 throw new RuntimeException("返回类型不对头，mutation中不允许出现该类型");

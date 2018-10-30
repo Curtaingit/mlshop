@@ -1,6 +1,7 @@
 package com.qunchuang.mlshop.config;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
@@ -44,6 +45,7 @@ public class MyAuthenticationSuccessHandler
         SavedRequest savedRequest
                 = requestCache.getRequest(request, response);
 
+
         if (savedRequest == null) {
             clearAuthenticationAttributes(request);
             if(isFromOAuth2){
@@ -60,6 +62,11 @@ public class MyAuthenticationSuccessHandler
             outputStream.close();
 
             }
+
+            //todo 如果是 管理员登录
+
+            response.getOutputStream().write(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString().getBytes());
+
             return ;
         }
         String targetUrlParam = getTargetUrlParameter();

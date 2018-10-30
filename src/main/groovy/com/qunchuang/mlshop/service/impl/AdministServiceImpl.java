@@ -4,6 +4,7 @@ package com.qunchuang.mlshop.service.impl;
 import com.qunchuang.mlshop.exception.MLShopRunTimeException;
 import com.qunchuang.mlshop.model.Administ;
 import com.qunchuang.mlshop.model.Privilege;
+import com.qunchuang.mlshop.model.PrivilegeItem;
 import com.qunchuang.mlshop.repo.AdministRepository;
 import com.qunchuang.mlshop.service.AdministService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,15 +42,12 @@ public class AdministServiceImpl implements AdministService {
     @Override
     @Transactional
     public Administ update(Administ administ) {
-        //todo  首先在方法上需要功能权限   其次在这里需要做判断  只能赋予 自己子集的权限（角色）    创建也是一样的
+        //todo  超级管理员admin的权限和角色不允许修改
+
         administ = administRepository.save(administ);
-        if (privilegeCheck(administ)) {
-            return administ;
-        } else {
-            throw new AccessDeniedException("权限添加错误，赋予了本身不具备的权限");
-        }
+        privilegeCheck(administ);
 
-
+        return administ;
     }
 
 
@@ -57,28 +55,29 @@ public class AdministServiceImpl implements AdministService {
     @Transactional
     public Administ save(Administ administ) {
         administ = administRepository.save(administ);
-        if (privilegeCheck(administ)) {
-            return administ;
-        } else {
-            throw new AccessDeniedException("权限添加错误，赋予了本身不具备的权限");
-        }
+        privilegeCheck(administ);
+
+        return administ;
+
     }
 
 
-    private Boolean privilegeCheck(Administ administ) {
+    private void privilegeCheck(Administ administ) {
         Administ principal = (Administ) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Set<Privilege> principalPrivilege = principal.getRoleItems()
                 .stream()
                 .flatMap(roleItem -> roleItem.getRole().getPrivilegeItems().stream())
-                .map(privilegeItem -> privilegeItem.getPrivilege()).collect(Collectors.toSet());
+                .map(PrivilegeItem::getPrivilege).collect(Collectors.toSet());
 
         Set<Privilege> administerPrivilege = administ.getRoleItems()
                 .stream()
                 .flatMap(roleItem -> roleItem.getRole().getPrivilegeItems().stream())
-                .map(privilegeItem -> privilegeItem.getPrivilege()).collect(Collectors.toSet());
+                .map(PrivilegeItem::getPrivilege).collect(Collectors.toSet());
 
-        return principalPrivilege.containsAll(administerPrivilege);
+        if (!principalPrivilege.containsAll(administerPrivilege)) {
+            throw new AccessDeniedException("权限添加错误，赋予了本身不具备的权限");
+        }
     }
 
 }

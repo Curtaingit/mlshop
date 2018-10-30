@@ -23,6 +23,12 @@ public class RoleItem extends Entry{
      * 角色
      */
     @ManyToOne
-    Role role;
+    private Role role;
 
+    @Override
+    public String toString() {
+        return "RoleItem{" +
+                "role=" + role +
+                '}';
+    }
 }

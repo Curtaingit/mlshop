@@ -2,12 +2,12 @@ package com.qunchuang.mlshop.model;
 
 import com.bos.domain.BosEntity;
 import com.bos.domain.Bostype;
-import com.qunchuang.mlshop.anntations.AccountType;
-import com.qunchuang.mlshop.anntations.PrivilegeType;
+import com.qunchuang.mlshop.graphql.annotation.PrivilegeConstraint;
 import com.qunchuang.mlshop.graphql.annotation.SchemaDocumentation;
 import groovy.transform.CompileStatic;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,14 +15,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.OneToMany;import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.qunchuang.mlshop.enums.RoleAuthorityFunctionConst.ADMIN_MANAGEMENT;
 
 @Entity
 @SchemaDocumentation("管理员")
@@ -30,16 +24,16 @@ import static com.qunchuang.mlshop.enums.RoleAuthorityFunctionConst.ADMIN_MANAGE
 @Bostype("A06")
 @Getter
 @Setter
-@AccountType("Administ")
-@PrivilegeType(ADMIN_MANAGEMENT)
+@PrivilegeConstraint(expression = "#p.id.endsWith('C03')?'admin.userId':#p.id.endsWith('A06')?#p.getConstraint('ADMIN_MANAGEMENT'):'false'")
+//@PrivilegeConstraint(key = "#p.id.contains('A07')?'{\"key\":\"id\",\"operator\":\"EQUEAL\",\"value\":\"lJGJakfJEfGrhNPDC7rsb2A06\"}':null")
 public class Administ extends BosEntity implements UserDetails {
     @SchemaDocumentation("姓名")
 //    @NotNull
-    String name;
+            String name;
 
     @SchemaDocumentation("联系方式")
 //    @Length(min = 11, max = 11, message = "长度不正确")
-    String tel;
+            String tel;
 
     @SchemaDocumentation("用户名")
     String username;
@@ -54,12 +48,13 @@ public class Administ extends BosEntity implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> collect = roleItems
                 .stream()
-                .map(roleItem -> roleItem.getRole())
+                .map(RoleItem::getRole)
                 .flatMap(role -> role.getPrivilegeItems().stream())
-                .map(privilegeItem -> privilegeItem.getPrivilege())
+                .map(PrivilegeItem::getPrivilege)
                 .map(privilege -> new SimpleGrantedAuthority(privilege.getAuthority()))
                 .collect(Collectors.toSet());
-        return new ArrayList<>(collect);
+
+        return collect;
     }
 
     @Override
@@ -94,7 +89,29 @@ public class Administ extends BosEntity implements UserDetails {
 
     @Override
     public String toString() {
-        return this.username;
+        return "Administ{" +
+                "name='" + name + '\'' +
+                ", tel='" + tel + '\'' +
+                ", username='" + username + '\'' +
+                ", roleItems=" + roleItems +
+                '}';
+    }
+
+    public String getConstraint(String privilege) {
+        Collection<? extends GrantedAuthority> authorities = this.getAuthorities();
+
+        if (!authorities.contains(new SimpleGrantedAuthority(privilege))){
+            throw new AccessDeniedException("权限不足");
+        }
+
+        List<String> collect = this.getRoleItems().stream().map(roleItem -> roleItem.getRole())
+                .flatMap(role -> role.getPrivilegeItems().stream())
+                //如果连个角色中包含同一个权限  且设定了不同的约束条件  todo 待处理
+                .filter(privilegeItem -> privilegeItem.getConstraintRule() != null && privilegeItem.getPrivilege().getPrivilege().contains(privilege))
+                .map(privilegeItem -> privilegeItem.getConstraintRule())
+                .collect(Collectors.toList());
+
+        return collect.get(0);
     }
 
 }

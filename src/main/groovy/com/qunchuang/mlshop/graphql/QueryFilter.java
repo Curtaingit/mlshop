@@ -1,11 +1,10 @@
 package com.qunchuang.mlshop.graphql;
 
-import com.bos.domain.BosEnum;
 import com.qunchuang.mlshop.graphql.annotation.SchemaDocumentation;
 
 
 @SchemaDocumentation("过滤条件")
-public class QueryFilter {
+public class QueryFilter{
 
     @SchemaDocumentation("键，可以带导航的.号")
     public void setKey(String key) {
@@ -88,45 +87,4 @@ public class QueryFilter {
 
 //TODO 可能需要扩展或者更规范化
 
-@SchemaDocumentation("查询过滤操作符")
-enum QueryFilterOperator implements BosEnum {
-    ISNULL("ISNULL","为空"),
-    ISNOTNULL("ISNOTNULL","不为空"),
-    GREATTHAN("GREATTHAN","大于"),
-    LESSTHAN("LESSTHAN","小于"),
-    NOTLESSTHAN("NOTLESSTHAN","不小于"),
-    NOTGREATTHAN("NOTGREATTHAN","不大于"),
-    EQUEAL("EQUEAL","相等"),
-    IN("IN","包含"),
-    NOTIN("NOTIN","不包含"),
-    NOT("NOT","非"),
-    LIKE("LIKE","LIKE");
 
-    private QueryFilterOperator(String value,String name){
-        this.ev = new BosEnum.EnumInnerValue(value, name);
-    }
-
-    private BosEnum.EnumInnerValue ev = null;
-
-    @Override
-    public EnumInnerValue getEnumInnerValue() {
-        return this.ev;
-    }
-}
-
-
-@SchemaDocumentation("查询表达式组合操作符")
-enum QueryFilterCombinator implements BosEnum {
-    AND("AND","and"),
-    OR("OR","or"),
-    NOT("NOT","!");
-
-    private QueryFilterCombinator(String value,String name){
-        this.ev = new BosEnum.EnumInnerValue(value, name);
-    }
-    private BosEnum.EnumInnerValue ev = null;
-    @Override
-    public BosEnum.EnumInnerValue getEnumInnerValue() {
-        return this.ev;
-    }
-}

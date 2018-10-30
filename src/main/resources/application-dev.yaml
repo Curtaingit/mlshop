@@ -7,7 +7,7 @@ spring:
      schema: classpath:schema.sql
      initialization-mode: never
   jpa:
-     show-sql: true
+     show-sql: false
      hibernate:
        ddl-auto: update
 #     properties:

@@ -2,6 +2,7 @@ package com.qunchuang.mlshop;
 
 import com.qunchuang.mlshop.enums.RoleAuthorityFunctionConst;
 import com.qunchuang.mlshop.model.*;
+import com.qunchuang.mlshop.model.user.User;
 import com.qunchuang.mlshop.repo.AdministRepository;
 import com.qunchuang.mlshop.repo.PrivilegeRepository;
 import com.qunchuang.mlshop.repo.RoleRepository;
@@ -97,7 +98,6 @@ public class MlshopApplicationTests {
         role3 = roleRepository.save(role3);
 
 
-
         RoleItem roleItem1 = new RoleItem();
         RoleItem roleItem2 = new RoleItem();
         RoleItem roleItem3 = new RoleItem();
@@ -113,6 +113,11 @@ public class MlshopApplicationTests {
         //todo 这里如果不前保存 name 和 privilege 会出现以下错误   暂时未找到解决方案
         //todo object references an unsaved transient instance - save the transient instance before flushing
 
+//        List<String> collect = administ.getRoleItems()
+//                .stream()
+//                .map(roleItem -> roleItem.getRole()).flatMap(role -> role.getPrivilegeItems().stream()).map(PrivilegeItem::getPrivilege).map(privilege -> privilege.getPrivilege()).collect(Collectors.toList());
+//
+//        administ.setOwnPrivilege(collect.toString());
         administRepository.save(administ);
 
 
@@ -120,33 +125,37 @@ public class MlshopApplicationTests {
 
 
     @Test
-    public void TestSpel(){
+    public void TestSpel() {
         //1.首先准备测试数据
         Collection<Integer> collection = new ArrayList<Integer>();
-        collection.add(4);   collection.add(5);
-        Map<String, Integer> map = new HashMap<String, Integer>();
-        map.put("a", 1);    map.put("b", 2);
+        collection.add(4);
+        collection.add(5);
+        Map<String, Object> map = new HashMap<String, Object>();
+        Administ administ = new Administ();
+        administ.setUsername("aaaaaaaaa");
+        User user = new User();
+        user.setUsername("uuuuuuuuu");
+        map.put("admin", administ);
+        map.put("user", user);
 
         //2.集合或数组测试
-        EvaluationContext context1 = new StandardEvaluationContext();
-        context1.setVariable("collection", collection);
-        Collection<Integer> result1 =
-                parser.parseExpression("#collection.?[#this>4]").getValue(context1, Collection.class);
-        Assert.assertEquals(1, result1.size());
-        Assert.assertEquals(new Integer(5), result1.iterator().next());
+//        EvaluationContext context1 = new StandardEvaluationContext();
+//        context1.setVariable("collection", collection);
+//        Collection<Integer> result1 =
+//                parser.parseExpression("#collection.?[#this>4]").getValue(context1, Collection.class);
+//        Assert.assertEquals(1, result1.size());
+//        Assert.assertEquals(new Integer(5), result1.iterator().next());
 
         //3.字典测试
         EvaluationContext context2 = new StandardEvaluationContext();
-        context2.setVariable("map", map);
-        Map<String, Integer> result2 =
-                parser.parseExpression("#map.?[#this.key != 'a']").getValue(context2, Map.class);
-        Assert.assertEquals(1, result2.size());
+        context2.setVariable("administ", administ);
+        Administ value1 = parser.parseExpression("#administ()").getValue(context2, Administ.class);
+        String value = parser.parseExpression("#administ.username").getValue(context2, String.class);
 
         List<Integer> result3 =
                 parser.parseExpression("#map.?[key != 'D'].![value+1]").getValue(context2, List.class);
         Assert.assertEquals(new Integer(3), result3.iterator().next());
     }
-
 
 
 }

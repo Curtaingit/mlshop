@@ -26,23 +26,32 @@ public class Privilege extends BosEntity implements GrantedAuthority {
      * 权限
      */
     @SchemaDocumentation("权限")
-    String privilege;
+    private String privilege;
 
     /**
      * 名称（中文描述）
      */
     @SchemaDocumentation("名称（中文描述）")
-    String name;
+    private  String name;
 
     /**
      * 类别
      */
     @SchemaDocumentation("类别")
-    Integer category;
+    private Integer category;
 
 
     @Override
     public String getAuthority() {
         return privilege;
+    }
+
+    @Override
+    public String toString() {
+        return "Privilege{" +
+                "privilege='" + privilege + '\'' +
+                ", name='" + name + '\'' +
+                ", category=" + category +
+                '}';
     }
 }
