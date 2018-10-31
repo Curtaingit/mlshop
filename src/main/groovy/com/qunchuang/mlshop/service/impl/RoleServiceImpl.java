@@ -46,6 +46,10 @@ public class RoleServiceImpl implements RoleService {
         return role;
     }
 
+    /**
+     * 验证修改的权限 是否被允许（包含在当前用户中）
+     * @param role
+     */
     private void privilegeCheck(Role role) {
         Administ principal = (Administ) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

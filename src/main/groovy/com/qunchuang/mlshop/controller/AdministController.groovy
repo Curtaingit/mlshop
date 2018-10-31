@@ -27,7 +27,7 @@ public class AdministController {
 
     @SchemaDocumentation("增加管理员信息")
     @GRequestMapping(path = "/add", method = RequestMethod.POST)
-    @RoleAuthority(RoleAuthorityFunctionEnum.ADMIN_MANAGEMENT)
+//    @PreAuthorize("hasAuthority('ADMIN_MANAGEMENT')")
     Administ addAdminist(
             @RequestParam(name = "administ", required = true) Administ administ) {
         return administService.save(administ);

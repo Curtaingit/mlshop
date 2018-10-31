@@ -10,6 +10,7 @@ import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +30,7 @@ import java.util.stream.Stream;
 public class JpaDataFetcher implements DataFetcher {
 
     public static final String DESC = "DESC";
+    public static final String FALSE = "FALSE";
     protected EntityManager entityManager;
     protected EntityType<?> entityType;
     protected IGraphQlTypeMapper graphQlTypeMapper;
@@ -45,22 +47,21 @@ public class JpaDataFetcher implements DataFetcher {
         QueryFilter queryFilter = extractQueryFilter(environment, environment.getFields().iterator().next());
 
         //检查权限  构造数据过滤   查询时才需要
-        if (this instanceof JpaDataFetcher) {
-            checkPermission(queryFilter);
+        if (this.getClass().isAssignableFrom(JpaDataFetcher.class)) {
+            queryFilter = checkPermission(queryFilter);
         }
-
 
         Object result = this.getResult(environment, queryFilter);
         return result;
     }
 
-    private Object checkPermission(QueryFilter queryFilter) {
+    private QueryFilter checkPermission(QueryFilter queryFilter) {
         //获取实体类型   获取可访问的实体信息
         Class clazz = this.entityType.getJavaType();
 
         PrivilegeConstraint privilegeConstraint = (PrivilegeConstraint) clazz.getAnnotation(PrivilegeConstraint.class);
 
-        //如果 没有添加AccountType注解那么 默认表示无任何限制
+        //如果 没有添加PrivilegeConstraint注解那么 默认表示无任何限制
         if (privilegeConstraint == null) {
             return queryFilter;
         }
@@ -71,29 +72,27 @@ public class JpaDataFetcher implements DataFetcher {
         if (authentication.getPrincipal() instanceof String) {
             throw new BadCredentialsException("对不起，你还未登录！");
         }
-        //创建spel环境
+        //创建SpEL环境
         EvaluationContext context = new StandardEvaluationContext();
         context.setVariable("p", authentication.getPrincipal());
         SpelExpressionParser parser = new SpelExpressionParser();
         String expression = privilegeConstraint.expression();
         String value = parser.parseExpression(expression).getValue(context, String.class);
 
-        //根据注解的值构造Qfilter
+        //根据注解的值构造QFilter
         if (value == null) {
             //无约束条件
             return queryFilter;
+        } else if (FALSE.equals(value.toUpperCase())) {
+            //不符合SpEL条件
+            throw new AccessDeniedException("权限不足");
         } else {
-            //生成Qfilter
+            //替换value中的  #p.id  为登录用户id
+            value = value.replaceAll("#p.id", parser.parseExpression("#p.id").getValue(context, String.class));
+            //生成QFilter
             QueryFilter qf = JSONObject.parseObject(value).toJavaObject(QueryFilter.class);
-            //这里需要重新考虑  怎么整合两个 qf todo
-            QueryFilter qf2 = new QueryFilter();
-            while (qf.getNext() != null) {
-                qf2 = queryFilter.getNext();
-            }
-            qf2.setCombinator(QueryFilterCombinator.AND);
-            qf2.setNext(qf);
-
-            return queryFilter;
+            //组合并返回
+            return qf.merge(queryFilter);
         }
     }
 

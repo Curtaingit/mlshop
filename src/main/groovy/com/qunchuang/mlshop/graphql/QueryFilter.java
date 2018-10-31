@@ -83,6 +83,21 @@ public class QueryFilter{
                 && Boolean.valueOf(this.getValue()).booleanValue();
     }
 
+
+    /**
+     * 合并QFilter
+     * @param newQF
+     * @return
+     */
+    public QueryFilter merge(QueryFilter newQF){
+        QueryFilter tempQF = this;
+        while (tempQF.getNext() != null) {
+            tempQF = tempQF.getNext();
+        }
+        tempQF.setCombinator(QueryFilterCombinator.AND);
+        tempQF.setNext(newQF);
+        return this;
+    }
 }
 
 //TODO 可能需要扩展或者更规范化
