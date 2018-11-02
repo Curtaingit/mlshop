@@ -32,6 +32,7 @@ public class MlshopApplicationTests {
     public void saveAdminist() {
 
         Administ administ = new Administ();
+        //
 
         administ.setName("小明");
         administ.setUsername("admin");
