@@ -48,7 +48,7 @@ public class JpaDataFetcher implements DataFetcher {
 
         //检查权限  构造数据过滤   查询时才需要
         if (this.getClass().isAssignableFrom(JpaDataFetcher.class)) {
-            queryFilter = checkPermission(queryFilter);
+//            queryFilter = checkPermission(queryFilter);
         }
 
         Object result = this.getResult(environment, queryFilter);

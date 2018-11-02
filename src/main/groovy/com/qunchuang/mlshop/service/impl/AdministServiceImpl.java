@@ -9,7 +9,6 @@ import com.qunchuang.mlshop.repo.AdministRepository;
 import com.qunchuang.mlshop.service.AdministService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -55,7 +54,7 @@ public class AdministServiceImpl implements AdministService {
 
     @Override
     @Transactional
-    @PreAuthorize("#admin.id == authentication.principal.id")
+//    @PreAuthorize("#admin.id == authentication.principal.id")
     public Administ save(@P("admin") Administ administ) {
         administ = administRepository.save(administ);
         privilegeCheck(administ);

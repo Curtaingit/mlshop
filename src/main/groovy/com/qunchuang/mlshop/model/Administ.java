@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Bostype("A06")
 @Getter
 @Setter
-@PrivilegeConstraint(expression = "#p.id.endsWith('C03')?'{\"key\":\"id\",\"operator\":\"EQUEAL\",\"value\":\"#p.id\"}':#p.id.endsWith('A06')?#p.getConstraint('ADMIN_MANAGEMENT'):'false'")
+@PrivilegeConstraint(expression = "#p.id.endsWith('C03')?'{key:\"id\",operator:\"EQUEAL\",value:\"p#.id\"}':#p.id.endsWith('A06')?#p.getConstraint('ADMIN_MANAGEMENT'):'false'")
 //@PrivilegeConstraint(key = "#p.id.contains('A07')?'{\"key\":\"id\",\"operator\":\"EQUEAL\",\"value\":\"lJGJakfJEfGrhNPDC7rsb2A06\"}':null")
 public class Administ extends BosEntity implements UserDetails {
     @SchemaDocumentation("姓名")
