@@ -19,6 +19,7 @@ public class StringToJavaBean {
 
     @Test
     public void test() {
+//        {key:"id",operator:"EQUEAL",value:"#p.id",next:{key:"id",operator:"EQUEAL",value:"#p.id"}}
         String s = "k=admin.id,v=#p.id,o=equal && k=admin.name,o=isnotnull";
         m.put("equal",QueryFilterOperator.EQUEAL);
         m.put("isnotnull",QueryFilterOperator.ISNOTNULL);
