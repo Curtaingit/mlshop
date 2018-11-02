@@ -13,7 +13,7 @@ import java.util.Map;
  * @date 2018/11/1 16:18
  */
 
-public class StringToJavaBean {
+public class StringToQueryFilter {
 
     private static final Map<String,QueryFilterOperator> m = new HashMap();
 
@@ -57,6 +57,7 @@ public class StringToJavaBean {
             }else if(item.contains("v=")){
                 queryFilter.setValue(item.substring(item.indexOf("v=")+2));
             }else if (item.contains("o=")){
+                //todo  是否需要匹配 >= > == < <=
                 String o = item.substring(item.indexOf("o=") + 2).toLowerCase();
                 queryFilter.setOperator(m.get(o));
             }
