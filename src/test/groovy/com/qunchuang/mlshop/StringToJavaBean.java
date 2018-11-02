@@ -12,6 +12,10 @@ public class StringToJavaBean {
 
     @Test
     public void test() {
-//        String s =
+        String s = "k=admin.id,v=#p.id,o=equal,c=and,n={k=admin.name,o=isnotnull}";
+    }
+
+    public void parse(String s){
+
     }
 }
